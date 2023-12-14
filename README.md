@@ -84,10 +84,10 @@ To run the Spring Boot backend of this project in Eclipse or STS, follow these s
     - Right-click on the main class.
     - Select `Run As` -> `Java Application`.
 
-6. The backend server should now be running locally in Eclipse or STS on `http://localhost:8181`.
+6. The backend server should now be running locally in Eclipse or STS on `http://localhost:8080`.
 
 
-Now, the frontend, backend, and database are set up locally. You can access the application by visiting `http://localhost:3000` for the React frontend and making requests to the backend running at `http://localhost:8181`.
+Now, the frontend, backend, and database are set up locally. You can access the application by visiting `http://localhost:3000` for the React frontend and making requests to the backend running at `http://localhost:8080`.
 
 
 ### Additional Notes
