@@ -112,7 +112,7 @@ function NavScrollExample() {
   return (
     <Navbar
       expand="lg"
-      className={`mb-5 ${scroll ? "navbar-dark bg-primary" : "navbar-light"}`}
+      className={`${scroll ? "navbar-dark bg-primary" : "navbar-light"}`}
       sticky="top"
     >
       <Container fluid>

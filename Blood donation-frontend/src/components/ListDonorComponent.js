@@ -55,7 +55,7 @@ const ListDonorComponent = () => {
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Sex</th>
+                            <th>Gender</th>
                             <th>Age</th>
                             <th>Blood Group</th>
                             <th>Last Donation</th>

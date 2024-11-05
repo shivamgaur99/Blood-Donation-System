@@ -1,77 +1,64 @@
 import React from "react";
-import { Container, Row, Col, Button } from "react-bootstrap";
 import "./Home.css";
+
+// Reusable Feature Item Component
+const FeatureItem = ({ iconClass, title, description }) => (
+  <div className="feature-item">
+    <i className={`fas ${iconClass} fa-3x`} aria-hidden="true"></i>
+    <h3>{title}</h3>
+    <p>{description}</p>
+  </div>
+);
 
 function Home() {
   return (
-    <div>
-      <main className="home">
-        <section className="hero-section">
-          <Container>
-            <Row>
-              <Col md={6} className="hero-text">
+    <div className="home">
+      {/* Hero Section */}
+      <section className="hero-section">
+        <div className="container">
+          <div className="row">
+            <div className="col-12 col-md-6 wlcm">
+              <div>
                 <h1>Welcome to Blood Donation</h1>
-                <p>
-                  We are dedicated to saving lives through voluntary blood
-                  donation. Join us in making a difference.
+                <p className="para">
+                  We are dedicated to saving lives through voluntary blood donation. Join us in making a difference.
                 </p>
-
-                <a href="http://localhost:3000/add-donor">
-                  {" "}
-                  <Button variant="primary">Donate Now </Button>{" "}
+                <a href="http://localhost:3000/login" aria-label="Donate Now">
+                  <button className="donate-button">Donate Now</button>
                 </a>
-              </Col>
-              <Col md={6} className="hero-image">
-                <img
-                  src="https://img.freepik.com/free-vector/blood-donation-symbol-with-hand-blood-bag_1308-111016.jpg?size=626&ext=jpg&ga=GA1.2.2138836995.1688756964&semt=ais"
-                  alt="Hero"
-                  className="img-fluid"
-                />
-              </Col>
-            </Row>
-          </Container>
-        </section>
+              </div>
+            </div>
+            <div className="col-12 col-md-6 hero-image">
+              <div className="image-container">
+                <img src="bldrop.png" alt="Blood Drop" className="blood-drop" />
+                <img src="hand.png" alt="Hand" className="hand-image" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        <section className="features-section">
-          <Container>
-            <Row>
-              <Col md={4}>
-                <div className="feature-item">
-                  <i className="fas fa-heart"></i>
-                  <h3>Save Lives</h3>
-                  <p>
-                    By donating blood, you can help save lives and support
-                    medical treatments.
-                  </p>
-                </div>
-              </Col>
-              <Col md={4}>
-                <div className="feature-item">
-                  <i className="fas fa-users"></i>
-                  <h3>Community</h3>
-                  <p>
-                    Join our blood donation community and make a positive impact
-                    in your community.
-                  </p>
-                </div>
-              </Col>
-              <Col md={4}>
-                <div className="feature-item">
-                  <i className="fas fa-medkit"></i>
-                  <h3>Health Benefits</h3>
-                  <p>
-                    Regular blood donation has numerous health benefits for the
-                    donors.
-                  </p>
-                </div>
-              </Col>
-              <img src="heart.png" className="img-fluid" />
-              <img src="aboutus.jpg" className="img-fluid" />
-              <img src="email_footer.png" className="img-fluid" />
-            </Row>
-          </Container>
-        </section>
-      </main>
+      {/* Features Section */}
+      <section className="features-section">
+        <h2 className="features-title">Why Donate Blood?</h2>
+        <div className="features-container">
+          <FeatureItem
+            iconClass="fa-heart"
+            title="Save Lives"
+            description="By donating blood, you can help save lives and support medical treatments."
+          />
+          <FeatureItem
+            iconClass="fa-users"
+            title="Community Impact"
+            description="Join our blood donation community and make a positive impact in your area."
+          />
+          <FeatureItem
+            iconClass="fa-medkit"
+            title="Health Benefits"
+            description="Regular blood donation has numerous health benefits for donors."
+          />
+        </div>
+      </section>
     </div>
   );
 }

@@ -1,35 +1,60 @@
+/* About Us - Styling */
+
 .about-us {
-    position: relative;
-     background-size: cover;
-   background-position: center;
-  }
-  
-  .about-us::before {
-    content: '';
-    width: 100vh;
-    background-image: url('https://www.kokilabenhospital.com/blog/wp-content/uploads/2018/06/World-Blood-Donor-Day.png');
-    opacity: 0.3;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-  }
-  
-  /* .about-us {
-    background-image: url('https://www.kokilabenhospital.com/blog/wp-content/uploads/2018/06/World-Blood-Donor-Day.png');
-    background-size: cover;
-    background-position: center;
-  }
-  
-  .hero {
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 50px;
-  }
-  
-  .mission {
-    background-color: #f5f5f5;
-    padding: 50px;
-  }
-   */
+  background: #f7f7f7;
+}
+
+.hero {
+  background: linear-gradient(rgba(255, 0, 0, 0.6), rgba(0, 0, 255, 0.6)), url('../../public/about.jpg') center/cover;
+  color: white;
+  padding: 60px 0;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+.hero-text {
+  font-size: 1.25rem;
+  margin-top: 1rem;
+}
+
+.about-section {
+  padding: 60px 0;
+}
+
+.about-us-image {
+  margin: 20px 0;
+  border-radius: 10px;
+  width: 100%;
+  transition: transform 0.3s ease;
+}
+
+.mission-section {
+  padding: 60px 0;
+  background: linear-gradient(to right, #0073ff, #f0f0f0);
+}
+
+.mission-card {
+  margin: 10px 0;
+  background-color: white;
+  border: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+
+.mission-card:hover {
+  transform: translateY(-5px);
+}
+
+.mission-card .card-title {
+  font-weight: bold;
+  color: #ff3344;
+}
+
+.mission-text {
+  font-size: 1.2rem;
+  color: #444;
+  margin-bottom: 40px;
+}

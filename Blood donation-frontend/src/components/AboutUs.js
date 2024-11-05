@@ -1,80 +1,117 @@
 import React from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Card } from "react-bootstrap";
 import "./aboutus.css";
-import Cards from "./Cards";
 
 function AboutUs() {
   return (
     <div>
       <main className="about-us">
-        <section className="hero">
+        {/* Hero Section */}
+        {/* <section className="hero">
+          <Container className="text-center">
+            <h1>About Us</h1>
+            <p className="hero-text">
+              Saving lives through the power of voluntary blood donation.
+            </p>
+          </Container>
+        </section> */}
+
+        {/* About Section */}
+        {/* <section className="about-section">
           <Container>
-            <img
-              src="https://img.freepik.com/free-vector/illustration-business-people_53876-5879.jpg?size=626&ext=jpg&ga=GA1.2.2138836995.1688756964&semt=ais"
-              alt="About Us"
-              height={100}
-            />
-            <Row>
-              {/* <Col md={6}>
-             
-              </Col> */}
-              <Col md={6}>
-                <h2>About Us</h2>
+            <Row className="align-items-center">
+              <Col md={12} className="about-content">
                 <p>
-                  Welcome to Blood Donation, a platform dedicated to saving
-                  lives through voluntary blood donation. We are a passionate
-                  team of individuals committed to ensuring a sustainable and
-                  reliable blood supply for those in need. Our mission is to
+                  We are a passionate team dedicated to ensuring a sustainable
+                  and reliable blood supply for those in need. Our mission is to
                   connect blood donors with patients, hospitals, and blood banks
-                  in a seamless and efficient manner.
+                  seamlessly.
                 </p>
                 <p>
-                  At Blood Donation, we believe that every blood donation has
-                  the power to make a difference in someone's life. By giving
-                  blood, you can help save lives, support medical treatments,
-                  and contribute to the well-being of your community. We
-                  encourage individuals from all walks of life to join us in
-                  this noble cause.
+                  By donating blood, you have the power to make a difference in
+                  someone's life. Join us in this noble cause and help save
+                  lives, support medical treatments, and strengthen our
+                  community.
                 </p>
               </Col>
             </Row>
           </Container>
-        </section>
+        </section> */}
 
-        <section className="mission">
+        {/* Mission Section */}
+        <section className="mission-section">
+        <Container className="text-center">
+            <h1>About Us</h1>
+            <p className="hero-text">
+              Saving lives through the power of voluntary blood donation.
+            </p>
+          </Container>
           <Container>
-            <Row>
-              <Col>
-                <h2>Our Mission</h2>
-                <p>
-                  Our mission is to create awareness about the importance of
-                  blood donation and make it accessible to everyone in need. We
-                  strive to:
-                </p>
-                <ul>
-                  <li>
-                    Ensure a steady and safe supply of blood for medical
-                    treatments and emergencies.
-                  </li>
-                  <li>
-                    Educate the public about the significance of regular blood
-                    donation and its positive impact on health.
-                  </li>
-                  <li>
-                    Facilitate the process of finding blood donors, connecting
-                    them with hospitals and patients in real-time.
-                  </li>
-                  <li>
-                    Collaborate with blood banks, healthcare organizations, and
-                    volunteers to strengthen the blood donation ecosystem.
-                  </li>
-                  <li>
-                    Promote a culture of voluntary and altruistic blood
-                    donation.
-                  </li>
-                </ul>
+          <img
+                  src="aboutus.jpg"
+                  alt="Blood Donation"
+                  className="about-us-image"
+                />
+            <h2 className="text-center">Our Mission</h2>
+            <p className="mission-text text-center">
+              Our mission is to create awareness about blood donation and make
+              it accessible to everyone in need.
+            </p>
+            <Row className="mission-container">
+              <Col md={4}>
+                <Card className="mission-card">
+                  <Card.Body>
+                    <Card.Title>Safe Blood Supply</Card.Title>
+                    <Card.Text>
+                      Ensure a steady and safe supply of blood for treatments
+                      and emergencies.
+                    </Card.Text>
+                  </Card.Body>
+                </Card>
               </Col>
-              <Cards />
+              <Col md={4}>
+                <Card className="mission-card">
+                  <Card.Body>
+                    <Card.Title>Public Education</Card.Title>
+                    <Card.Text>
+                      Educate the public on the importance of regular blood
+                      donation.
+                    </Card.Text>
+                  </Card.Body>
+                </Card>
+              </Col>
+              <Col md={4}>
+                <Card className="mission-card">
+                  <Card.Body>
+                    <Card.Title>Connect Donors</Card.Title>
+                    <Card.Text>
+                      Facilitate connections between donors, hospitals, and
+                      patients.
+                    </Card.Text>
+                  </Card.Body>
+                </Card>
+              </Col>
+              <Col md={4}>
+                <Card className="mission-card">
+                  <Card.Body>
+                    <Card.Title>Community Collaboration</Card.Title>
+                    <Card.Text>
+                      Partner with healthcare organizations and volunteers to
+                      build a strong donation ecosystem.
+                    </Card.Text>
+                  </Card.Body>
+                </Card>
+              </Col>
+              <Col md={4}>
+                <Card className="mission-card">
+                  <Card.Body>
+                    <Card.Title>Altruistic Donation Culture</Card.Title>
+                    <Card.Text>
+                      Promote a culture of voluntary, altruistic blood donation.
+                    </Card.Text>
+                  </Card.Body>
+                </Card>
+              </Col>
             </Row>
           </Container>
         </section>

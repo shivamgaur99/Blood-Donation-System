@@ -3,14 +3,13 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import ListDonorComponent from "./components/ListDonorComponent";
 import CreateDonorComponent from "./components/CreateDonorComponent";
 import UpdateDonorComponent from "./components/UpdateDonorComponent.js";
-import NavScrollExample from "./components/HeaderComponent";
+import Navbar from "./components/HeaderComponent";
 import Home from "./components/Home";
 import AboutUs from "./components/AboutUs";
 import ContactUs from "./components/ConatactUs";
 import Footer from "./components/Footer";
 import Register from "./register/register";
 import UserDashboard from "./components/UserDashboard";
-// import { useState, useEffect } from 'react';
 import CustomerLogin from "./login/Login";
 import MakeRequest from "./components/MakeRequest";
 import RequestHistory from "./components/RequestHistory";
@@ -20,18 +19,17 @@ import AdminDashboard from "./components/AdminDashboard";
 import AddDonors from "./components/AddDonors";
 import UserList from "./components/UserList";
 import BloodRequestHistory from "./components/BloodRequestHistory";
-function App() {
-  // const [loggedin, setloggedin] = useState(false)
-  // const [loggedinuser, setloggedinuser] = useState("")
-  // // let loggedin = false;
+import ScrollToTop from "./components/util/ScrollToTop";
 
+function App() {
+ 
   return (
 
     <div>
       <Router>
-        <NavScrollExample />
-        {/* <HeaderComponent/>    */}
-        <div className="container-fluid">
+        <Navbar />
+        <ScrollToTop /> 
+        <div>
           <Routes>
             <Route exact path="/" element={<Home />}></Route>{" "}
             {/* http://localhost:3000/ */}

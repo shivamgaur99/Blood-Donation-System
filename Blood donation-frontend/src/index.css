@@ -11,3 +11,47 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Scrollbar container */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background-color: #f0f0f0; /* Light gradient */
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2); /* Subtle inner shadow */
+}
+
+/* Thumb */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #e01414, #b30000); /* Red gradient */
+  border-radius: 10px;
+  border: 3px solid #f0f0f0;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Thumb hover effect */
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #0047ab, #003b8e); /* Blue gradient on hover */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Glow effect */
+}
+
+/* Thumb focus effect (for arrow key or active use) */
+::-webkit-scrollbar-thumb:focus {
+  background: linear-gradient(180deg, #0047ab, #003b8e); /* Matches hover color */
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.4); /* Stronger glow for focused effect */
+  outline: none; /* Removes any default focus outline */
+}
+
+/* Scrollbar corner for resizable scrollbars */
+::-webkit-scrollbar-corner {
+  background: #f0f0f0;
+}
+
+/* Scrollbar style during active scrolling */
+body.scrolling ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #0047ab, #003b8e);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}

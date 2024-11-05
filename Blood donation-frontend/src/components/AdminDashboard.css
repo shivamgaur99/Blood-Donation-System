@@ -1,0 +1,49 @@
+  .dashboard-container {
+    padding: 40px;
+    text-align: center;
+  }
+  
+  .dashboard-title {
+    font-size: 2.5rem;
+    color: #333; /* Darker color for the title */
+    margin-bottom: 30px;
+  }
+  
+  .card-deck {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Responsive grid layout */
+    gap: 20px; /* Spacing between cards */
+    max-width: 1200px; /* Limit max width for better alignment */
+    margin: 0 auto; /* Center the grid */
+  }
+  
+  .card {
+    background-color: #fff; /* White background for cards */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth effects */
+  }
+  
+  .card:hover {
+    transform: translateY(-5px); /* Lift effect on hover */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* Darker shadow on hover */
+  }
+  
+  .card-body {
+    padding: 20px; /* More padding for content */
+  }
+  
+  .card-title {
+    font-size: 1.5rem; /* Slightly larger title */
+    color: #007bff; /* Bootstrap primary color for titles */
+    margin-bottom: 10px;
+  }
+  
+  .card-text {
+    font-size: 1rem;
+    color: #666; /* Softer text color */
+    margin-bottom: 15px;
+  }
+  
+
+  
