@@ -13,7 +13,70 @@ const FeatureItem = ({ iconClass, title, description }) => (
 function Home() {
   return (
     <div className="home">
+        {/* Hero Section */}
+      <section className="hero">
+        <div className="overlay"></div>
+        <div className="hero-content">
+          <div className="hero-text">
+            <h1>Save a Life. Donate Blood.</h1>
+            <p>Your donation could make a difference.</p>
+            <button 
+              className="cta-btn" 
+              onClick={() => alert('Thank you for considering to donate!')}
+            >
+              Donate Now
+            </button>
+          </div>
+          <div className="hero-images">
+            <div className="hero-image blood-drop">
+              <img src="bldrop.png" alt="Left Image" />
+            </div>
+            <div className="hero-image hand-image">
+              <img src="hand.png" alt="Right Image" />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Hero Section */}
+      {/* <section className="hero">
+        <div className="overlay"></div>
+        <div className="hero-content">
+          <h1>Save a Life. Donate Blood.</h1>
+          <p>Your donation could make a difference.</p>
+          <button 
+            className="cta-btn" 
+            onClick={() => alert('Thank you for considering to donate!')}
+          >
+            Donate Now
+          </button>
+        </div>
+      </section> */}
+
+      {/* How It Works Section */}
+      <section className="how-it-works">
+        <h2>How Does Blood Donation Work?</h2>
+        <div className="steps">
+          <div className="step">
+            <h3>1. Register</h3>
+            <p>Fill out a simple form and register as a blood donor.</p>
+          </div>
+          <div className="step">
+            <h3>2. Donor Screening</h3>
+            <p>A health screening will be conducted to ensure you're eligible to donate.</p>
+          </div>
+          <div className="step">
+            <h3>3. Blood Donation</h3>
+            <p>Donate blood in a safe and comfortable environment.</p>
+          </div>
+          <div className="step">
+            <h3>4. Recovery & Refresh</h3>
+            <p>Enjoy a snack and relax before heading home.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Hero Welcome Section */}
       <section className="hero-section">
         <div className="container">
           <div className="row">

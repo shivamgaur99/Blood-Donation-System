@@ -5,7 +5,7 @@
 }
 
 .hero {
-  background: linear-gradient(rgba(255, 0, 0, 0.6), rgba(0, 0, 255, 0.6)), url('../../public/about.jpg') center/cover;
+  background: linear-gradient(rgba(255, 0, 0, 0.6), rgba(0, 0, 255, 0.6)), url('../../public/images/about.jpg') center/cover;
   color: white;
   padding: 60px 0;
 }

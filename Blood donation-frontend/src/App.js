@@ -1,10 +1,10 @@
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import ListDonorComponent from "./components/ListDonorComponent";
-import CreateDonorComponent from "./components/CreateDonorComponent";
-import UpdateDonorComponent from "./components/UpdateDonorComponent.js";
+// import CreateDonorComponent from "./components/CreateDonorComponent";
+// import UpdateDonorComponent from "./components/UpdateDonorComponent.js";
 import Navbar from "./components/HeaderComponent";
-import Home from "./components/Home";
+import Home from "./pages/Home/Home";
 import AboutUs from "./components/AboutUs";
 import ContactUs from "./components/ConatactUs";
 import Footer from "./components/Footer";
@@ -19,7 +19,7 @@ import AdminDashboard from "./components/AdminDashboard";
 import AddDonors from "./components/AddDonors";
 import UserList from "./components/UserList";
 import BloodRequestHistory from "./components/BloodRequestHistory";
-import ScrollToTop from "./components/util/ScrollToTop";
+import ScrollToTop from "./components/util/ScrollToTop/ScrollToTop";
 
 function App() {
  
@@ -38,15 +38,15 @@ function App() {
             <Route path="/contact" element={<ContactUs />}></Route>{" "}
             <Route path="/donors" element={<ListDonorComponent />}></Route>{" "}
             {/* http://localhost:3000/donors */}
-            <Route
+            {/* <Route
               path="/add-donor/"
               element={<CreateDonorComponent />}
-            ></Route>{" "}
+            ></Route>{" "} */}
             {/* http://localhost:3000/add-donor */}
-            <Route
+            {/* <Route
               path="/update-donor/:id"
               element={<UpdateDonorComponent />}
-            ></Route>{" "}
+            ></Route>{" "} */}
             {/* http://localhost:3000/update-donor/2 */}
             <Route path="/register" element={<Register />}></Route>{" "}
             <Route path="/login" element={<CustomerLogin/>}></Route>{" "}
