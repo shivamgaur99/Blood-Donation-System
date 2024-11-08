@@ -1,0 +1,107 @@
+/* Testimonials Section */
+/* Donor Stories Section */
+.testimonials {
+    background-color: #f7f9fc;
+    padding: 80px 20px;
+    text-align: center;
+  }
+  
+  .testimonials h2 {
+    font-size: 2.6em;
+    color: #1d3557;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+  }
+
+ .testimonials h2 {
+    font-size: 2.5em;
+    color: #1d3557;
+    margin-bottom: 50px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    position: relative;
+  }
+  
+  .testimonials h2::after {
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 2px;
+    background-color: #ff758c;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .testimonial-list {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Testimonial Card */
+  .testimonial {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 30px;
+    width: 300px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: left;
+  }
+  
+  .testimonial:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  }
+  
+  /* .testimonial::before {
+    content: "“";
+    font-size: 3em;
+    color: #ff758c;
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    opacity: 0.2;
+  } */
+  
+  .testimonial p {
+    font-size: 1em;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 15px;
+  }
+  
+  .testimonial h4 {
+    font-size: 1.2em;
+    color: #1d3557;
+    font-weight: 600;
+    text-align: right;
+    margin-top: 20px;
+  }
+
+  .testimonial h4::before {
+    content: "—";
+    font-size: 1.5em;
+    margin-right: 10px;
+    color: #ff758c;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .testimonial-list {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .testimonial {
+      width: 90%;
+      margin-bottom: 30px;
+    }
+  }
