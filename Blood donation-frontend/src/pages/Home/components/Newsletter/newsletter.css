@@ -1,0 +1,83 @@
+/* Newsletter Section */
+.newsletter {
+    background-color: #1d3557;
+    padding: 80px 20px;
+    text-align: center;
+    color: white;
+    /* border-radius: 12px; */
+  }
+  
+  .newsletter h2 {
+    font-size: 2.6em;
+    margin-bottom: 30px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+  
+  .newsletter p {
+    font-size: 1.2em;
+    margin-bottom: 40px;
+    line-height: 1.6;
+  }
+  
+  .newsletter input[type="email"] {
+    padding: 15px;
+    width: 50%;
+    max-width: 400px;
+    font-size: 1.1em;
+    border: 2px solid #fff;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #333;
+    margin-bottom: 20px;
+    transition: border-color 0.3s ease;
+  }
+  
+  .newsletter input[type="email"]:focus {
+    outline: none;
+    border-color: #ff758c;
+  }
+  
+  .newsletter .subscribe-btn {
+    padding: 15px 30px;
+    font-size: 1.1em;
+    background-color: #ff758c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .newsletter .subscribe-btn:hover {
+    background-color: #ef498e;
+    transform: translateY(-3px);
+  }
+  
+  /* Optional: Add envelope icon to button */
+  .newsletter .subscribe-btn::before {
+    /* content: url('path-to-envelope-icon.svg'); Use an envelope icon */
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+  
+  @media (max-width: 768px) {
+    .newsletter input[type="email"] {
+      width: 80%;
+    }
+  
+    .newsletter .subscribe-btn {
+      font-size: 1em;
+      padding: 12px 25px;
+    }
+  
+    .newsletter h2 {
+      font-size: 2.2em;
+    }
+  
+    .newsletter p {
+      font-size: 1.1em;
+    }
+  }
+  
