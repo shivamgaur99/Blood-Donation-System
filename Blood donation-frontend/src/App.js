@@ -1,12 +1,10 @@
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import ListDonorComponent from "./components/ListDonorComponent";
-// import CreateDonorComponent from "./components/CreateDonorComponent";
-// import UpdateDonorComponent from "./components/UpdateDonorComponent.js";
 import Navbar from "./components/HeaderComponent";
 import Home from "./pages/Home/Home";
-import AboutUs from "./components/AboutUs";
-import ContactUs from "./components/ConatactUs";
+import AboutUs from "./pages/About/AboutUs";
+import ContactUs from "./pages/ContactUs/ContactUs";
 import Footer from "./components/Footer";
 import Register from "./register/register";
 import UserDashboard from "./components/UserDashboard";
@@ -32,22 +30,10 @@ function App() {
         <div>
           <Routes>
             <Route exact path="/" element={<Home />}></Route>{" "}
-            {/* http://localhost:3000/ */}
             <Route path="/home" element={<Home />}></Route>{" "}
             <Route path="/about" element={<AboutUs />}></Route>{" "}
             <Route path="/contact" element={<ContactUs />}></Route>{" "}
             <Route path="/donors" element={<ListDonorComponent />}></Route>{" "}
-            {/* http://localhost:3000/donors */}
-            {/* <Route
-              path="/add-donor/"
-              element={<CreateDonorComponent />}
-            ></Route>{" "} */}
-            {/* http://localhost:3000/add-donor */}
-            {/* <Route
-              path="/update-donor/:id"
-              element={<UpdateDonorComponent />}
-            ></Route>{" "} */}
-            {/* http://localhost:3000/update-donor/2 */}
             <Route path="/register" element={<Register />}></Route>{" "}
             <Route path="/login" element={<CustomerLogin/>}></Route>{" "}
             <Route path="/userDashboard" element={<UserDashboard/>}></Route>{" "}

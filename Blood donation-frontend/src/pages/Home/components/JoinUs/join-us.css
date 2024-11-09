@@ -1,0 +1,74 @@
+  /* Call to Action */
+  .call-to-action {
+    padding: 80px 20px;
+    text-align: center;
+    background-color: #101342;
+    color: white;
+  }
+  
+  .call-to-action h2 {
+    font-size: 3.2em;
+    margin-bottom: 20px;
+  }
+  
+  .call-to-action p {
+    font-size: 1.5em;
+    margin-bottom: 40px;
+  }
+ 
+  
+.join-us-button {
+  padding: 16px 40px;
+  font-size: 1.1em;
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #fd6780;
+  color: #fff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.join-us-button:hover {
+  background-color: #ea193c;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.join-us-button.primary {
+  background-color: #ff758c;
+  color: white;
+}
+
+.join-us-button.primary:hover {
+  background-color: #b90952;
+  transform: translateY(-5px);
+}
+
+.join-us-button.secondary {
+  background-color: transparent;
+  border: 2px solid #ff758c;
+  color: white;
+}
+
+.join-us-button.secondary:hover {
+  background-color: #ff758c;
+  color: white;
+}
+
+  
+/* 
+.cta-button.primary {
+  font-size: 1.5rem;
+  padding: 18px 40px;
+  background-color: white;
+  color: #ff4d68;
+}
+
+.cta-button.primary:hover {
+  background-color: #ff758c;
+  color: white;
+  cursor: pointer;
+} */
+

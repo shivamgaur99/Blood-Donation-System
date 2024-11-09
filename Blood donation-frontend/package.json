@@ -3,15 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "axios": "^1.6.2",
+    "axios": "^1.7.7",
     "bootstrap": "^5.3.0",
     "formik": "^2.4.2",
     "react": "^17.0.2",
     "react-bootstrap": "^2.8.0",
     "react-dom": "^17.0.2",
+    "react-owl-carousel": "^2.3.3",
     "react-redux": "^8.1.1",
     "react-router-dom": "^6.2.2",
     "react-scripts": "^5.0.1",
+    "react-slick": "^0.30.2",
+    "slick-carousel": "^1.8.1",
     "sweetalert2": "^11.6.13"
   },
   "scripts": {

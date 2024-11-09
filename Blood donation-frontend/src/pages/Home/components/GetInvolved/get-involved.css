@@ -1,0 +1,353 @@
+/* General Styles */
+.get-involved {
+  font-family: "Arial", sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+/* Get Involved Section */
+.get-involve {
+  background-color: #ffebf2;
+  padding: 80px 20px;
+  text-align: center;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.get-involve h2 {
+  font-size: 2.6em;
+  color: #1d3557;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.get-involve p {
+  font-size: 1.2em;
+  color: #333;
+  line-height: 1.7;
+  margin-bottom: 40px;
+  font-weight: 500;
+}
+
+/* Get Involved Header Section */
+.get-involved-header {
+  background: linear-gradient(135deg, #ff758c, #ff7eb3);
+  color: white;
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.get-involved-header h1 {
+  font-size: 3em;
+  margin-bottom: 20px;
+}
+
+.get-involved-header p {
+  font-size: 1.2em;
+  margin-bottom: 40px;
+}
+
+/* CTA Buttons Section */
+.get-involved-header .get-involved-btns {
+  display: flex;
+  justify-content: center;  /* Centers the buttons horizontally */
+  gap: 2rem;                /* Adds space between buttons */
+  margin-top: 2rem;         /* Adds margin to the top of the button section */
+}
+
+.get-involved-btns {
+  display: flex;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.get-involved-btn {
+  padding: 16px 40px;
+  font-size: 1.1em;
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: white;
+  color: #ff758c;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.get-involved-btn:hover {
+  transform: translateY(-5px);
+  background-color: #ff7eb3;
+  color: #fff;
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.get-involved-btn.primary {
+  background-color: #ff758c;
+  color: white;
+  border: none;
+}
+
+.get-involved-btn.primary:hover {
+  background-color: #d62e3d;
+  transform: translateY(-5px);
+}
+
+.get-involved-btn.secondary {
+  background-color: transparent;
+  border: 2px solid white;
+  color: white;
+}
+
+.get-involved-btn.secondary:hover {
+  background-color: white;
+  color: #ff758c;
+} 
+
+/* Volunteer Form */
+.volunteer-form {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: -40px;
+}
+
+.volunteer-form h2 {
+  font-size: 2.5em;
+  color: #1d3557;
+  margin-bottom: 30px;
+}
+
+.volunteer-form input,
+.volunteer-form textarea {
+  width: 80%;
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 1em;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+}
+
+.volunteer-form textarea {
+  height: 150px;
+}
+
+.volunteer-form button {
+  margin-top: 2rem;
+  padding: 1rem 3rem;
+  background-color: #ff758c;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.volunteer-form button:hover {
+  background-color: #ff7eb3;
+}
+
+/* Donation Facts Section */
+.donation-facts {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #fff;
+}
+
+.donation-facts h2 {
+  font-size: 2.8em;
+  color: #1d3557;
+  margin-bottom: 40px;
+}
+
+.fact-cards {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.fact-card {
+  background: #ff7eb3;
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 280px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.fact-card h3 {
+  font-size: 1.8em;
+}
+
+.fact-card p {
+  font-size: 1.1em;
+  color: #fff;
+}
+
+/* Partner Organizations Section */
+.partner-orgs {
+  background-color: #f4f4f9;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.partner-orgs h2 {
+  font-size: 2.8em;
+  color: #1d3557;
+  margin-bottom: 40px;
+}
+
+.partners {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.partner img {
+  width: 150px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.partner p {
+  font-size: 1.1em;
+  color: #1d3557;
+}
+
+
+
+
+
+.join-us {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #ff758c, #ff7eb3);
+  color: white;
+  padding: 80px 40px;
+  margin-top: 60px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.join-us-content {
+  flex: 1;
+  text-align: left;
+  padding-right: 60px;
+  z-index: 2;
+}
+
+.join-us-content h2 {
+  font-size: 3.2em;
+  margin-bottom: 20px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.join-us-content p {
+  font-size: 1.4em;
+  margin-bottom: 30px;
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.cta-button {
+  padding: 16px 40px;
+  font-size: 1.1em;
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: white;
+  color: #ff758c;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.cta-button:hover {
+  transform: translateY(-5px);
+  background-color: #ff7eb3;
+  color: #fff;
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.cta-button.primary {
+  background-color: #ff758c;
+  color: white;
+  border: none;
+}
+
+.cta-button.primary:hover {
+  background-color: #d62e3d;
+  transform: translateY(-5px);
+}
+
+.cta-button.secondary {
+  background-color: transparent;
+  border: 2px solid white;
+  color: white;
+}
+
+.cta-button.secondary:hover {
+  background-color: white;
+  color: #ff758c;
+} 
+
+.join-us-image img {
+  max-width: 500px;
+  border-radius: 10px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.join-us-image img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .join-us {
+    flex-direction: column;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .join-us-content {
+    padding-right: 0;
+    margin-bottom: 30px;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .join-us-image {
+    margin-top: 30px;
+  }
+
+  .join-us-image img {
+    width: 100%;
+    max-width: 400px;
+  }
+}

@@ -1,0 +1,200 @@
+/* General Styles */
+.overview-page {
+    /* font-family: 'Arial', sans-serif; */
+    background-color: #f9f9f9;
+    color: #333;
+    padding: 0;
+    margin: 0;
+  }
+  
+/* Hero Section */
+.hero-section {
+  position: relative;
+  background-color: #1d3557;
+  /* background-image: url('/images/hero-background.jpg'); */
+  background-position: center;
+  background-size: cover;
+  color: white;
+  text-align: center;
+  height: 100vh; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-section::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); 
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  color: white;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+}
+
+.hero-content h1 {
+  font-size: 4em;
+  font-weight: 700;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+}
+
+.hero-content p {
+  font-size: 1.3em;
+  margin-bottom: 30px;
+}
+
+.hero-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.hero-buttons .cta-button {
+  padding: 18px 40px;
+  font-size: 1.1em;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+
+/* util/OverviewButton.css */
+.overview-button {
+  padding: 16px 40px;
+  font-size: 1.1em;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: white;
+  color: #ff758c;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.overview-button:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.overview-button.primary {
+  background-color: #ff758c;
+  color: white;
+}
+
+.overview-button.primary:hover {
+  background-color: #d62e3d;
+  transform: translateY(-5px);
+}
+
+.overview-button.secondary {
+  background-color: transparent;
+  border: 2px solid #fff;
+  color: white;
+}
+
+.overview-button.secondary:hover {
+  background-color: white;
+  border: 2px solid #d62e3d;
+  color: #ff758c;
+}
+
+/* Overview Section */
+.overview {
+  background: linear-gradient(135deg, #ff758c, #ff7eb3);
+  /* padding: 80px 20px; */
+  text-align: center;
+  color: #fff;
+  /* border-bottom: 5px solid #fff; */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.overview::before {
+  content: '';
+  position: absolute;
+  top: 0%;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 0;
+}
+
+.overview-content {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.overview h2 {
+  font-size: 3.2em;
+  margin-bottom: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  line-height: 1.4;
+  color: #fff;
+  animation: fadeIn 1s ease-out;
+}
+
+.overview p {
+  font-size: 1.2em;
+  color: #fff;
+  line-height: 1.8;
+  margin-bottom: 30px;
+  opacity: 0.9;
+  animation: fadeIn 1.5s ease-out;
+}
+
+.overview-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  animation: fadeIn 2s ease-out;
+}
+
+/* Keyframes for Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .overview h2 {
+    font-size: 2.4em;
+  }
+
+  .overview p {
+    font-size: 1em;
+  }
+
+  .cta-button {
+    font-size: 1em;
+    padding: 12px 30px;
+  }
+}
+
+
+
+
+
+
