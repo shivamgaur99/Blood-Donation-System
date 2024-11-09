@@ -1,0 +1,68 @@
+# Java
+*.class
+*.jar
+*.war
+*.ear
+
+# Package Files
+*.jar
+*.war
+*.ear
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# Gradle
+.gradle
+build/
+!gradle-wrapper.jar
+.gradle/
+build/
+out/
+
+# STS (Spring Tool Suite)
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+
+# IntelliJ IDEA
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+
+# VS Code
+.vscode/
+
+# Eclipse
+.project
+.classpath
+.metadata/
+.springBeans
+*.diff
+*.patch
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Log Files
+*.log
+
+# Environment Properties
+.env
+.env.local
+.env.*.local
+
+# Test Results
+test-output/
+surefire-reports/
