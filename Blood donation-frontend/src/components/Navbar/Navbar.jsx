@@ -81,7 +81,7 @@ export const Navbar = () => {
               activeClassName={"active-link"}
               to="/"
               className={({ isActive }) =>
-                `${isActive ? (isDarkMode ? "active-link" : "active-link") : ""} ${
+                `${isActive ? (isDarkMode ? "active-link-dark" : "active-link") : ""} ${
                   isDarkMode ? "nav-links-dark" : "nav-links"
                 }`
               }
@@ -96,7 +96,7 @@ export const Navbar = () => {
               activeClassName={"active-link"}
               to="/about-us"
               className={({ isActive }) =>
-                `${isActive ? (isDarkMode ? "active-link" : "active-link") : ""} ${
+                `${isActive ? (isDarkMode ? "active-link-dark" : "active-link") : ""} ${
                   isDarkMode ? "nav-links-dark" : "nav-links"
                 }`
               }
@@ -111,7 +111,7 @@ export const Navbar = () => {
               activeClassName={"active-link"}
               to="/contact-us"
               className={({ isActive }) =>
-                `${isActive ? (isDarkMode ? "active-link" : "active-link") : ""} ${
+                `${isActive ? (isDarkMode ? "active-link-dark" : "active-link") : ""} ${
                   isDarkMode ? "nav-links-dark" : "nav-links"
                 }`
               }
@@ -127,7 +127,7 @@ export const Navbar = () => {
                 activeClassName={"active-link"}
                 to="/admin-dashboard"
                 className={({ isActive }) =>
-                  `${isActive ? (isDarkMode ? "active-link" : "active-link") : ""} ${
+                  `${isActive ? (isDarkMode ? "active-link-dark" : "active-link") : ""} ${
                     isDarkMode ? "nav-links-dark" : "nav-links"
                   }`
                 }
@@ -144,7 +144,7 @@ export const Navbar = () => {
                 activeClassName={"active-link"}
                 to="/user-dashboard"
                 className={({ isActive }) =>
-                  `${isActive ? (isDarkMode ? "active-link" : "active-link") : ""} ${
+                  `${isActive ? (isDarkMode ? "active-link-dark" : "active-link") : ""} ${
                     isDarkMode ? "nav-links-dark" : "nav-links"
                   }`
                 }

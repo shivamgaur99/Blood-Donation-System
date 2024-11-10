@@ -206,7 +206,7 @@ a.nav-links-dark:hover {
 }
 
 .nav-links.active-link,
-.nav-links-dark.active-link {
+.nav-links-dark.active-link-dark {
   color: whitesmoke;
 }
 
