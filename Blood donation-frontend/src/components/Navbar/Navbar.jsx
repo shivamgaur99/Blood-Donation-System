@@ -203,18 +203,12 @@ export const Navbar = () => {
               </li>
             </>
           )}
-
-          <li className={"nav-item"}>
+          <div onClick={closeMobileMenu} className={"nav-links-toggle"}>
             <Toggle
-              class={"nav-toggle"}
               isChecked={isDarkMode}
               handleToggleChange={toggleDarkMode}
-              onClick={closeMobileMenu}
-              className={
-                isDarkMode ? "nav-links-mobile-dark" : "nav-links-mobile"
-              }
             />
-          </li>
+          </div>
         </ul>
 
         {/* Admin Button */}
@@ -255,11 +249,9 @@ export const Navbar = () => {
         )}
 
         {/* Dark Mode Toggle Button */}
-        <Toggle
-          class={"nav-toggle"}
-          isChecked={isDarkMode}
-          handleToggleChange={toggleDarkMode}
-        />
+        <div className={"nav-toggle"}>
+          <Toggle isChecked={isDarkMode} handleToggleChange={toggleDarkMode} />
+        </div>
       </nav>
     </Fragment>
   );
