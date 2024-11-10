@@ -191,7 +191,7 @@ a.nav-links-dark:hover {
   border-bottom: 2px;
   border-radius: 8px;
   color: whitesmoke;
-  background: linear-gradient(45deg, #b00dc2 0%, #ff6b86 90%);
+  background: linear-gradient(45deg, #ee1e1e 0%, #f5117f 90%);
 }
 
 .active-link-dark {
