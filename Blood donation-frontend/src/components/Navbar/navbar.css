@@ -191,7 +191,7 @@ a.nav-links-dark:hover {
   border-bottom: 2px;
   border-radius: 8px;
   color: whitesmoke;
-  background: linear-gradient(45deg, #ee1e1e 0%, #f5117f 90%);
+  background: linear-gradient(45deg, #b00dc2 0%, #ff6b86 90%);
 }
 
 .active-link-dark {
@@ -202,11 +202,17 @@ a.nav-links-dark:hover {
 }
 
 .nav-links-toggle {
- display: none;
+  display: none;
 }
 
-.nav-links.active-link, .nav-links-dark.active-link {
+.nav-links.active-link,
+.nav-links-dark.active-link {
   color: whitesmoke;
+}
+
+.nav-admin-button-dark.button-div-dark,
+.nav-admin-button.button-div {
+  color: #fff;
 }
 
 @media screen and (min-width: 860px) and (max-width: 1050px) {
@@ -390,11 +396,11 @@ a.nav-links-dark:hover {
     font-size: 1.5rem;
   }
 
-  .nav-links-mobile>span {
+  .nav-links-mobile > span {
     font-family: sans-serif;
   }
 
-  .nav-links-mobile-dark>span {
+  .nav-links-mobile-dark > span {
     font-family: sans-serif;
   }
 
@@ -446,9 +452,3 @@ a.nav-links-dark:hover {
     display: none;
   }
 }
-
-
-.nav-admin-button-dark.button-div-dark, .nav-admin-button.button-div {
-  color: #fff;
-} 
-
