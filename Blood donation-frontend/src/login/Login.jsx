@@ -33,7 +33,7 @@ const Login = () => {
         // alert("User login Successful")
         // Redirect the user to the home page
         // navigate("/userDashboard");
-        window.location.href = '/userDashboard';
+        window.location.href = '/user-dashboard';
       } else {
         setLoginError("User Login failed");
       }
@@ -62,7 +62,7 @@ const Login = () => {
       // sessionStorage.setItem('isAdminLoggedIn', 'true');
       // alert("Admin Login Successful");
       // navigate("/adminDashboard");
-      window.location.href = '/adminDashboard';
+      window.location.href = '/admin-dashboard';
     } else {
       setLoginError("Invalid credentials");
     }
