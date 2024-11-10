@@ -1,11 +1,15 @@
+import { Fragment, useEffect, useState } from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import "./App.css";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import ListDonorComponent from "./components/ListDonorComponent";
-import Navbar from "./components/HeaderComponent";
 import Home from "./pages/Home/Home";
 import AboutUs from "./pages/About/AboutUs";
 import ContactUs from "./pages/ContactUs/ContactUs";
-import Footer from "./components/Footer";
 import Register from "./register/register";
 import UserDashboard from "./components/UserDashboard";
 import CustomerLogin from "./login/Login";
@@ -18,41 +22,67 @@ import AddDonors from "./components/AddDonors";
 import UserList from "./components/UserList";
 import BloodRequestHistory from "./components/BloodRequestHistory";
 import ScrollToTop from "./components/util/ScrollToTop/ScrollToTop";
+import { Navbar } from "./components/Navbar/Navbar";
+import GetInvolved from "./pages/GetInvolved/GetInvolved";
+import Footer from "./components/Footer/Footer";
+
+function ScrollToTopOnRouteChange() {
+  const location = useLocation();
+
+  function getTheme() {
+    return JSON.parse(localStorage.getItem("dark")) || false;
+  }
+  const [theme, setTheme] = useState(getTheme());
+  const [toast, setToast] = useState(false);
+
+  function toggleTheme() {
+    setTheme((prevTheme) => !prevTheme);
+    setToast(true);
+
+    setTimeout(() => {
+      setToast(false);
+    }, 3000);
+
+    localStorage.setItem("dark", !theme);
+  }
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
+
+  return null;
+}
 
 function App() {
- 
   return (
-
-    <div>
-      <Router>
-        <Navbar />
-        <ScrollToTop /> 
-        <div>
-          <Routes>
-            <Route exact path="/" element={<Home />}></Route>{" "}
-            <Route path="/home" element={<Home />}></Route>{" "}
-            <Route path="/about" element={<AboutUs />}></Route>{" "}
-            <Route path="/contact" element={<ContactUs />}></Route>{" "}
-            <Route path="/donors" element={<ListDonorComponent />}></Route>{" "}
-            <Route path="/register" element={<Register />}></Route>{" "}
-            <Route path="/login" element={<CustomerLogin/>}></Route>{" "}
-            <Route path="/userDashboard" element={<UserDashboard/>}></Route>{" "}
-            <Route path="/makeRequest" element={<MakeRequest/>}></Route>{" "}
-            <Route path="/requestHistory" element={<RequestHistory/>}></Route>{" "}
-            <Route path="/donateBlood" element={<DonateBlood/>}></Route>{" "}
-            <Route path="/availableDonors" element={<DonarList/>}></Route>{" "}
-            {/* <Route path="/adminLogin" element={<AdminLogin/>}></Route>{" "} */}
-            {/* <Route path="/userLogin" element={<UserLogin/>}></Route>{" "} */}
-            <Route path="/userDashboard" element={<UserDashboard/>}></Route>{" "}
-            <Route path="/adminDashboard" element={<AdminDashboard/>}></Route>{" "}
-            <Route path="/addDonors" element={<AddDonors/>}></Route>{" "}
-            <Route path="/users" element={<UserList/>}></Route>{" "}
-            <Route path="/bloodRequests" element={<BloodRequestHistory/>}></Route>{" "}
-          </Routes>
-        </div>
-      </Router>
+    <Router>
+      <ScrollToTopOnRouteChange />
+      <Navbar />
+      <ScrollToTop />
+      <div>
+        <Routes>
+          <Route exact path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/about-us" element={<AboutUs />} />
+          <Route path="/contact-us" element={<ContactUs />} />
+          <Route path="/donors" element={<ListDonorComponent />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<CustomerLogin />} />
+          <Route path="/userDashboard" element={<UserDashboard />} />
+          <Route path="/makeRequest" element={<MakeRequest />} />
+          <Route path="/requestHistory" element={<RequestHistory />} />
+          <Route path="/donateBlood" element={<DonateBlood />} />
+          <Route path="/availableDonors" element={<DonarList />} />
+          <Route path="/user-dashboard" element={<UserDashboard />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/addDonors" element={<AddDonors />} />
+          <Route path="/users" element={<UserList />} />
+          <Route path="/bloodRequests" element={<BloodRequestHistory />} />
+          <Route path="/get-involved" element={<GetInvolved />} />
+        </Routes>
+      </div>
       <Footer />
-    </div>
+    </Router>
   );
 }
 
