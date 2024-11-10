@@ -1,0 +1,238 @@
+.about-us {
+  font-family: Arial, sans-serif;
+  color: #848383;
+  background-color: #070724;
+}
+
+.about-hero {
+  background: linear-gradient(135deg, #a64354, #fd1878);
+  color: white;
+  text-align: center;
+  padding: 100px 20px;
+}
+
+.about-hero-content h1 {
+  font-size: 3em;
+  margin-bottom: 15px;
+}
+
+.about-hero-content p {
+  font-size: 1.2em;
+  max-width: 600px;
+  margin: 0 auto 20px;
+}
+
+
+
+.abt-us-btns {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.abt-us-btn {
+  padding: 12px 30px;
+  background: #1d3557;
+  color: white;
+  border: 2px solid #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1em;
+  margin-top: 20px;
+  transition: background 0.3s;
+}
+
+.abt-us-btn:hover {
+  background: #ee3151;
+}
+
+
+.abt-us-btn.primary {
+  background-color: #1d3557;
+  color: white;
+}
+
+.abt-us-btn.primary:hover {
+  background-color: #e04343;
+  transform: translateY(-2px);
+}
+
+.abt-us-btn.secondary {
+  background: transparent;
+  border: 2px solid #fff;
+  color: #fff;
+}
+
+.abt-us-btn.secondary:hover {
+  background: white;
+  color: #1d3557;
+  transform: translateY(-2px);
+}
+
+.abt-us-btn:disabled {
+  background-color: #cccccc;
+  color: #888888;
+  cursor: not-allowed;
+}
+
+.abt-us-btn:disabled:hover {
+  background-color: #cccccc;
+  color: #888888;
+  transform: none;
+}
+
+.vision h2 {
+  font-size: 3em;
+  margin-bottom: 20px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  animation: fadeIn 1s ease-out;
+}
+
+.vision p {
+  font-size: 1.3em;
+  line-height: 1.8;
+  margin-bottom: 40px;
+  font-weight: 400;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  animation: fadeIn 1.5s ease-out;
+}
+
+.vision .abt-us-btn {
+  padding: 15px 30px;
+  font-size: 1.2em;
+  background-color: #ff758c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: 20px;
+  animation: fadeIn 2s ease-out;
+}
+
+.vision .abt-us-btn:hover {
+  background-color: #ff7eb3;
+  transform: translateY(-3px);
+}
+
+/* Animations for text */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Optional: Add an Icon or Image */
+.vision .icon {
+  font-size: 4em;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+.vision img {
+  width: 100px; /* Adjust depending on the image size */
+  height: auto;
+  margin-bottom: 20px;
+  animation: fadeIn 1s ease-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+
+  .mission-vision {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .vision {
+    padding: 60px 20px;
+  }
+
+  .vision h2 {
+    font-size: 2.4em;
+  }
+
+  .vision p {
+    font-size: 1.1em;
+  }
+
+  .vision .abt-us-btn {
+    font-size: 1em;
+    padding: 12px 25px;
+  }
+}
+
+/* Mission and Vision Section */
+.mission-vision {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.vision {
+  background: #f4f4f9;
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 400px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Values Section */
+.values {
+  padding: 60px 20px;
+  background: #a33e4f;
+  color: white;
+  text-align: center;
+}
+
+.values h2 {
+  font-size: 2.5em;
+  margin-bottom: 30px;
+}
+
+.values-list {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.value {
+  background: white;
+  color: #333;
+  padding: 20px;
+  border-radius: 8px;
+  width: 250px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Story Section */
+.story {
+  padding: 60px 20px;
+  background: #070724;
+  text-align: center;
+}
+
+.story h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+.story p {
+  font-size: 1.1em;
+  max-width: 600px;
+  margin: 0 auto;
+}
