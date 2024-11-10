@@ -76,12 +76,12 @@ export const Navbar = () => {
               : `${"nav-menu"} ${isDarkMode ? "nav-menu-dark" : ""}`
           }
         >
-          <li className={"nav-item"}>
+          <li className={isDarkMode ? "nav-item-dark" : "nav-item"}>
             <NavLink
               activeClassName={"active-link"}
               to="/"
               className={({ isActive }) =>
-                `${isActive ? "active-link" : ""} ${
+                `${isActive ? (isDarkMode ? "active-link" : "active-link") : ""} ${
                   isDarkMode ? "nav-links-dark" : "nav-links"
                 }`
               }
@@ -91,12 +91,12 @@ export const Navbar = () => {
             </NavLink>
           </li>
 
-          <li className={"nav-item"}>
+          <li className={isDarkMode ? "nav-item-dark" : "nav-item"}>
             <NavLink
               activeClassName={"active-link"}
               to="/about-us"
               className={({ isActive }) =>
-                `${isActive ? "active-link" : ""} ${
+                `${isActive ? (isDarkMode ? "active-link" : "active-link") : ""} ${
                   isDarkMode ? "nav-links-dark" : "nav-links"
                 }`
               }
@@ -106,12 +106,12 @@ export const Navbar = () => {
             </NavLink>
           </li>
 
-          <li className={"nav-item"}>
+          <li className={isDarkMode ? "nav-item-dark" : "nav-item"}>
             <NavLink
               activeClassName={"active-link"}
               to="/contact-us"
               className={({ isActive }) =>
-                `${isActive ? "active-link" : ""} ${
+                `${isActive ? (isDarkMode ? "active-link" : "active-link") : ""} ${
                   isDarkMode ? "nav-links-dark" : "nav-links"
                 }`
               }
@@ -122,12 +122,12 @@ export const Navbar = () => {
           </li>
 
           {Role === "admin" && (
-            <li className={"nav-item"}>
+            <li className={isDarkMode ? "nav-item-dark" : "nav-item"}>
               <NavLink
                 activeClassName={"active-link"}
                 to="/admin-dashboard"
                 className={({ isActive }) =>
-                  `${isActive ? "active-link" : ""} ${
+                  `${isActive ? (isDarkMode ? "active-link" : "active-link") : ""} ${
                     isDarkMode ? "nav-links-dark" : "nav-links"
                   }`
                 }
@@ -139,12 +139,12 @@ export const Navbar = () => {
           )}
 
           {Role === "user" && (
-            <li className={"nav-item"}>
+            <li className={isDarkMode ? "nav-item-dark" : "nav-item"}>
               <NavLink
                 activeClassName={"active-link"}
                 to="/user-dashboard"
                 className={({ isActive }) =>
-                  `${isActive ? "active-link" : ""} ${
+                  `${isActive ? (isDarkMode ? "active-link" : "active-link") : ""} ${
                     isDarkMode ? "nav-links-dark" : "nav-links"
                   }`
                 }
@@ -155,7 +155,7 @@ export const Navbar = () => {
             </li>
           )}
 
-          {/* <li className={"nav-item"}>
+          {/* <li className={isDarkMode ? "nav-item-dark" : "nav-item"}>
             <Link
               to="/admin"
               className={isDarkMode ? "nav-links-mobile-dark" : "nav-links-mobile"}
@@ -166,7 +166,7 @@ export const Navbar = () => {
           </li> */}
 
           {loggedIn ? (
-            <li className={"nav-item"}>
+            <li className={isDarkMode ? "nav-item-dark" : "nav-item"}>
               <Link
                 to="/login"
                 className={
@@ -179,7 +179,7 @@ export const Navbar = () => {
             </li>
           ) : (
             <>
-              <li className={"nav-item"}>
+              <li className={isDarkMode ? "nav-item-dark" : "nav-item"}>
                 <Link
                   to="/register"
                   className={
@@ -187,10 +187,10 @@ export const Navbar = () => {
                   }
                   onClick={closeMobileMenu}
                 >
-                  SingUp
+                  Sing Up
                 </Link>
               </li>
-              <li className={"nav-item"}>
+              <li className={isDarkMode ? "nav-item-dark" : "nav-item"}>
                 <Link
                   to="/login"
                   className={
@@ -203,25 +203,23 @@ export const Navbar = () => {
               </li>
             </>
           )}
-
-          <li className={"nav-item"}>
+          <div onClick={closeMobileMenu} className={"nav-links-toggle"}>
             <Toggle
-              class={"nav-toggle"}
               isChecked={isDarkMode}
               handleToggleChange={toggleDarkMode}
-              onClick={closeMobileMenu}
-              className={
-                isDarkMode ? "nav-links-mobile-dark" : "nav-links-mobile"
-              }
             />
-          </li>
+          </div>
         </ul>
 
         {/* Admin Button */}
         {/* <NavLink
           to="/admin"
-          activeClassName={"button-div"}
-          className={"nav-admin-button"}
+            activeClassName={"button-div"}
+              className={({ isActive }) =>
+                `${isActive ? (isDarkMode ? "button-div-dark" : "button-div") : ""} ${isActive ? "" : ""} ${
+                  isDarkMode ? "nav-admin-button-dark" : "nav-admin-button"
+                }`
+              }
         >
           Admin ?
         </NavLink> */}
@@ -230,7 +228,11 @@ export const Navbar = () => {
           <NavLink
             to="/login"
             activeClassName={"button-div"}
-            className={"nav-admin-button"}
+            className={({ isActive }) =>
+              `${isActive ? (isDarkMode ? "button-div-dark" : "button-div") : ""} ${isActive ? "" : ""} ${
+                isDarkMode ? "nav-admin-button-dark" : "nav-admin-button"
+              }`
+            }
             onClick={handleLogout}
           >
             Logout
@@ -238,28 +240,34 @@ export const Navbar = () => {
         ) : (
           <>
             <NavLink
-              to="/register"
-              activeClassName={"button-div"}
-              className={"nav-admin-button"}
-            >
-              SignUp
-            </NavLink>
-            <NavLink
               to="/login"
               activeClassName={"button-div"}
-              className={"nav-admin-button"}
+              className={({ isActive }) =>
+                `${isActive ? (isDarkMode ? "button-div-dark" : "button-div") : ""} ${isActive ? "" : ""} ${
+                  isDarkMode ? "nav-admin-button-dark" : "nav-admin-button"
+                }`
+              }
             >
               Login
+            </NavLink>
+            <NavLink
+              to="/register"
+              activeClassName={"button-div"}
+              className={({ isActive }) =>
+                `${isActive ? (isDarkMode ? "button-div-dark" : "button-div") : ""} ${isActive ? "" : ""} ${
+                  isDarkMode ? "nav-admin-button-dark" : "nav-admin-button"
+                }`
+              }
+            >
+              Sign Up
             </NavLink>
           </>
         )}
 
         {/* Dark Mode Toggle Button */}
-        <Toggle
-          class={"nav-toggle"}
-          isChecked={isDarkMode}
-          handleToggleChange={toggleDarkMode}
-        />
+        <div className={"nav-toggle"}>
+          <Toggle isChecked={isDarkMode} handleToggleChange={toggleDarkMode} />
+        </div>
       </nav>
     </Fragment>
   );
