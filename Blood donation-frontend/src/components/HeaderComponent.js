@@ -17,8 +17,7 @@ function NavScrollExample() {
   const [Role, setRole] = useState("");
   // const navigate = useNavigate();
 
- 
-  useEffect(() => {  
+  useEffect(() => {
     checkAuthentication(); // Call checkAuthentication on mount
   }, []);
 
@@ -33,14 +32,14 @@ function NavScrollExample() {
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
-    };        
+    };
   }, []);
 
   const checkAuthentication = () => {
-    const user = localStorage.getItem('LoggedIn');
-    const role = localStorage.getItem('Role');
+    const user = localStorage.getItem("LoggedIn");
+    const role = localStorage.getItem("Role");
     const isAuthenticated = user ? true : false; // Convert to boolean
-   
+
     setLoggedIn(isAuthenticated);
     setRole(role);
   };
@@ -49,16 +48,15 @@ function NavScrollExample() {
     // Clear the token from localStorage
     localStorage.clear();
     // navigate("/login");
-    window.location.href = '/login';
+    window.location.href = "/login";
   };
-  
 
   // const checkAuthentication = () => {
   //   const user = localStorage.getItem("username");
-  
+
   //   // Check if a username exists in local storage
   //   const isAuthenticated = !!user;
-  
+
   //   setLoggedIn(isAuthenticated);
   //   setUsername(user || ''); // Set the username, if available
   // };
@@ -68,10 +66,10 @@ function NavScrollExample() {
   //     await axios.delete("http://localhost:8181/logout");
   //     localStorage.removeItem("token"); // Clear token
   //     localStorage.removeItem("username"); // Clear username
-  
+
   //     setLoggedIn(false); // Update loggedIn state
   //     setUsername(""); // Clear username state if necessary
-  
+
   //     // Redirect the user to the login page or any other appropriate page
   //     navigate("/login");
   //   } catch (error) {
@@ -80,27 +78,25 @@ function NavScrollExample() {
   //   }
   // };
 
-
   // const checkAuthentication = () => {
   //   const user = localStorage.getItem("username");
-  
+
   //   // Check if a username exists in local storage
   //   const isAuthenticated = !!user;
-  
+
   //   setLoggedIn(isAuthenticated);
   //   setUsername(user || ''); // Set the username, if available
   // };
 
-  
   // const handleLogout = async () => {
   //   try {
   //     await axios.delete("http://localhost:8181/logout");
   //     localStorage.removeItem("token"); // Clear token
   //     localStorage.removeItem("username"); // Clear username
-  
+
   //     setLoggedIn(false); // Update loggedIn state
   //     setUsername(""); // Clear username state if necessary
-  
+
   //     // Redirect the user to the login page or any other appropriate page
   //     navigate("/login");
   //   } catch (error) {
@@ -132,7 +128,7 @@ function NavScrollExample() {
                 Blood Donation System
               </h5>
             </Nav.Link> */}
-            <Nav.Link href="/contact">
+            <Nav.Link href="/contact-us">
               <h5
                 style={{ fontFamily: "monoBrush Scriptspace", color: "red" }}
                 className="mx-2"
@@ -140,7 +136,7 @@ function NavScrollExample() {
                 ContactUs
               </h5>
             </Nav.Link>
-            
+
             {/* <NavDropdown title="New Donor" id="navbarScrollingDropdown">
               <NavDropdown.Item href="add-donor">Donate Blood</NavDropdown.Item>
               <NavDropdown.Item href="update-donor/:id">
@@ -149,7 +145,7 @@ function NavScrollExample() {
               <NavDropdown.Divider />
               <NavDropdown.Item href="donors">Donors Details</NavDropdown.Item>
             </NavDropdown> */}
-            <Nav.Link href="/about">
+            <Nav.Link href="/about-us">
               <h5
                 style={{ fontFamily: "monoBrush Scriptspace", color: "red" }}
                 className="mx-2"
@@ -158,20 +154,26 @@ function NavScrollExample() {
               </h5>
             </Nav.Link>
 
-            {Role === 'admin' && (
-        <Nav.Link href="/adminDashboard">
-          <h5 style={{ fontFamily: "monoBrush Scriptspace", color: "red" }} className="mx-2">
-            AdminDashboard
-          </h5>
-        </Nav.Link>
-      )}
-      {Role === 'user' && (
-        <Nav.Link href="/userDashboard">
-          <h5 style={{ fontFamily: "monoBrush Scriptspace", color: "red" }} className="mx-2">
-            UserDashboard
-          </h5>
-        </Nav.Link>
-        )}
+            {Role === "admin" && (
+              <Nav.Link href="/admin-dashboard">
+                <h5
+                  style={{ fontFamily: "monoBrush Scriptspace", color: "red" }}
+                  className="mx-2"
+                >
+                  AdminDashboard
+                </h5>
+              </Nav.Link>
+            )}
+            {Role === "user" && (
+              <Nav.Link href="/user-dashboard">
+                <h5
+                  style={{ fontFamily: "monoBrush Scriptspace", color: "red" }}
+                  className="mx-2"
+                >
+                  UserDashboard
+                </h5>
+              </Nav.Link>
+            )}
           </Nav>
           <Form className="d-flex">
             <Form.Control

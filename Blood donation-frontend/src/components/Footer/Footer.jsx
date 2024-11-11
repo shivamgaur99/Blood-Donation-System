@@ -56,13 +56,13 @@ const Footer = () => {
                   <a href="#">Lorem ipsum</a>
                 </li>
                 <li>
-                  <a href="#">Dolor sit amet</a>
+                  <a href="#">Privacy policy</a>
                 </li>
                 <li>
                   <a href="#">Consectetur Adipisicing</a>
                 </li>
                 <li>
-                  <a href="#">Privacy policy</a>
+                  <a href="/get-involved">Get Involved</a>
                 </li>
               </ul>
             </div>

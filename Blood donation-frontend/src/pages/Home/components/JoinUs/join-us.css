@@ -2,7 +2,8 @@
   .call-to-action {
     padding: 80px 20px;
     text-align: center;
-    background-color: #101342;
+    /* background: linear-gradient(45deg, #b00dc2 0%, #ff6b86 90%); */
+    background-color: #ff758c;
     color: white;
   }
   
@@ -37,12 +38,12 @@
 }
 
 .join-us-button.primary {
-  background-color: #ff758c;
+  background-color: #f9647d;
   color: white;
 }
 
 .join-us-button.primary:hover {
-  background-color: #b90952;
+  background-color: #ea193c;
   transform: translateY(-5px);
 }
 
@@ -57,7 +58,6 @@
   color: white;
 }
 
-  
 /* 
 .cta-button.primary {
   font-size: 1.5rem;
