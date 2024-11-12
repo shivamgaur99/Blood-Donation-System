@@ -45,10 +45,6 @@ const GetInvolved = () => {
             <button className="cta-button secondary">Get Involved</button>
           </div>
         </div>
-
-        <div className="join-us-image">
-          <img src="path-to-your-image.jpg" alt="Join Us Image" />
-        </div>
       </section>
 
 

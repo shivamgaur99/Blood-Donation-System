@@ -2,14 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const UserDashboard = () => {
-  // const navigate = useNavigate();
-
-  // const handleLogout = () => {
-  //   // Clear the user login status from localStorage
-  //   localStorage.removeItem('userLoggedIn');
-  //   // Navigate to the login page
-  //   navigate('/login');
-  // };
 
   return (
     <div>
@@ -44,9 +36,6 @@ const UserDashboard = () => {
           </div>
         </div>
       </div>
-      {/* <button className="btn btn-danger mt-4" onClick={handleLogout}>
-        Logout
-      </button> */}
     </div>
   );
 }

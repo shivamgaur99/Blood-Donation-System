@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 import com.application.model.User;
 
-public interface RegistrationRepository extends CrudRepository<User, Integer>
+public interface RegistrationRepository extends CrudRepository<User, String>
 {
 
 	public User findByEmail(String email);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import './AdminDashboard.css'; // Create a CSS file for styling
+import './admin-dashboard.css'; 
 
 function AdminDashboard() {
   const navigate = useNavigate();

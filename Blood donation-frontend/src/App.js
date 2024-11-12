@@ -6,25 +6,25 @@ import {
   useLocation,
 } from "react-router-dom";
 import "./App.css";
-import ListDonorComponent from "./components/ListDonorComponent";
 import Home from "./pages/Home/Home";
 import AboutUs from "./pages/About/AboutUs";
 import ContactUs from "./pages/ContactUs/ContactUs";
 import Register from "./register/register";
-import UserDashboard from "./components/UserDashboard";
 import CustomerLogin from "./login/Login";
-import MakeRequest from "./components/MakeRequest";
-import RequestHistory from "./components/RequestHistory";
-import DonateBlood from "./components/DonateBlood";
-import DonarList from "./components/DonarList";
-import AdminDashboard from "./components/AdminDashboard";
-import AddDonors from "./components/AddDonors";
-import UserList from "./components/UserList";
-import BloodRequestHistory from "./components/BloodRequestHistory";
 import ScrollToTop from "./components/util/ScrollToTop/ScrollToTop";
 import { Navbar } from "./components/Navbar/Navbar";
 import GetInvolved from "./pages/GetInvolved/GetInvolved";
 import Footer from "./components/Footer/Footer";
+import AdminDashboard from "./pages/Admin/AdminDashboard/AdminDashboard";
+import DonarList from "./pages/Admin/DonarList/DonarList";
+import BloodRequestHistory from "./pages/Admin/BloodRequestHistory/BloodRequestHistory";
+import AddDonors from "./pages/Admin/AddDonors/AddDonors";
+import UserList from "./pages/Admin/UserList/UserList";
+import UserDashboard from "./pages/User/UserDashboard/UserDashboard";
+import MakeRequest from "./pages/User/MakeRequest/MakeRequest";
+import DonateBlood from "./pages/User/DonateBlood/DonateBlood";
+import RequestHistory from "./pages/User/RequestHistory/RequestHistory";
+import ListDonorComponent from "./components/ListDonorComponent";
 
 function ScrollToTopOnRouteChange() {
   const location = useLocation();
@@ -68,7 +68,7 @@ function App() {
           <Route path="/donors" element={<ListDonorComponent />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<CustomerLogin />} />
-          <Route path="/userDashboard" element={<UserDashboard />} />
+          <Route path="/userDashboard" element={<UserDashboard  />} />
           <Route path="/makeRequest" element={<MakeRequest />} />
           <Route path="/requestHistory" element={<RequestHistory />} />
           <Route path="/donateBlood" element={<DonateBlood />} />

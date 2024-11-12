@@ -8,7 +8,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-public interface DonorRepository extends CrudRepository<Donor, String>
+public interface DonorRepository extends CrudRepository<Donor, Integer>
 {
     public Donor findByBloodGroup(String bloodGroup);
 	

@@ -53,9 +53,9 @@
 /* CTA Buttons Section */
 .get-involved-header .get-involved-btns {
   display: flex;
-  justify-content: center;  /* Centers the buttons horizontally */
-  gap: 2rem;                /* Adds space between buttons */
-  margin-top: 2rem;         /* Adds margin to the top of the button section */
+  justify-content: center;  
+  gap: 2rem;               
+  margin-top: 2rem;         
 }
 
 .get-involved-btns {

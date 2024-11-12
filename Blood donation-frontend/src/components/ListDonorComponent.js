@@ -43,7 +43,7 @@ const ListDonorComponent = () => {
 
     return (
       <div>
-          <h2 className='text-center'>Donors List</h2>
+          <h2 className='text-center'>Donors Listtt</h2>
           <div className='row'style={{display: 'flex', justifyContent: 'center', alignContent: 'center', marginTop: '20px', marginBottom: '20px'}}>
                 <button style={{width: 200}} className='btn btn-primary' onClick={addDonor}>Add Donor</button>
                 <input type="text" className="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" style={{width: 200, marginLeft: 20}}
