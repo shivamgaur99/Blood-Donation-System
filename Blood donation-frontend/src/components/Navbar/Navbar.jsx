@@ -25,6 +25,7 @@ export const Navbar = () => {
   };
 
   const handleLogout = () => {
+    // localStorage.removeItem('jwtToken');
     // Clear the token from localStorage
     localStorage.clear();
     // Redirect to login page

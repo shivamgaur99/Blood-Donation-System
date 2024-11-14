@@ -33,5 +33,9 @@ public class AuthRequest
 	 {
 		  this.password = password;
 	 }
+
+	public String getRole() {
+		return null;
+	}
 	 
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.application.model.AuthRequest;
+import com.application.model.JwtResponse;
 import com.application.model.User;
 import com.application.service.RegistrationService;
 import com.application.util.JwtUtils;
@@ -59,66 +60,38 @@ public class RegistrationController
         {
             throw new Exception("Invalid Username/password");
         }
-        return new ResponseEntity<String>(jwtUtil.generateToken(authRequest.getEmail()), HttpStatus.OK);
+        return new ResponseEntity<String>(jwtUtil.generateToken(authRequest.getEmail(), authRequest.getRole()), HttpStatus.OK);
     }
 	
-//	@PostMapping("/register")
-//	@CrossOrigin(origins = "http://localhost:3000")
-//	public User registerUser(@RequestBody User user) throws Exception
-//	{
-//		String currEmail = user.getEmail();
-//		if(currEmail != null || !"".equals(currEmail))
-//		{
-//			User userObj = registerService.fetchUserByEmail(currEmail);
-//			if(userObj != null)
-//			{
-//				throw new Exception("User with "+currEmail+" already exists !!!");
-//			}
-//		}
-//		User userObj = null;
-//		userObj = registerService.saveUser(user);
-//		return userObj;
-//	}
-	
-//	@PostMapping("/login")
-//	@CrossOrigin(origins = "http://localhost:3000")
-//	public User loginUser(@RequestBody User user) throws Exception
-//	{
-//		String currEmail = user.getEmail();
-//		String currPassword = user.getPassword();
-//		
-//		User userObj = null;
-//		if(currEmail != null && currPassword != null)
-//		{
-//			userObj = registerService.fetchUserByEmailAndPassword(currEmail, currPassword);
-//		}
-//		if(userObj == null)
-//		{
-//			throw new Exception("User does not exists!!! Please enter valid credentials...");
-//		}		
-//		return userObj;
-//	}
-	
-	@PostMapping("/login")
-	@CrossOrigin(origins = "http://localhost:3000")
-	public ResponseEntity<?> loginUser(@RequestBody User user) {
-	    try {
-	        String email = user.getEmail();
-	        String password = user.getPassword();
 
-	        if (email != null && password != null) {
-	            User authenticatedUser = registerService.fetchUserByEmailAndPassword(email, password);
-	            if (authenticatedUser != null) {
-	                return ResponseEntity.ok(authenticatedUser);
-	            }
-	        }
-	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-	    } catch (Exception ex) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing login");
-	    }
-	}
+    
+    @PostMapping("/user/login")
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<?> loginUser(@RequestBody User user) {
+        try {
+            String email = user.getEmail();
+            String password = user.getPassword();
+
+            if (email != null && password != null) {
+                // Validate user credentials
+                User authenticatedUser = registerService.fetchUserByEmailAndPassword(email, password);
+                if (authenticatedUser != null) {
+                    // Generate JWT token after successful authentication
+                    String token = jwtUtil.generateToken(authenticatedUser.getEmail(), user.getRole());
+                    
+                    // Return token in the response body
+                    return ResponseEntity.ok(new JwtResponse(token, authenticatedUser.getEmail()));  // JwtResponse is a DTO you can create for the token
+                }
+            }
+            // If credentials are invalid
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing login");
+        }
+    }
+
 	
-	@PostMapping("/register")
+	@PostMapping("/user/register")
 	@CrossOrigin(origins = "http://localhost:3000")
 	public ResponseEntity<?> registerUser(@RequestBody User user) {
 	    try {
