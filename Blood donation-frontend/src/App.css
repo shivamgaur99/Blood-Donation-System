@@ -66,8 +66,6 @@
   border-radius: 30px;
 } */
 
-
-
 /* Scrollbar container */
 ::-webkit-scrollbar {
   width: 15px;
@@ -89,14 +87,14 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #8ab7f7, #003b8e); 
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); 
+  background: linear-gradient(180deg, #8ab7f7, #003b8e);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 ::-webkit-scrollbar-thumb:focus {
-  background: linear-gradient(180deg, #0047ab, #901313); 
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.4); 
-  outline: none; 
+  background: linear-gradient(180deg, #0047ab, #901313);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+  outline: none;
 }
 
 ::-webkit-scrollbar-corner {
