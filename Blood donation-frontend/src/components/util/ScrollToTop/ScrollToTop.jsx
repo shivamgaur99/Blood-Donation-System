@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from "react-router-dom";
 import './ScrollToTop.css';
 
 const ScrollToTop = () => {
+  const location = useLocation();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -24,6 +26,10 @@ const ScrollToTop = () => {
     event.preventDefault();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
 
   return (
     <a 

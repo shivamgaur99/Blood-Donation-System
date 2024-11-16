@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 
 import Home from "./pages/Home/Home";
@@ -39,21 +39,10 @@ function App() {
     });
   };
 
-  const ScrollToTopOnRouteChange = () => {
-    const location = useLocation();
-
-    useEffect(() => {
-      window.scrollTo(0, 0);
-    }, [location]);
-
-    return null;
-  };
-
   return (
     <Router>
       <Fragment>
         <Navbar handleClick={toggleTheme} theme={theme} />
-        <ScrollToTopOnRouteChange />
         <main>
           <Routes>
             <Route path="/" element={<Home />} />
