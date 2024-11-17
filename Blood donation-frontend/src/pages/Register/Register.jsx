@@ -1,192 +1,294 @@
-import React, { useState } from "react";
-import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
-import axios from "axios";
-import { useNavigate } from "react-router";
+import React, { useState, useRef } from "react";
+import Joi from "joi-browser";
+import { useNavigate } from "react-router-dom";
+import { SimpleToast } from "../../components/util/Toast/Toast";
+import { useToast } from "../../services/toastService";
+import axios from "axios"; 
+import "./register.css";
+import { END_POINT } from "../../config/api";
 
-const Register = () => {
+const Register = (props) => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [age, setAge] = useState("");
-  const [bloodGroup, setBloodGroup] = useState("");
-  const [gender, setGender] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const { toast, showToast, hideToast } = useToast();
+  const dark = props.theme;
+
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    age: "",
+    bloodGroup: "",
+    gender: "",
+    mobile: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const [errorObj, setErrorObj] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [hidePassword, setHidePassword] = useState(false);
+
+  const passwordInput = useRef("password");
+
+  const validationSchema = {
+    username: Joi.string().min(3).required(),
+    email: Joi.string().email().required(),
+    age: Joi.number().min(18).required(),
+    bloodGroup: Joi.string().required(),
+    gender: Joi.string().required(),
+    mobile: Joi.string().min(10).required(),
+    password: Joi.string().min(6).required(),
+    confirmPassword: Joi.string().valid(Joi.ref("password")).required(),
+  };
+
+  const validateForm = () => {
+    const { error } = Joi.validate(formData, validationSchema, {
+      abortEarly: false,
+    });
+    if (!error) return true;
+
+    const errors = error.details.reduce((acc, item) => {
+      acc[item.path[0]] = item.message;
+      return acc;
+    }, {});
+    setErrorObj(errors);
+    return false;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (validateForm()) {
+      setIsLoading(true);
+      const payload = { ...formData, bloodgroup: formData.bloodGroup };
 
-    if (
-      username === "" ||
-      email === "" ||
-      age === "" ||
-      bloodGroup === "" ||
-      gender === "" ||
-      mobile === "" ||
-      password === "" ||
-      confirmPassword === ""
-    ) {
-      setError("Please fill in all fields.");
-      return;
-    }
-
-    if (password.length <= 6) {
-      setError("Password must be more than 6 characters.");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    const payload = {
-      username: username,
-      email: email,
-      age: age,
-      bloodgroup: bloodGroup,
-      gender: gender,
-      mobile: mobile,
-      password: password
-    };
-
-    axios
-      .post("http://localhost:8181/register", payload)
-      .then((response) => {
-        if (response.status === 200) {
-          setSuccess("Registration Successful");
-          setError("");
-          navigate("/login");
-        } else {
-          setError("Registration failed: " + response.data.error);
-          setSuccess("");
-        }
-      })
-      .catch((error) => {
-        if (error.response && error.response.data) {
-          const { data } = error.response;
-          if (data.error === "duplicate_email") {
-            setError("Registration failed: Email already exists");
+      // Use Axios to make the POST request
+      axios
+        .post(`${END_POINT}/user/register`, payload, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          // Check if the registration was successful
+          if (response.status === 200) {
+            showToast("Registration Successful", "success");
+            navigate("/login");
           } else {
-            setError("Registration failed: " + error.response.data);
+            // Handle unexpected success responses (if any)
+            showToast(
+              `Registration failed: ${response.data.error || "Unknown error"}`,
+              "error"
+            );
           }
-        } else {
-          setError("Registration failed. Please try again later.");
-        }
-        setSuccess("");
-      });
+        })
+        .catch((error) => {
+          // Handle Axios errors or failed responses
+          if (error.response) {
+            // The request was made and the server responded with a status other than 2xx
+            console.error("Error Response Data:", error.response.data); // log the response for debugging
+            showToast(
+              `Registration failed: ${
+                error.response.data || "Something went wrong"
+              }`,
+              "error"
+            );
+          } else if (error.request) {
+            // The request was made but no response was received
+            console.error("Error Request:", error.request);
+            showToast(
+              "No response received from server. Please try again later.",
+              "error"
+            );
+          } else {
+            // Something happened in setting up the request that triggered an error
+            console.error("Error Message:", error.message);
+            showToast("An error occurred. Please try again later.", "error");
+          }
+        })
+        .finally(() => setIsLoading(false)); // Always stop loading
+    }
   };
 
+  passwordInput.current = hidePassword ? "text" : "password";
+
+  const renderInput = (name, type, placeholder, icon) => (
+    <div
+      className={`register-input ${
+        dark ? "register-input-dark" : "register-input-light"
+      }`}
+    >
+      <input
+        type={type}
+        name={name}
+        value={formData[name]}
+        onChange={handleChange}
+        placeholder={placeholder}
+        className={`input-register ${
+          dark ? "input-register-dark" : "input-register-light"
+        }`}
+      />
+      <i className={icon}></i>
+      <div className="validation">
+        {errorObj[name] && <div>* {errorObj[name]}</div>}
+      </div>
+    </div>
+  );
+
   return (
-    <Container>
-      <Row className="justify-content-md-center">
-        <Col md={6}>
-          <h1 className="text-center mb-4">Registration</h1>
-          {error && <Alert variant="danger">{error}</Alert>}
-          {success && <Alert variant="success">{success}</Alert>}
-          <Form id="registrationForm" onSubmit={handleSubmit}>
-            <Form.Group>
-              <Form.Label>Username</Form.Label>
-              <Form.Control
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Age</Form.Label>
-              <Form.Control
-                type="number"
-                value={age}
-                onChange={(e) => setAge(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Blood Group</Form.Label>
-              <Form.Control
-                as="select"
-                value={bloodGroup}
-                onChange={(e) => setBloodGroup(e.target.value)}
-                required
+    <>
+      <div
+        className={`register-section ${
+          dark ? "register-section-dark" : "register-section-light"
+        }`}
+      >
+        <div className="register-parent">
+          <div className="register-child child1">
+            <img
+              src="./images/register.png"
+              alt="register-illustration"
+              className="register-image"
+            />
+          </div>
+          <div className="register-child child2">
+            <div
+              className={`register-card ${
+                dark ? "register-card-dark" : "register-card-light"
+              }`}
+            >
+              <h1
+                className={`card-heading ${
+                  dark ? "card-heading-dark" : "card-heading-light"
+                }`}
               >
-              <option value="">Select</option>
-              <option value="O+">O+</option>
-              <option value="O-">O-</option>
-              <option value="A+">A+</option>
-              <option value="A-">A-</option>
-              <option value="B+">B+</option>
-              <option value="B-">B-</option>
-              <option value="AB+">AB+</option>
-              <option value="AB-">AB-</option>
-              
-              </Form.Control>
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Gender</Form.Label>
-              <Form.Control
-                as="select"
-                value={gender}
-                onChange={(e) => setGender(e.target.value)}
-                required
-              >
-                <option value="">Select</option>
-                
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-              </Form.Control>
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Mobile</Form.Label>
-              <Form.Control
-                type="text"
-                value={mobile}
-                onChange={(e) => setMobile(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Confirm Password</Form.Label>
-              <Form.Control
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-            </Form.Group>
-            <Button variant="primary" type="submit" className="w-100 mt-3">
-              Register
-            </Button>
-          </Form>
-        </Col>
-      </Row>
-    </Container>
+                Create Account
+              </h1>
+              <form onSubmit={handleSubmit} noValidate>
+                <div className="inside-register">
+                  {renderInput("username", "text", "Username", "fas fa-user")}
+                  {renderInput(
+                    "email",
+                    "email",
+                    "Email",
+                    "fas fa-envelope-open-text"
+                  )}
+                  {renderInput("age", "number", "Age", "fas fa-calendar-alt")}
+                  <div
+                    className={`register-input ${
+                      dark ? "register-input-dark" : "register-input-light"
+                    }`}
+                  >
+                    <select
+                      name="bloodGroup"
+                      value={formData.bloodGroup}
+                      onChange={handleChange}
+                      className={
+                        dark ? "input-register-dark" : "input-register-light"
+                      }
+                    >
+                      <option value="">Select Blood Group</option>
+                      {["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"].map(
+                        (group) => (
+                          <option key={group} value={group}>
+                            {group}
+                          </option>
+                        )
+                      )}
+                    </select>
+                    <i className="fas fa-tint"></i>
+                    <div className="validation">
+                      {errorObj["bloodGroup"] && (
+                        <div>* {errorObj["bloodGroup"]}</div>
+                      )}
+                    </div>
+                  </div>
+                  <div
+                    className={`register-input ${
+                      dark ? "register-input-dark" : "register-input-light"
+                    }`}
+                  >
+                    <select
+                      name="gender"
+                      value={formData.gender}
+                      onChange={handleChange}
+                      className={
+                        dark ? "input-register-dark" : "input-register-light"
+                      }
+                    >
+                      <option value="">Select Gender</option>
+                      {["male", "female", "other"].map((genderOption) => (
+                        <option key={genderOption} value={genderOption}>
+                          {genderOption}
+                        </option>
+                      ))}
+                    </select>
+                    <i className="fas fa-venus-mars"></i>
+                    <div className="validation">
+                      {errorObj["gender"] && <div>* {errorObj["gender"]}</div>}
+                    </div>
+                  </div>
+                  {renderInput(
+                    "mobile",
+                    "text",
+                    "Mobile Number",
+                    "fas fa-phone"
+                  )}
+                  <div
+                    className={`register-input ${
+                      dark ? "register-input-dark" : "register-input-light"
+                    }`}
+                  >
+                    <input
+                      type={passwordInput.current}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      placeholder="Password"
+                      className={`input-register ${
+                        dark ? "input-register-dark" : "input-register-light"
+                      }`}
+                    />
+                    <i
+                      className={hidePassword ? "fa fa-eye" : "fa fa-eye-slash"}
+                      onClick={() => setHidePassword(!hidePassword)}
+                    ></i>
+                    <div className="validation">
+                      {errorObj["password"] && (
+                        <div>* {errorObj["password"]}</div>
+                      )}
+                    </div>
+                  </div>
+                  {renderInput(
+                    "confirmPassword",
+                    "password",
+                    "Confirm Password",
+                    "fas fa-lock"
+                  )}
+                  <div className="submit-btns">
+                    <button
+                      className="submit-button primary signup-btn"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Registering..." : "Register"}
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <SimpleToast
+        open={toast.open}
+        severity={toast.severity}
+        message={toast.message}
+        handleCloseToast={hideToast}
+      />
+    </>
   );
 };
 
 export default Register;
-

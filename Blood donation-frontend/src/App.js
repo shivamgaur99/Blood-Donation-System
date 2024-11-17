@@ -37,7 +37,10 @@ function App() {
     setTheme((prevTheme) => {
       const newTheme = !prevTheme;
       localStorage.setItem("dark", newTheme);
-      showToast("You have changed the theme", "info");
+      showToast(
+        `switched to ${newTheme ? 'dark' : 'light'} theme.`,
+        "info"
+      );
       return newTheme;
     });
   };
@@ -52,7 +55,7 @@ function App() {
             <Route path="/home" element={<Home />} />
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/contact-us" element={<ContactUs />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/register" element={<Register theme={theme} />} />
             <Route path="/login" element={<Login theme={theme} />} />
             <Route path="/donorlist" element={<DonorList />} />
             <Route path="/user-dashboard" element={<UserDashboard />} />
