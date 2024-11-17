@@ -23,18 +23,21 @@ import { NotFound } from "./components/ErrorHandlerPages/404/NotFound";
 import ScrollToTop from "./components/util/ScrollToTop/ScrollToTop";
 import { Navbar } from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
+import { SimpleToast } from "./components/util/Toast/Toast";
+import { useToast } from "./services/toastService";
+
 
 function App() {
   const getTheme = () => JSON.parse(localStorage.getItem("dark")) || false;
   const [theme, setTheme] = useState(getTheme());
-  const [toast, setToast] = useState(false);
+
+  const { toast, showToast, hideToast } = useToast();
 
   const toggleTheme = () => {
-    setTheme(prevTheme => {
+    setTheme((prevTheme) => {
       const newTheme = !prevTheme;
       localStorage.setItem("dark", newTheme);
-      setToast(true);
-      setTimeout(() => setToast(false), 3000);
+      showToast("You have changed the theme", "info");
       return newTheme;
     });
   };
@@ -50,7 +53,7 @@ function App() {
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<Login theme={theme} />} />
             <Route path="/donorlist" element={<DonorList />} />
             <Route path="/user-dashboard" element={<UserDashboard />} />
             <Route path="/makeRequest" element={<MakeRequest />} />
@@ -68,6 +71,12 @@ function App() {
         </main>
         <Footer />
         <ScrollToTop />
+        <SimpleToast
+          open={toast.open}
+          severity={toast.severity}
+          message={toast.message}
+          handleCloseToast={hideToast}
+        />
       </Fragment>
     </Router>
   );

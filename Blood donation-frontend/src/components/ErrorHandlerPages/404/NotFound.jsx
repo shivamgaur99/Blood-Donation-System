@@ -1,8 +1,8 @@
 import React from "react";
 import "./not-found.css";
 
-export const NotFound = ({ theme }) => {
-  const dark = theme;
+export const NotFound = (props) => {
+  const dark = props.theme;
 
   return (
     <main className={dark ? "main-dark" : "main"}>

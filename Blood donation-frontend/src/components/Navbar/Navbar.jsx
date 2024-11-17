@@ -3,6 +3,8 @@ import { NavLink } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Toggle from "../util/Toggle/Toggle";
 import "./navbar.css";
+import { useToast } from "../../services/toastService";
+import { SimpleToast } from "../util/Toast/Toast";
 
 export const Navbar = (props) => {
   const dark = props.theme;
@@ -10,6 +12,8 @@ export const Navbar = (props) => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
   const [Role, setRole] = useState("");
+
+  const { toast, showToast, hideToast } = useToast();
 
   const toggleNav = () => setIsNavOpen(!isNavOpen);
   const closeMobileMenu = () => setIsNavOpen(false);
@@ -27,6 +31,7 @@ export const Navbar = (props) => {
   const handleLogout = () => {
     // localStorage.removeItem('jwtToken');
     localStorage.clear();
+    showToast("You have successfully logged out.", "success");
     window.location.href = "/login";
   };
 
@@ -238,7 +243,7 @@ export const Navbar = (props) => {
                 } ${dark ? "nav-admin-button-dark" : "nav-admin-button"}`
               }
             >
-              Sign Up
+              SignUp
             </NavLink>
           </>
         )}
@@ -247,6 +252,12 @@ export const Navbar = (props) => {
           <Toggle handleClick={props.handleClick} theme={props.theme} />
         </div>
       </nav>
+      <SimpleToast
+        open={toast.open}
+        severity={toast.severity}
+        message={toast.message}
+        handleCloseToast={hideToast}
+      />
     </Fragment>
   );
 };
