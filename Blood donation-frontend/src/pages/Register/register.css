@@ -365,11 +365,6 @@
   background-clip: padding-box, border-box;
 }
 
-.register-input-dark select:focus {
-  background-image: linear-gradient(to right, #2b5876, #4e4376);
-  background-color: black;
-}
-
 .register-input select {
   -webkit-appearance: none; 
   -moz-appearance: none; 
@@ -379,3 +374,39 @@
   background-size: 12px;
 }
 
+.input-register {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  color: #333;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-register:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.input-register-dark {
+  background-color: #2b2b2b;
+  color: #fff;
+  border-color: #444;
+}
+
+.input-register-dark:focus {
+  border-color: #6c63ff;
+  box-shadow: 0 0 5px rgba(108, 99, 255, 0.5);
+}
+.input-register-light {
+  background-color: #f9f9f9;
+  color: #333;
+  border-color: #ccc;
+}
+
+.input-register-light:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}

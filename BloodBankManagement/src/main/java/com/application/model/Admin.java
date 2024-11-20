@@ -4,19 +4,21 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.jetbrains.annotations.NotNull;
+
 @Entity
 @Table(name = "admins")
 public class Admin {
-
+	
+	@NotNull
     @Id
-    private String email; // Unique identifier for the admin
-    
+    private String email; 
     private String username;
+    @NotNull
     private String password;
     private String mobile;
     private String gender;
     private int age;
-    
     private String role; // Admin's role (e.g., "SUPER_ADMIN", "ADMIN")
 
     // Default constructor

@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -29,7 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private RegistrationService registrationService;
-	
+
 	@Autowired
 	private AdminService adminService;
 
@@ -52,24 +51,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeRequests().antMatchers("/authenticate").permitAll()
-				.antMatchers("/profileDetails/{email}", "/admin/login", "/admin/register", "/admin/delete/{email}",
-						"/admin/update/{email}", "/user/login", "/user/register", "/updateuser", "/logout")
-				.permitAll()
-				.antMatchers("/bloodDetails", "/addDonor", "/addAsDonor", "/updateStatus/{email}",
-						"/acceptstatus/{email}", "/rejectstatus/{email}")
-				.permitAll()
-				.antMatchers("/donorlist", "/requestHistory", "/requestHistory/{email}", "/bloodDetails",
-						"/getTotalUsers", "/getTotalDonors")
-				.permitAll()
-				.antMatchers("/getTotalBloodGroups", "/getTotalUnits", "/getTotalRequests/{email}",
-						"/getTotalDonationCount/{email}", "/userlist", "/requestblood")
-				.permitAll()
-				.anyRequest().fullyAuthenticated().and().exceptionHandling()
-				.accessDeniedHandler((request, response, accessDeniedException) -> {
-					AccessDeniedHandler defaultAccessDeniedHandler = new AccessDeniedHandlerImpl();
-					defaultAccessDeniedHandler.handle(request, response, accessDeniedException);
-				}).and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http.csrf(csrf -> csrf.disable())
+				.authorizeRequests(requests -> requests.antMatchers("/authenticate").permitAll()
+						.antMatchers("/admin/login", "/admin/register", "/user/login", "/user/register", "/logout")
+						.permitAll().anyRequest().fullyAuthenticated())
+				.exceptionHandling(
+						handling -> handling.accessDeniedHandler((request, response, accessDeniedException) -> {
+							AccessDeniedHandler defaultAccessDeniedHandler = new AccessDeniedHandlerImpl();
+							defaultAccessDeniedHandler.handle(request, response, accessDeniedException);
+						}))
+				.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http.addFilterBefore((Filter) jwtFilter, UsernamePasswordAuthenticationFilter.class);
 	}
 }

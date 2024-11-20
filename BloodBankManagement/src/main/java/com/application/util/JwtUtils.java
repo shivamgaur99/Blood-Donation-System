@@ -52,9 +52,6 @@ public class JwtUtils {
     // Generate token with username (email) and role
     public String generateToken(String username, String role) {
         Map<String, Object> claims = new HashMap<>();
-        if (role == null) {
-            role = "USER";  // Set a default role if none is provided
-        }
         claims.put("role", role);  // Store the role in the token
         return createToken(claims, username);
     }
