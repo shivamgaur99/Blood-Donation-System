@@ -2,19 +2,26 @@ package com.application.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import lombok.Data;
 
 @Entity
-public class Donor 
-{
+@Data
+public class Donor {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	private String name;
-	
-	@Column(name="bloodgroup")
+
+	@Column(name = "bloodgroup")
 	private String bloodGroup;
 	private int units;
 	private String mobile;
@@ -23,14 +30,24 @@ public class Donor
 	private String city;
 	private String address;
 	private String date;
+
+	@ManyToOne
+	@JoinColumn(name = "user_email", referencedColumnName = "email", nullable = false, foreignKey = @ForeignKey(name = "FK_donor_user"))
+	 @JsonBackReference("userReference")
+	private User user;
+
+	@ManyToOne
+	@JoinColumn(name = "request_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "FK_donor_request"))
+	 @JsonBackReference("requestReference")
+	private Requesting requesting;
+
 	
-	public Donor()
-	{
+	public Donor() {
 		super();
 	}
 
-	public Donor(int id, String name, String bloodGroup, int units, String mobile, String gender, int age, String city,String address, String date) 
-	{
+	public Donor(int id, String name, String bloodGroup, int units, String mobile, String gender, int age, String city,
+			String address, String date) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -44,103 +61,4 @@ public class Donor
 		this.date = date;
 	}
 
-	public int getId() 
-	{
-		return id;
-	}
-
-	public void setId(int id) 
-	{
-		this.id = id;
-	}
-
-	public String getName()
-	{
-		return name;
-	}
-
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-
-	public String getBloodGroup() 
-	{
-		return bloodGroup;
-	}
-
-	public void setBloodGroup(String bloodGroup)
-	{
-		this.bloodGroup = bloodGroup;
-	}
-
-	public int getUnits() 
-	{
-		return units;
-	}
-
-	public void setUnits(int units)
-	{
-		this.units = units;
-	}
-
-	public String getMobile() 
-	{
-		return mobile;
-	}
-
-	public void setMobile(String mobile) 
-	{
-		this.mobile = mobile;
-	}
-
-	public String getGender() 
-	{
-		return gender;
-	}
-
-	public void setGender(String gender) 
-	{
-		this.gender = gender;
-	}
-
-	public int getAge() 
-	{
-		return age;
-	}
-
-	public void setAge(int age) 
-	{
-		this.age = age;
-	}
-
-	public String getCity() 
-	{
-		return city;
-	}
-
-	public void setCity(String city) 
-	{
-		this.city = city;
-	}
-
-	public String getAddress() 
-	{
-		return address;
-	}
-
-	public void setAddress(String address) 
-	{
-		this.address = address;
-	}
-
-	public String getDate() 
-	{
-		return date;
-	}
-
-	public void setDate(String date) 
-	{
-		this.date = date;
-	}
 }

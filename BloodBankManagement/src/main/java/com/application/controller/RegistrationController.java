@@ -1,5 +1,6 @@
 package com.application.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,7 +111,6 @@ public class RegistrationController {
 						.body("Password must be at least 6 characters long!");
 			}
 
-			
 //	        String passwordPattern = "^(?=.*[0-9])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$";
 //	        if (!password.matches(passwordPattern)) {
 //	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
@@ -188,6 +188,26 @@ public class RegistrationController {
 		} catch (Exception ex) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting user");
 		}
+	}
+
+	@GetMapping("/userlist")
+	public ResponseEntity<List<User>> getUsers() throws Exception {
+		List<User> users = registerService.getAllUsers();
+		return new ResponseEntity<List<User>>(users, HttpStatus.OK);
+	}
+
+	@GetMapping("/profileDetails/{email}")
+	public ResponseEntity<List<User>> getProfileDetails(@PathVariable String email) throws Exception {
+		List<User> users = registerService.fetchProfileByEmail(email);
+		return new ResponseEntity<List<User>>(users, HttpStatus.OK);
+	}
+
+	@GetMapping("/getTotalUsers")
+	public ResponseEntity<List<Integer>> getTotalUsers() throws Exception {
+		List<User> users = registerService.getAllUsers();
+		List<Integer> al = new ArrayList<>();
+		al.add(users.size());
+		return new ResponseEntity<List<Integer>>(al, HttpStatus.OK);
 	}
 
 }
