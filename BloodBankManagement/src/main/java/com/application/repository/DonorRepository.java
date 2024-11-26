@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.application.model.Donor;
+import com.application.model.User;
 
 public interface DonorRepository extends CrudRepository<Donor, Integer> {
 //    public Donor findByBloodGroup(String bloodGroup);
@@ -33,5 +34,9 @@ public interface DonorRepository extends CrudRepository<Donor, Integer> {
 	List<Donor> findByBloodGroupAndCity(String bloodGroup, String city);
 
 	List<Donor> findByAgeBetween(int minAge, int maxAge);
+	
+	List<Donor> findByUser(User user);
+	 
+	 
 
 }

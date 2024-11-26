@@ -1,15 +1,20 @@
 package com.application.service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.application.model.BloodDetails;
 import com.application.model.Donor;
 import com.application.model.Requesting;
+import com.application.model.User;
 import com.application.repository.DonorRepository;
 import com.application.repository.RequestingBloodRepository;
 
@@ -69,6 +74,83 @@ public class DonorService {
     public List<Donor> getDonorsByBloodGroup(String bloodGroup) {
         return donorRepository.findByBloodGroup(bloodGroup);
     }
+    
+    public void saveBloodRequest(Requesting requesting) {
+    	requestingBloodRepository.save(requesting); // Assuming a JPA repository is available
+    }
+    
+    
+    public List<Requesting> getRequestHistoryByEmail(String email) {
+    	System.out.println("Fetching history for email: " + email);
+        return requestingBloodRepository.findByEmail(email);
+    }
+    
+    
+    public boolean updateRequestStatus(int id, String status) {
+        Optional<Requesting> request = requestingBloodRepository.findById(id);
+        if (request.isPresent()) {
+            Requesting req = request.get();
+            req.setStatus(status);
+            requestingBloodRepository.save(req);
+            return true;
+        }
+        return false;
+    }
+
+    
+    public List<Donor> getDonorsByUser(User user) {
+        return donorRepository.findByUser(user);
+    }
+    
+    public List<Requesting> getRequestHistoryByUser(User user) {
+        return requestingBloodRepository.findByUser(user);
+    }
+
+
+
+    public List<Requesting> getRequestsByBloodGroup(String bloodGroup) {
+        return requestingBloodRepository.findByBloodGroup(bloodGroup);
+    }
+
+    
+    
+    public List<Requesting> getRequestsByStatus(String status) {
+        return requestingBloodRepository.findByStatus(status);
+    }
+
+    
+    
+    public List<BloodDetails> getDonorUnitsByBloodGroup() {
+        // Fetch all donors from the database
+        List<Donor> donors = (List<Donor>) donorRepository.findAll();
+
+        // Map to hold blood group and its aggregated units
+        Map<String, Integer> bloodGroupUnitsMap = new LinkedHashMap<>();
+
+        // Aggregate the units by blood group
+        for (Donor donor : donors) {
+            String bloodGroup = donor.getBloodGroup();
+            int units = donor.getUnits();
+
+            bloodGroupUnitsMap.put(bloodGroup, bloodGroupUnitsMap.getOrDefault(bloodGroup, 0) + units);
+        }
+
+        // Convert the map to a list of BloodDetails objects
+        List<BloodDetails> bloodDetailsList = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : bloodGroupUnitsMap.entrySet()) {
+            bloodDetailsList.add(new BloodDetails(entry.getKey(), entry.getValue(), entry.getValue()));
+        }
+
+        return bloodDetailsList;
+    }
+    
+    
+    
+    
+    
+
+    
+    
 
 	public Donor saveDonor(Donor donor) {
 		return donorRepository.save(donor);
@@ -78,9 +160,9 @@ public class DonorService {
 		return donorRepository.save(donor);
 	}
 
-	public Requesting saveBloodRequest(Requesting request) {
-		return requestingBloodRepository.save(request);
-	}
+//	public Requesting saveBloodRequest(Requesting request) {
+//		return requestingBloodRepository.save(request);
+//	}
 
 //	public Donor fetchDonorByBloodGroup(String bloodGroup) {
 //		return donorRepository.findByBloodGroup(bloodGroup);
@@ -107,9 +189,9 @@ public class DonorService {
 		return (List<Requesting>) requestingBloodRepository.findAll();
 	}
 
-	public List<Requesting> getRequestHistoryByEmail(String email) {
-		return (List<Requesting>) requestingBloodRepository.findByEmail(email);
-	}
+//	public List<Requesting> getRequestHistoryByEmail(String email) {
+//		return (List<Requesting>) requestingBloodRepository.findByEmail(email);
+//	}
 
 	public List<Donor> getBloodDetails() {
 		return (List<Donor>) donorRepository.findBloodDetails();

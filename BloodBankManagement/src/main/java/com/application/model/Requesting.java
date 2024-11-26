@@ -25,7 +25,7 @@ public class Requesting {
 	private int id;
 	private String name;
 	private String email;
-	private String bloodgroup;
+	private String bloodGroup;
 	private int units;
 	private String disease;
 	private String mobile;
@@ -43,13 +43,18 @@ public class Requesting {
 	private List<Donor> donors;
 
 	
-	public Requesting(int id, String name, String email, String bloodgroup, int units, String disease, String mobile,
+	 public Requesting() {
+		 super();
+	 }
+	 
+	 
+	public Requesting(int id, String name, String email, String bloodGroup, int units, String disease, String mobile,
 			String gender, int age, String status) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.email = email;
-		this.bloodgroup = bloodgroup;
+		this.bloodGroup = bloodGroup;
 		this.units = units;
 		this.disease = disease;
 		this.mobile = mobile;

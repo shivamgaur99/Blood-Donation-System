@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.application.constants.RequestStatus;
 import com.application.model.BloodDetails;
 import com.application.model.Donor;
 import com.application.model.Requesting;
@@ -34,146 +36,111 @@ public class DonorController {
 
 	@Autowired
 	private DonorService donorService;
-	
+
 	@Autowired
-    private RegistrationService userService;
-	
-	 @Autowired
-	    private JwtUtils jwtUtils;
-	 
-	 
-	  /**
-	     * Add a new donor.
-	     * Requires JWT token to identify the user.
-	     */
-	    @PostMapping("/add")
-	    public ResponseEntity<String> addDonor(@RequestBody Donor donor, HttpServletRequest request) {
-	        try {
-	            // Extract the JWT token from the Authorization header
-	            String token = extractTokenFromRequest(request);
+	private RegistrationService userService;
 
-	            if (token == null) {
-	                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization token is required.");
-	            }
+	@Autowired
+	private JwtUtils jwtUtils;
 
-	            // Extract username (email) from the token
-	            String email = jwtUtils.extractUsername(token);
+	@PostMapping("/add")
+	public ResponseEntity<String> addDonor(@RequestBody Donor donor, HttpServletRequest request) {
+		try {
 
-	            // Fetch user details from the database
-	            User user = userService.fetchUserByEmail(email);
-	            if (user == null) {
-	                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
-	            }
+			String token = extractTokenFromRequest(request);
 
-	            // Set the user for the donor
-	            donor.setUser(user);
+			if (token == null) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization token is required.");
+			}
 
-	            // Save the donor
-	            donorService.saveDonor(donor);
+			String email = jwtUtils.extractUsername(token);
 
-	            return ResponseEntity.status(HttpStatus.CREATED).body("Donor details added successfully.");
-	        } catch (Exception e) {
-	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
-	        }
-	    }
+			User user = userService.fetchUserByEmail(email);
+			if (user == null) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+			}
 
-	    /**
-	     * Retrieve all donors.
-	     */
-	    @GetMapping("/all")
-	    public ResponseEntity<List<Donor>> getAllDonors() {
-	        List<Donor> donors = donorService.getAllDonors();
-	        return ResponseEntity.ok(donors);
-	    }
+			donor.setUser(user);
 
-	    /**
-	     * Retrieve donor by ID.
-	     */
-	    @GetMapping("/{id}")
-	    public ResponseEntity<Object> getDonorById(@PathVariable int id) {
-	        Donor donor = donorService.getDonorById(id);
-	        if (donor != null) {
-	            return ResponseEntity.ok(donor);
-	        } else {
-	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Donor not found.");
-	        }
-	    }
+			donorService.saveDonor(donor);
 
-	    /**
-	     * Delete a donor by ID.
-	     */
-	    @DeleteMapping("/delete/{id}")
-	    public ResponseEntity<String> deleteDonor(@PathVariable int id) {
-	        try {
-	            donorService.deleteDonor(id);
-	            return ResponseEntity.ok("Donor deleted successfully.");
-	        } catch (Exception e) {
-	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
-	        }
-	    }
-
-	    /**
-	     * Extract the JWT token from the Authorization header.
-	     */
-	    private String extractTokenFromRequest(HttpServletRequest request) {
-	        String authorizationHeader = request.getHeader("Authorization");
-	        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-	            return authorizationHeader.substring(7); // Remove "Bearer " prefix
-	        }
-	        return null;
-	    }
-	    
-	    @GetMapping("/blood-group/{bloodGroup}")
-	    public ResponseEntity<List<Donor>> getDonorsByBloodGroup(@PathVariable String bloodGroup) {
-	        List<Donor> donors = donorService.getDonorsByBloodGroup(bloodGroup);
-	        if (!donors.isEmpty()) {
-	            return ResponseEntity.ok(donors);
-	        } else {
-	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-	        }
-	    }
-
-	
-	
-	@PostMapping("/addDonor")
-	public Donor addNewDonor(@RequestBody Donor donor) throws Exception {
-		return donorService.saveDonor(donor);
-	}
-
-	@PostMapping("/addAsDonor")
-	public Donor addUserAsDonor(@RequestBody Donor donor) throws Exception {
-		return donorService.saveUserAsDonor(donor);
-	}
-
-	@PostMapping("/updateStatus/{email}")
-	public ResponseEntity<List<String>> updateStatus(@PathVariable String email, @RequestBody String status)
-			throws Exception {
-		donorService.updateStatus(email);
-		List<String> response = new ArrayList<>();
-		response.add(status);
-		return new ResponseEntity<>(response, HttpStatus.OK);
-	}
-
-	@GetMapping("/acceptstatus/{email}")
-	public ResponseEntity<List<String>> updateStatus(@PathVariable String email) throws Exception {
-		donorService.updateStatus(email);
-		List<String> al = new ArrayList<>();
-		al.add("accepted");
-		return new ResponseEntity<List<String>>(al, HttpStatus.OK);
-	}
-
-	@GetMapping("/rejectstatus/{email}")
-	public ResponseEntity<List<String>> rejectStatus(@PathVariable String email) throws Exception {
-		donorService.rejectStatus(email);
-		List<String> al = new ArrayList<>();
-		al.add("rejected");
-		return new ResponseEntity<List<String>>(al, HttpStatus.OK);
+			return ResponseEntity.status(HttpStatus.CREATED).body("Donor details added successfully.");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
+		}
 	}
 
 	@GetMapping("/donorlist")
-	public ResponseEntity<List<Donor>> getDonors() throws Exception {
+	public ResponseEntity<List<Donor>> getAllDonors() {
 		List<Donor> donors = donorService.getAllDonors();
-		return new ResponseEntity<List<Donor>>(donors, HttpStatus.OK);
+		return ResponseEntity.ok(donors);
+	}
+
+	@GetMapping("/{id}")
+	public ResponseEntity<Object> getDonorById(@PathVariable int id) {
+		Donor donor = donorService.getDonorById(id);
+		if (donor != null) {
+			return ResponseEntity.ok(donor);
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Donor not found.");
+		}
+	}
+
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity<String> deleteDonor(@PathVariable int id) {
+		try {
+			donorService.deleteDonor(id);
+			return ResponseEntity.ok("Donor deleted successfully.");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
+		}
+	}
+
+	private String extractTokenFromRequest(HttpServletRequest request) {
+		String authorizationHeader = request.getHeader("Authorization");
+		if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+			return authorizationHeader.substring(7); // Remove "Bearer " prefix
+		}
+		return null;
+	}
+
+	@GetMapping("/blood-group/{bloodGroup}")
+	public ResponseEntity<List<Donor>> getDonorsByBloodGroup(@PathVariable String bloodGroup) {
+		List<Donor> donors = donorService.getDonorsByBloodGroup(bloodGroup);
+		if (!donors.isEmpty()) {
+			return ResponseEntity.ok(donors);
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+	}
+
+	@PostMapping("/blood-requests")
+	public ResponseEntity<String> addBloodRequest(@RequestBody Requesting requesting, HttpServletRequest request) {
+		try {
+
+			String token = extractTokenFromRequest(request);
+			if (token == null) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization token is required.");
+			}
+
+			String email = jwtUtils.extractUsername(token);
+
+			User user = userService.fetchUserByEmail(email);
+			if (user == null) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+			}
+
+			requesting.setUser(user);
+
+			requesting.setStatus(RequestStatus.PENDING.getStatus());
+
+			donorService.saveBloodRequest(requesting);
+
+			return ResponseEntity.status(HttpStatus.CREATED).body("Blood request created successfully.");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("An error occurred while processing the blood request: " + e.getMessage());
+		}
 	}
 
 	@GetMapping("/requestHistory")
@@ -183,10 +150,144 @@ public class DonorController {
 	}
 
 	@GetMapping("/requestHistory/{email}")
-	public ResponseEntity<List<Requesting>> getRequestHistoryByEmail(@PathVariable String email) throws Exception {
-		System.out.print("requesting");
+	public ResponseEntity<List<Requesting>> getRequestHistoryByEmail(@PathVariable String email) {
 		List<Requesting> history = donorService.getRequestHistoryByEmail(email);
-		return new ResponseEntity<List<Requesting>>(history, HttpStatus.OK);
+		if (!history.isEmpty()) {
+			return ResponseEntity.ok(history);
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+	}
+
+	@GetMapping("/userRequestHistory")
+	public ResponseEntity<List<Requesting>> getRequestHistoryByUser(HttpServletRequest request) {
+		try {
+
+			String token = extractTokenFromRequest(request);
+			if (token == null) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+			}
+
+			String email = jwtUtils.extractUsername(token);
+			if (email == null) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+			}
+
+			User user = userService.fetchUserByEmail(email);
+			if (user == null) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			}
+
+			List<Requesting> requestHistory = donorService.getRequestHistoryByUser(user);
+			if (requestHistory.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			}
+
+			return ResponseEntity.ok(requestHistory);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+	}
+
+	@PutMapping("/blood-requests/{id}/approve")
+	public ResponseEntity<String> approveRequest(@PathVariable int id) {
+		boolean result = donorService.updateRequestStatus(id, RequestStatus.APPROVED.getStatus());
+		if (result) {
+			return ResponseEntity.ok("Request approved successfully.");
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Request not found.");
+		}
+	}
+
+	@PutMapping("/blood-requests/{id}/reject")
+	public ResponseEntity<String> rejectRequest(@PathVariable int id) {
+		boolean result = donorService.updateRequestStatus(id, RequestStatus.REJECTED.getStatus());
+		if (result) {
+			return ResponseEntity.ok("Request rejected successfully.");
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Request not found.");
+		}
+	}
+
+	@GetMapping("/userDonors")
+	public ResponseEntity<List<Donor>> getDonorsByUser(HttpServletRequest request) {
+		try {
+
+			String token = extractTokenFromRequest(request);
+			if (token == null) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+			}
+
+			String email = jwtUtils.extractUsername(token);
+			if (email == null) {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+			}
+
+			User user = userService.fetchUserByEmail(email);
+			if (user == null) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			}
+
+			List<Donor> donors = donorService.getDonorsByUser(user);
+			return ResponseEntity.ok(donors);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+	}
+
+	@GetMapping("/requestsByBloodGroup/{bloodGroup}")
+	public ResponseEntity<List<Requesting>> getRequestsByBloodGroup(@PathVariable String bloodGroup) {
+		try {
+			List<Requesting> requests = donorService.getRequestsByBloodGroup(bloodGroup);
+			if (requests.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			}
+			return ResponseEntity.ok(requests);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+	}
+
+	@PutMapping("/updateDonor/{id}")
+	public ResponseEntity<String> updateDonor(@PathVariable int id, @RequestBody Donor updatedDonor) {
+		try {
+			Donor existingDonor = donorService.getDonorById(id);
+			if (existingDonor == null) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Donor not found.");
+			}
+
+			existingDonor.setName(updatedDonor.getName());
+			existingDonor.setBloodGroup(updatedDonor.getBloodGroup());
+			existingDonor.setUnits(updatedDonor.getUnits());
+
+			donorService.saveDonor(existingDonor);
+			return ResponseEntity.ok("Donor updated successfully.");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
+		}
+	}
+
+	@GetMapping("/requestsByStatus/{status}")
+	public ResponseEntity<List<Requesting>> getRequestsByStatus(@PathVariable String status) {
+		try {
+			List<Requesting> requests = donorService.getRequestsByStatus(status);
+			if (requests.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			}
+			return ResponseEntity.ok(requests);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+	}
+
+	@GetMapping("/donorUnitsByBloodGroup")
+	public ResponseEntity<List<BloodDetails>> getDonorUnitsByBloodGroup() {
+		try {
+			List<BloodDetails> bloodDetails = donorService.getDonorUnitsByBloodGroup();
+			return ResponseEntity.ok(bloodDetails);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
 	}
 
 	@GetMapping("/bloodDetails")
@@ -276,8 +377,4 @@ public class DonorController {
 		return new ResponseEntity<List<Integer>>(al, HttpStatus.OK);
 	}
 
-	@PostMapping("/requestblood")
-	public Requesting addNewBloodRequest(@RequestBody Requesting request) throws Exception {
-		return donorService.saveBloodRequest(request);
-	}
 }

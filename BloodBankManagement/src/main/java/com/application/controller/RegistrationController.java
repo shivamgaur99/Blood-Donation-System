@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +36,9 @@ public class RegistrationController {
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@GetMapping("/")
 	public String welcomeMessage() {
@@ -67,17 +71,14 @@ public class RegistrationController {
 			String password = user.getPassword();
 
 			if (email != null && password != null) {
-				// Validate user credentials
-				User authenticatedUser = registerService.fetchUserByEmailAndPassword(email, password);
-				if (authenticatedUser != null) {
-					// Generate JWT token after successful authentication
-					String token = jwtUtil.generateToken(authenticatedUser.getEmail(), user.getRole());
+				User authenticatedUser = registerService.fetchUserByEmail(email);
 
-					// Return token in the response body
+				if (authenticatedUser != null && passwordEncoder.matches(password, authenticatedUser.getPassword())) {
+					String token = jwtUtil.generateToken(authenticatedUser.getEmail(), authenticatedUser.getRole());
 					return ResponseEntity.ok(new JwtResponse(token, authenticatedUser.getEmail()));
 				}
 			}
-			// If credentials are invalid
+
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
 		} catch (Exception ex) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while processing login");
@@ -92,37 +93,24 @@ public class RegistrationController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is required for registration!");
 			}
 
-			// Check if email already exists
 			User existingUser = registerService.fetchUserByEmail(currEmail);
 			if (existingUser != null) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 						.body("User with " + currEmail + " already exists!");
 			}
 
-			// Validate password
 			String password = user.getPassword();
 			if (password == null || password.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password is required!");
 			}
 
-			// Check if password meets minimum length requirement
-			if (password.length() < 6) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-						.body("Password must be at least 6 characters long!");
-			}
-
-//	        String passwordPattern = "^(?=.*[0-9])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$";
-//	        if (!password.matches(passwordPattern)) {
-//	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-//	                "Password must contain at least one digit, one uppercase letter, and one special character."
-//	            );
-//	        }
+			String hashedPassword = passwordEncoder.encode(password);
+			user.setPassword(hashedPassword);
 
 			if (user.getRole() == null || user.getRole().isEmpty()) {
 				user.setRole("user");
 			}
 
-			// Save user if all validation passes
 			User savedUser = registerService.saveUser(user);
 			return ResponseEntity.ok(savedUser);
 		} catch (Exception ex) {
@@ -133,10 +121,9 @@ public class RegistrationController {
 	@PutMapping("/user/update/{email}")
 	public ResponseEntity<?> updateUserProfile(@PathVariable String email, @RequestBody User user) {
 		try {
-			// Call service to update user profile
+
 			User updatedUser = registerService.updateUserProfile(email, user);
 
-			// If the user exists and is updated
 			if (updatedUser != null) {
 				return ResponseEntity.ok(updatedUser);
 			} else {
@@ -144,7 +131,7 @@ public class RegistrationController {
 			}
 
 		} catch (Exception ex) {
-			// Handle any exceptions and return an internal server error response
+
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body("Error during user update: " + ex.getMessage());
 		}
@@ -162,10 +149,8 @@ public class RegistrationController {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid role");
 			}
 
-			// Update the role
 			user.setRole(newRole);
 
-			// Save the updated user
 			registerService.saveUser(user);
 			return ResponseEntity.ok("User role updated successfully");
 		} catch (Exception ex) {
@@ -181,7 +166,6 @@ public class RegistrationController {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
 			}
 
-			// Delete the user
 			registerService.deleteUserByEmail(email);
 
 			return ResponseEntity.ok("User deleted successfully");
