@@ -27,7 +27,7 @@ public class RegistrationService implements UserDetailsService {
 		return registrationRepo.save(user);
 	}
 
-	public User updateUserProfile(String email, User user) throws Exception {
+	public User updateUserProfile(String email, User user) {
 		// Fetch the existing user by email
 		User existingUser = registrationRepo.findByEmail(email);
 

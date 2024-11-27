@@ -1,25 +1,20 @@
-# General Files
 HELP.md
 target/
-
-# Maven Wrapper (don't ignore the Maven wrapper jar)
 !.mvn/wrapper/maven-wrapper.jar
-
-# Ignore target directories except for specific ones in main and test source folders
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS (Spring Tool Suite) ###
+### STS ###
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings/
+.settings
 .springBeans
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea/
+.idea
 *.iws
 *.iml
 *.ipr
@@ -31,8 +26,6 @@ target/
 /nbdist/
 /.nb-gradle/
 build/
-
-# Don't ignore build directories in src/main and src/test
 !**/src/main/**/build/
 !**/src/test/**/build/
 
