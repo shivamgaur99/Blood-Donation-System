@@ -35,7 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private String frontendUrl;
 
 	@Autowired
-	private RegistrationService registrationService;
+	private RegistrationService userService;
 
 	@Autowired
 	private AdminService adminService;
@@ -45,8 +45,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(registrationService);
-		auth.userDetailsService(adminService);
+		auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(adminService).passwordEncoder(passwordEncoder());
 	}
 
 	@Bean
@@ -73,10 +73,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				corsConfiguration.setMaxAge(3600L);
 				return corsConfiguration;
 			}
-		})).csrf(csrf -> csrf.disable()).authorizeRequests(requests -> requests.antMatchers("/", "/authenticate")
-				.permitAll().antMatchers("/admin/login", "/admin/register", "/user/login", "/user/register").permitAll()
-//						.antMatchers("/admin/**").hasRole("ADMIN")
-				.anyRequest().fullyAuthenticated())
+		})).csrf(csrf -> csrf.disable())
+				.authorizeRequests(requests -> requests.antMatchers("/", "/authenticate").permitAll()
+						.antMatchers("/admin/login", "/admin/register", "/user/login", "/user/register").permitAll()
+						.anyRequest().fullyAuthenticated())
 				.exceptionHandling(
 						handling -> handling.accessDeniedHandler((request, response, accessDeniedException) -> {
 							AccessDeniedHandler defaultAccessDeniedHandler = new AccessDeniedHandlerImpl();

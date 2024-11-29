@@ -10,7 +10,13 @@ public enum ErrorCode {
 	VALIDATION_ERROR("VALIDATION_ERROR", "There was an error during validation", 422),
 	USER_ALREADY_EXISTS("USER_ALREADY_EXISTS", "User with the provided email already exists", 400),
 	USER_UPDATE_FAILED("USER_UPDATE_FAILED", "Failed to update the user profile", 500),
-	ROLE_UPDATE_FAILED("ROLE_UPDATE_FAILED", "Failed to update the user role", 500);
+	ROLE_UPDATE_FAILED("ROLE_UPDATE_FAILED", "Failed to update the user role", 500),
+	RESOURCE_NOT_FOUND("RESOURCE_NOT_FOUND", "The requested resource could not be found", 404),
+    NULL_POINTER("NULL_POINTER", "A null pointer error occurred", 500),
+    CONSTRAINT_VIOLATION("CONSTRAINT_VIOLATION", "Validation constraint violated", 400),
+    METHOD_NOT_ALLOWED("METHOD_NOT_ALLOWED", "Request method not supported", 405),
+    INVALID_TOKEN("INVALID_TOKEN", "The provided token is invalid", 401),
+	JWT_EXPIRED("JWT_EXPIRED", "Your session has expired. Please log in again.", 401);
 
 	private final String code;
 	private final String message;

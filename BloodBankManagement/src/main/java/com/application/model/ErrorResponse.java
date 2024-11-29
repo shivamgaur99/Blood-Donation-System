@@ -2,11 +2,15 @@ package com.application.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class ErrorResponse {
 
     private String errorCode;
     private String message;
     private String status;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timestamp;
 
     public ErrorResponse(String errorCode, String message, String status) {

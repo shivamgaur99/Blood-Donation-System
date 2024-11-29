@@ -16,7 +16,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Service
 public class JwtUtils {
 
-    // Injecting properties from application.properties
     @Value("${jwt.secret-key}")
     private String SECRET_KEY;  // Secret key for JWT signing
 

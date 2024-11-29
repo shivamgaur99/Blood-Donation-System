@@ -3,7 +3,6 @@ package com.application.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,6 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.application.custom_excs.InvalidCredentialsException;
+import com.application.custom_excs.RoleUpdateFailedException;
+import com.application.custom_excs.UserAlreadyExistsException;
+import com.application.custom_excs.UserNotFoundException;
 import com.application.model.Admin;
 import com.application.model.AuthRequest;
 import com.application.model.JwtResponse;
@@ -26,7 +29,6 @@ import com.application.util.JwtUtils;
 
 @RestController
 @RequestMapping("/admin")
-@CrossOrigin(origins = "http://localhost:3000")
 public class AdminController {
 
 	@Autowired
@@ -41,100 +43,74 @@ public class AdminController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	private static final List<String> VALID_ROLES = List.of("user", "volunteer", "admin", "superAdmin");
+
 	@PostMapping("/login")
 	public ResponseEntity<?> loginAdmin(@RequestBody AuthRequest authRequest) {
-		try {
-
-			Admin admin = adminService.fetchAdminByEmail(authRequest.getEmail());
-			if (admin == null || !passwordEncoder.matches(authRequest.getPassword(), admin.getPassword())) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-			}
-
-			String token = jwtUtils.generateToken(admin.getEmail(), admin.getRole());
-			return ResponseEntity.ok(new JwtResponse(token, authRequest.getEmail()));
-		} catch (Exception ex) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during admin login");
+		Admin admin = adminService.fetchAdminByEmail(authRequest.getEmail());
+		if (admin == null || !passwordEncoder.matches(authRequest.getPassword(), admin.getPassword())) {
+			throw new InvalidCredentialsException("Invalid credentials");
 		}
+
+		String token = jwtUtils.generateToken(admin.getEmail(), admin.getRole());
+		return ResponseEntity.ok(new JwtResponse(token, authRequest.getEmail()));
 	}
 
 	@PostMapping("/register")
 	public ResponseEntity<?> registerAdmin(@RequestBody Admin admin) {
-		try {
-
-			Admin existingAdmin = adminService.fetchAdminByEmail(admin.getEmail());
-			if (existingAdmin != null) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Admin with this email already exists!");
-			}
-
-			String password = admin.getPassword();
-			if (password == null || password.isEmpty()) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password is required!");
-			}
-
-			if (password.length() < 6) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-						.body("Password must be at least 6 characters long!");
-			}
-
-			if (admin.getRole() == null || admin.getRole().isEmpty()) {
-				admin.setRole("admin");
-			}
-
-			admin.setPassword(passwordEncoder.encode(admin.getPassword()));
-
-			Admin savedAdmin = adminService.registerAdmin(admin);
-			return ResponseEntity.ok(savedAdmin);
-		} catch (Exception ex) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during admin registration");
+		if (adminService.fetchAdminByEmail(admin.getEmail()) != null) {
+			throw new UserAlreadyExistsException("Admin with this email already exists!");
 		}
+
+		String password = admin.getPassword();
+		if (password == null || password.isEmpty()) {
+			throw new IllegalArgumentException("Password is required!");
+		}
+
+		if (password.length() < 6) {
+			throw new IllegalArgumentException("Password must be at least 6 characters long!");
+		}
+
+		if (admin.getRole() == null || admin.getRole().isEmpty()) {
+			admin.setRole("admin");
+		}
+
+		admin.setPassword(passwordEncoder.encode(admin.getPassword()));
+		Admin savedAdmin = adminService.registerAdmin(admin);
+		return ResponseEntity.ok(savedAdmin);
 	}
 
 	@PutMapping("/update/{email}")
 	public ResponseEntity<?> updateAdmin(@PathVariable String email, @RequestBody Admin updatedAdmin) {
-		try {
-			Admin updated = adminService.updateAdmin(email, updatedAdmin);
-			if (updated != null) {
-				return ResponseEntity.ok(updated);
-			} else {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Admin not found with the email: " + email);
-			}
-		} catch (Exception ex) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during admin update");
+		Admin updated = adminService.updateAdmin(email, updatedAdmin);
+		if (updated == null) {
+			throw new UserNotFoundException("Admin not found with the email: " + email);
 		}
+		return ResponseEntity.ok(updated);
 	}
 
 	@DeleteMapping("/delete/{email}")
 	public ResponseEntity<?> deleteAdmin(@PathVariable String email) {
-		try {
-			boolean deleted = adminService.deleteAdmin(email);
-			if (deleted) {
-				return ResponseEntity.ok("Admin with email " + email + " has been deleted successfully.");
-			} else {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Admin not found with the email: " + email);
-			}
-		} catch (Exception ex) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during admin deletion");
+		boolean deleted = adminService.deleteAdmin(email);
+		if (!deleted) {
+			throw new UserNotFoundException("Admin not found with the email: " + email);
 		}
+		return ResponseEntity.ok("Admin with email " + email + " has been deleted successfully.");
 	}
 
 	@PutMapping("/updateRole/{email}")
 	public ResponseEntity<?> updateRole(@PathVariable String email, @RequestParam String newRole) {
-		try {
-			User user = registerService.fetchUserByEmail(email); // Fetch user by email
-			if (user == null) {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-			}
-
-			if (!List.of("user", "volunteer", "admin", "superAdmin").contains(newRole)) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid role");
-			}
-
-			user.setRole(newRole);
-
-			registerService.saveUser(user);
-			return ResponseEntity.ok("User role updated successfully");
-		} catch (Exception ex) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating user role");
+		User user = registerService.fetchUserByEmail(email);
+		if (user == null) {
+			throw new UserNotFoundException("User not found");
 		}
+
+		if (!VALID_ROLES.contains(newRole)) {
+			throw new RoleUpdateFailedException("Invalid role");
+		}
+
+		user.setRole(newRole);
+		registerService.saveUser(user);
+		return ResponseEntity.ok("Role updated successfully");
 	}
 }

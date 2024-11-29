@@ -20,137 +20,88 @@ import com.application.repository.RequestingBloodRepository;
 
 @Service
 public class DonorService {
-	
+
 	@Autowired
 	private DonorRepository donorRepository;
 
 	@Autowired
 	private RequestingBloodRepository requestingBloodRepository;
 
-	/**
-	 * Save a new donor or update an existing donor.
-	 *
-	 * @param donor the donor object to be saved
-	 */
-//    public void saveDonor(Donor donor) {
-//        donorRepository.save(donor);
-//    }
-
-	/**
-	 * Retrieve all donors.
-	 *
-	 * @return a list of all donors
-	 */
-//    public List<Donor> getAllDonors() {
-//        return donorRepository.findAll();
-//    }
-
-	/**
-	 * Retrieve a donor by ID.
-	 *
-	 * @param id the ID of the donor
-	 * @return the donor object, or null if not found
-	 */
 	public Donor getDonorById(int id) {
 		Optional<Donor> donor = donorRepository.findById(id);
 		return donor.orElse(null);
 	}
 
-	/**
-	 * Delete a donor by ID.
-	 *
-	 * @param id the ID of the donor to be deleted
-	 */
-	public void deleteDonor(int id) {
-		donorRepository.deleteById(id);
+	public boolean deleteDonor(int id) {
+		Optional<Donor> donor = donorRepository.findById(id);
+		if (donor.isPresent()) {
+			donorRepository.deleteById(id);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
-	/**
-	 * Find donors by blood group.
-	 *
-	 * @param bloodGroup the blood group to search for
-	 * @return a list of donors with the specified blood group
-	 */
-    public List<Donor> getDonorsByBloodGroup(String bloodGroup) {
-        return donorRepository.findByBloodGroup(bloodGroup);
-    }
-    
-    public void saveBloodRequest(Requesting requesting) {
-    	requestingBloodRepository.save(requesting); // Assuming a JPA repository is available
-    }
-    
-    
-    public List<Requesting> getRequestHistoryByEmail(String email) {
-    	System.out.println("Fetching history for email: " + email);
-        return requestingBloodRepository.findByEmail(email);
-    }
-    
-    
-    public boolean updateRequestStatus(int id, String status) {
-        Optional<Requesting> request = requestingBloodRepository.findById(id);
-        if (request.isPresent()) {
-            Requesting req = request.get();
-            req.setStatus(status);
-            requestingBloodRepository.save(req);
-            return true;
-        }
-        return false;
-    }
+	public List<Donor> getDonorsByBloodGroup(String bloodGroup) {
+		return donorRepository.findByBloodGroup(bloodGroup);
+	}
 
-    
-    public List<Donor> getDonorsByUser(User user) {
-        return donorRepository.findByUser(user);
-    }
-    
-    public List<Requesting> getRequestHistoryByUser(User user) {
-        return requestingBloodRepository.findByUser(user);
-    }
+	public void saveBloodRequest(Requesting requesting) {
+		requestingBloodRepository.save(requesting); // Assuming a JPA repository is available
+	}
 
+	public List<Requesting> getRequestHistoryByEmail(String email) {
+		System.out.println("Fetching history for email: " + email);
+		return requestingBloodRepository.findByEmail(email);
+	}
 
+	public boolean updateRequestStatus(int id, String status) {
+		Optional<Requesting> request = requestingBloodRepository.findById(id);
+		if (request.isPresent()) {
+			Requesting req = request.get();
+			req.setStatus(status);
+			requestingBloodRepository.save(req);
+			return true;
+		}
+		return false;
+	}
 
-    public List<Requesting> getRequestsByBloodGroup(String bloodGroup) {
-        return requestingBloodRepository.findByBloodGroup(bloodGroup);
-    }
+	public List<Donor> getDonorsByUser(User user) {
+		return donorRepository.findByUser(user);
+	}
 
-    
-    
-    public List<Requesting> getRequestsByStatus(String status) {
-        return requestingBloodRepository.findByStatus(status);
-    }
+	public List<Requesting> getRequestHistoryByUser(User user) {
+		return requestingBloodRepository.findByUser(user);
+	}
 
-    
-    
-    public List<BloodDetails> getDonorUnitsByBloodGroup() {
-        // Fetch all donors from the database
-        List<Donor> donors = (List<Donor>) donorRepository.findAll();
+	public List<Requesting> getRequestsByBloodGroup(String bloodGroup) {
+		return requestingBloodRepository.findByBloodGroup(bloodGroup);
+	}
 
-        // Map to hold blood group and its aggregated units
-        Map<String, Integer> bloodGroupUnitsMap = new LinkedHashMap<>();
+	public List<Requesting> getRequestsByStatus(String status) {
+		return requestingBloodRepository.findByStatus(status);
+	}
 
-        // Aggregate the units by blood group
-        for (Donor donor : donors) {
-            String bloodGroup = donor.getBloodGroup();
-            int units = donor.getUnits();
+	public List<BloodDetails> getDonorUnitsByBloodGroup() {
 
-            bloodGroupUnitsMap.put(bloodGroup, bloodGroupUnitsMap.getOrDefault(bloodGroup, 0) + units);
-        }
+		List<Donor> donors = (List<Donor>) donorRepository.findAll();
 
-        // Convert the map to a list of BloodDetails objects
-        List<BloodDetails> bloodDetailsList = new ArrayList<>();
-        for (Map.Entry<String, Integer> entry : bloodGroupUnitsMap.entrySet()) {
-            bloodDetailsList.add(new BloodDetails(entry.getKey(), entry.getValue(), entry.getValue()));
-        }
+		Map<String, Integer> bloodGroupUnitsMap = new LinkedHashMap<>();
 
-        return bloodDetailsList;
-    }
-    
-    
-    
-    
-    
+		for (Donor donor : donors) {
+			String bloodGroup = donor.getBloodGroup();
+			int units = donor.getUnits();
 
-    
-    
+			bloodGroupUnitsMap.put(bloodGroup, bloodGroupUnitsMap.getOrDefault(bloodGroup, 0) + units);
+		}
+
+		List<BloodDetails> bloodDetailsList = new ArrayList<>();
+		for (Map.Entry<String, Integer> entry : bloodGroupUnitsMap.entrySet()) {
+			bloodDetailsList.add(new BloodDetails(entry.getKey(), entry.getValue(), entry.getValue()));
+		}
+
+		return bloodDetailsList;
+	}
 
 	public Donor saveDonor(Donor donor) {
 		return donorRepository.save(donor);
@@ -159,14 +110,6 @@ public class DonorService {
 	public Donor saveUserAsDonor(Donor donor) {
 		return donorRepository.save(donor);
 	}
-
-//	public Requesting saveBloodRequest(Requesting request) {
-//		return requestingBloodRepository.save(request);
-//	}
-
-//	public Donor fetchDonorByBloodGroup(String bloodGroup) {
-//		return donorRepository.findByBloodGroup(bloodGroup);
-//	}
 
 	public void updateStatus(String email) {
 		requestingBloodRepository.updateStatus(email);
@@ -177,10 +120,6 @@ public class DonorService {
 		requestingBloodRepository.rejectStatus(email);
 	}
 
-//	public Donor fetchDonorByGender(String gender) {
-//		return donorRepository.findByGender(gender);
-//	}
-
 	public List<Donor> getAllDonors() {
 		return (List<Donor>) donorRepository.findAll();
 	}
@@ -189,15 +128,11 @@ public class DonorService {
 		return (List<Requesting>) requestingBloodRepository.findAll();
 	}
 
-//	public List<Requesting> getRequestHistoryByEmail(String email) {
-//		return (List<Requesting>) requestingBloodRepository.findByEmail(email);
-//	}
-
 	public List<Donor> getBloodDetails() {
 		return (List<Donor>) donorRepository.findBloodDetails();
 	}
 
-	public void checkforOldBloodSamples(List<Donor> donors) {
+	public void checkForOldBloodSamples(List<Donor> donors) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = new Date();
 		String todayDate = formatter.format(date);

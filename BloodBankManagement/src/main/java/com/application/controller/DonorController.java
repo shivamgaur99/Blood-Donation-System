@@ -9,10 +9,11 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.application.constants.RequestStatus;
+import com.application.custom_excs.InvalidTokenException;
+import com.application.custom_excs.ResourceNotFoundException;
+import com.application.custom_excs.UserNotFoundException;
 import com.application.model.BloodDetails;
 import com.application.model.Donor;
 import com.application.model.Requesting;
@@ -31,7 +35,6 @@ import com.application.service.RegistrationService;
 import com.application.util.JwtUtils;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 public class DonorController {
 
 	@Autowired
@@ -43,338 +46,374 @@ public class DonorController {
 	@Autowired
 	private JwtUtils jwtUtils;
 
+	private static final Logger logger = LoggerFactory.getLogger(DonorController.class);
+
 	@PostMapping("/add")
 	public ResponseEntity<String> addDonor(@RequestBody Donor donor, HttpServletRequest request) {
-		try {
 
-			String token = extractTokenFromRequest(request);
+		String token = extractTokenFromRequest(request);
+		String email = jwtUtils.extractUsername(token);
 
-			if (token == null) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization token is required.");
-			}
-
-			String email = jwtUtils.extractUsername(token);
-
-			User user = userService.fetchUserByEmail(email);
-			if (user == null) {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
-			}
-
-			donor.setUser(user);
-
-			donorService.saveDonor(donor);
-
-			return ResponseEntity.status(HttpStatus.CREATED).body("Donor details added successfully.");
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
+		User user = userService.fetchUserByEmail(email);
+		if (user == null) {
+			throw new UserNotFoundException("User not found for email: " + email);
 		}
+
+		donor.setUser(user);
+		donorService.saveDonor(donor);
+
+		return ResponseEntity.status(HttpStatus.CREATED).body("Donor details added successfully.");
 	}
 
 	@GetMapping("/donorlist")
 	public ResponseEntity<List<Donor>> getAllDonors() {
 		List<Donor> donors = donorService.getAllDonors();
+		if (donors.isEmpty()) {
+			logger.info("No donors found in the database.");
+			return ResponseEntity.noContent().build();
+		}
+		logger.info("Retrieved {} donors from the database.", donors.size());
 		return ResponseEntity.ok(donors);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Object> getDonorById(@PathVariable int id) {
+	public ResponseEntity<Donor> getDonorById(@PathVariable int id) {
 		Donor donor = donorService.getDonorById(id);
-		if (donor != null) {
-			return ResponseEntity.ok(donor);
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Donor not found.");
+		if (donor == null) {
+			throw new ResourceNotFoundException("Donor with ID " + id + " not found.");
 		}
+		return ResponseEntity.ok(donor);
 	}
 
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<String> deleteDonor(@PathVariable int id) {
-		try {
-			donorService.deleteDonor(id);
-			return ResponseEntity.ok("Donor deleted successfully.");
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
+		// Attempt to delete the donor
+		boolean isDeleted = donorService.deleteDonor(id);
+
+		if (!isDeleted) {
+			// Donor not found in the system
+			throw new ResourceNotFoundException("Donor with ID " + id + " not found.");
 		}
+
+		// Return a success response
+		return ResponseEntity.ok("Donor deleted successfully.");
 	}
 
 	private String extractTokenFromRequest(HttpServletRequest request) {
 		String authorizationHeader = request.getHeader("Authorization");
-		if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-			return authorizationHeader.substring(7); // Remove "Bearer " prefix
+
+		if (authorizationHeader == null || authorizationHeader.trim().isEmpty()) {
+			logger.warn("Authorization header is missing or empty");
+			throw new InvalidTokenException("Authorization token is required but missing.");
 		}
-		return null;
+
+		if (!authorizationHeader.startsWith("Bearer ")) {
+			logger.warn("Authorization header does not start with 'Bearer ': {}", authorizationHeader);
+			throw new InvalidTokenException("Authorization token is invalid.");
+		}
+
+		String token = authorizationHeader.substring(7).trim();
+		if (token.isEmpty()) {
+			logger.warn("Token extracted from Authorization header is empty");
+			throw new InvalidTokenException("Authorization token is invalid or empty.");
+		}
+
+		return token;
 	}
 
 	@GetMapping("/blood-group/{bloodGroup}")
 	public ResponseEntity<List<Donor>> getDonorsByBloodGroup(@PathVariable String bloodGroup) {
+		// Validate the blood group format if needed
+		if (!isValidBloodGroup(bloodGroup)) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+
 		List<Donor> donors = donorService.getDonorsByBloodGroup(bloodGroup);
+
+		// Check if donors are found
 		if (!donors.isEmpty()) {
 			return ResponseEntity.ok(donors);
 		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			throw new ResourceNotFoundException("No donors found for blood group: " + bloodGroup);
 		}
+	}
+
+	// Helper method to validate blood group format (example)
+	private boolean isValidBloodGroup(String bloodGroup) {
+		// Implement your logic to validate blood group (e.g., "A+", "O-", etc.)
+		return bloodGroup.matches("^(A|B|AB|O)[+-]$");
 	}
 
 	@PostMapping("/blood-requests")
 	public ResponseEntity<String> addBloodRequest(@RequestBody Requesting requesting, HttpServletRequest request) {
-		try {
+		String token = extractTokenFromRequest(request);
+		String email = jwtUtils.extractUsername(token);
 
-			String token = extractTokenFromRequest(request);
-			if (token == null) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization token is required.");
-			}
-
-			String email = jwtUtils.extractUsername(token);
-
-			User user = userService.fetchUserByEmail(email);
-			if (user == null) {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
-			}
-
-			requesting.setUser(user);
-
-			requesting.setStatus(RequestStatus.PENDING.getStatus());
-
-			donorService.saveBloodRequest(requesting);
-
-			return ResponseEntity.status(HttpStatus.CREATED).body("Blood request created successfully.");
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body("An error occurred while processing the blood request: " + e.getMessage());
+		User user = userService.fetchUserByEmail(email);
+		if (user == null) {
+			throw new UserNotFoundException("User not found.");
 		}
+
+		requesting.setUser(user);
+		requesting.setStatus(RequestStatus.PENDING.getStatus());
+		donorService.saveBloodRequest(requesting);
+
+		logger.info("Blood request created successfully for user: {}", email);
+		return ResponseEntity.status(HttpStatus.CREATED).body("Blood request created successfully.");
 	}
 
 	@GetMapping("/requestHistory")
-	public ResponseEntity<List<Requesting>> getRequestHistory() throws Exception {
+	public ResponseEntity<List<Requesting>> getRequestHistory() {
 		List<Requesting> history = donorService.getRequestHistory();
-		return new ResponseEntity<List<Requesting>>(history, HttpStatus.OK);
+
+		if (history.isEmpty()) {
+			throw new ResourceNotFoundException("No request history found.");
+		}
+
+		return ResponseEntity.ok(history);
 	}
 
 	@GetMapping("/requestHistory/{email}")
 	public ResponseEntity<List<Requesting>> getRequestHistoryByEmail(@PathVariable String email) {
 		List<Requesting> history = donorService.getRequestHistoryByEmail(email);
-		if (!history.isEmpty()) {
-			return ResponseEntity.ok(history);
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+
+		if (history.isEmpty()) {
+			throw new ResourceNotFoundException("No request history found for email: " + email);
 		}
+
+		return ResponseEntity.ok(history);
 	}
 
 	@GetMapping("/userRequestHistory")
 	public ResponseEntity<List<Requesting>> getRequestHistoryByUser(HttpServletRequest request) {
-		try {
+		String token = extractTokenFromRequest(request);
+		String email = jwtUtils.extractUsername(token);
+		User user = userService.fetchUserByEmail(email);
 
-			String token = extractTokenFromRequest(request);
-			if (token == null) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-			}
-
-			String email = jwtUtils.extractUsername(token);
-			if (email == null) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-			}
-
-			User user = userService.fetchUserByEmail(email);
-			if (user == null) {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-			}
-
-			List<Requesting> requestHistory = donorService.getRequestHistoryByUser(user);
-			if (requestHistory.isEmpty()) {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-			}
-
-			return ResponseEntity.ok(requestHistory);
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		if (user == null) {
+			throw new UserNotFoundException("User not found with email: " + email);
 		}
+
+		List<Requesting> requestHistory = donorService.getRequestHistoryByUser(user);
+
+		if (requestHistory.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(requestHistory);
+		}
+
+		return ResponseEntity.ok(requestHistory);
 	}
 
 	@PutMapping("/blood-requests/{id}/approve")
 	public ResponseEntity<String> approveRequest(@PathVariable int id) {
 		boolean result = donorService.updateRequestStatus(id, RequestStatus.APPROVED.getStatus());
-		if (result) {
-			return ResponseEntity.ok("Request approved successfully.");
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Request not found.");
+
+		if (!result) {
+			throw new ResourceNotFoundException("Request with ID " + id + " not found.");
 		}
+
+		return ResponseEntity.ok("Request approved successfully.");
 	}
 
 	@PutMapping("/blood-requests/{id}/reject")
 	public ResponseEntity<String> rejectRequest(@PathVariable int id) {
 		boolean result = donorService.updateRequestStatus(id, RequestStatus.REJECTED.getStatus());
-		if (result) {
-			return ResponseEntity.ok("Request rejected successfully.");
-		} else {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Request not found.");
+
+		if (!result) {
+			throw new ResourceNotFoundException("Request with ID " + id + " not found.");
 		}
+
+		return ResponseEntity.ok("Request rejected successfully.");
 	}
 
 	@GetMapping("/userDonors")
 	public ResponseEntity<List<Donor>> getDonorsByUser(HttpServletRequest request) {
-		try {
+		String token = extractTokenFromRequest(request);
+		String email = jwtUtils.extractUsername(token);
 
-			String token = extractTokenFromRequest(request);
-			if (token == null) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-			}
-
-			String email = jwtUtils.extractUsername(token);
-			if (email == null) {
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-			}
-
-			User user = userService.fetchUserByEmail(email);
-			if (user == null) {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-			}
-
-			List<Donor> donors = donorService.getDonorsByUser(user);
-			return ResponseEntity.ok(donors);
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		if (email == null) {
+			throw new InvalidTokenException("Invalid or missing token.");
 		}
+
+		User user = userService.fetchUserByEmail(email);
+		if (user == null) {
+			throw new UserNotFoundException("User not found for email: " + email);
+		}
+
+		List<Donor> donors = donorService.getDonorsByUser(user);
+		return ResponseEntity.ok(donors);
 	}
 
 	@GetMapping("/requestsByBloodGroup/{bloodGroup}")
 	public ResponseEntity<List<Requesting>> getRequestsByBloodGroup(@PathVariable String bloodGroup) {
-		try {
-			List<Requesting> requests = donorService.getRequestsByBloodGroup(bloodGroup);
-			if (requests.isEmpty()) {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-			}
-			return ResponseEntity.ok(requests);
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		List<Requesting> requests = donorService.getRequestsByBloodGroup(bloodGroup);
+
+		if (requests.isEmpty()) {
+			throw new ResourceNotFoundException("No requests found for blood group: " + bloodGroup);
 		}
+
+		return ResponseEntity.ok(requests);
 	}
 
 	@PutMapping("/updateDonor/{id}")
 	public ResponseEntity<String> updateDonor(@PathVariable int id, @RequestBody Donor updatedDonor) {
-		try {
-			Donor existingDonor = donorService.getDonorById(id);
-			if (existingDonor == null) {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Donor not found.");
-			}
-
-			existingDonor.setName(updatedDonor.getName());
-			existingDonor.setBloodGroup(updatedDonor.getBloodGroup());
-			existingDonor.setUnits(updatedDonor.getUnits());
-
-			donorService.saveDonor(existingDonor);
-			return ResponseEntity.ok("Donor updated successfully.");
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
+		Donor existingDonor = donorService.getDonorById(id);
+		if (existingDonor == null) {
+			throw new ResourceNotFoundException("Donor with ID " + id + " not found.");
 		}
+
+		existingDonor.setName(updatedDonor.getName());
+		existingDonor.setBloodGroup(updatedDonor.getBloodGroup());
+		existingDonor.setUnits(updatedDonor.getUnits());
+
+		donorService.saveDonor(existingDonor);
+		return ResponseEntity.ok("Donor updated successfully.");
 	}
 
 	@GetMapping("/requestsByStatus/{status}")
 	public ResponseEntity<List<Requesting>> getRequestsByStatus(@PathVariable String status) {
-		try {
-			List<Requesting> requests = donorService.getRequestsByStatus(status);
-			if (requests.isEmpty()) {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-			}
-			return ResponseEntity.ok(requests);
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		List<Requesting> requests = donorService.getRequestsByStatus(status);
+		if (requests.isEmpty()) {
+			throw new ResourceNotFoundException("No requests found with status: " + status);
 		}
+		return ResponseEntity.ok(requests);
 	}
 
 	@GetMapping("/donorUnitsByBloodGroup")
 	public ResponseEntity<List<BloodDetails>> getDonorUnitsByBloodGroup() {
-		try {
-			List<BloodDetails> bloodDetails = donorService.getDonorUnitsByBloodGroup();
-			return ResponseEntity.ok(bloodDetails);
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		List<BloodDetails> bloodDetails = donorService.getDonorUnitsByBloodGroup();
+		if (bloodDetails.isEmpty()) {
+			throw new ResourceNotFoundException("No donor units found by blood group.");
 		}
+		return ResponseEntity.ok(bloodDetails);
 	}
 
 	@GetMapping("/bloodDetails")
-	public ResponseEntity<List<BloodDetails>> getBloodDetails() throws Exception {
+	public ResponseEntity<List<BloodDetails>> getBloodDetails() {
 		List<Donor> bloodDetails = donorService.getBloodDetails();
 
+		if (bloodDetails.isEmpty()) {
+			throw new ResourceNotFoundException("No blood details available.");
+		}
+
 		List<Donor> donors = donorService.getAllDonors();
-		donorService.checkforOldBloodSamples(donors);
+		donorService.checkForOldBloodSamples(donors);
 
 		List<String> groups = new ArrayList<>();
 		List<Integer> units = new ArrayList<>();
 		Map<String, Integer> details = new LinkedHashMap<>();
 		for (Donor donor : bloodDetails) {
-			if (details.containsKey(donor.getBloodGroup()))
-				details.put(donor.getBloodGroup(), details.get(donor.getBloodGroup()) + 1);
-			else
-				details.put(donor.getBloodGroup(), 1);
-			if (groups.contains(donor.getBloodGroup())) {
-				int index = groups.indexOf(donor.getBloodGroup());
+			details.put(donor.getBloodGroup(), details.getOrDefault(donor.getBloodGroup(), 0) + 1);
+
+			int index = groups.indexOf(donor.getBloodGroup());
+			if (index >= 0) {
 				units.set(index, units.get(index) + donor.getUnits());
 			} else {
 				groups.add(donor.getBloodGroup());
 				units.add(donor.getUnits());
 			}
 		}
+
 		List<BloodDetails> result = new ArrayList<>();
-		for (Map.Entry<String, Integer> m : details.entrySet()) {
-			result.add(new BloodDetails(m.getKey(), m.getValue(), units.get(0)));
+		for (Map.Entry<String, Integer> entry : details.entrySet()) {
+			result.add(new BloodDetails(entry.getKey(), entry.getValue(), units.get(0)));
 			units.remove(0);
 		}
-		return new ResponseEntity<List<BloodDetails>>(result, HttpStatus.OK);
+
+		return ResponseEntity.ok(result);
 	}
 
 	@GetMapping("/getTotalDonors")
-	public ResponseEntity<List<Integer>> getTotalDonors() throws Exception {
+	public ResponseEntity<List<Integer>> getTotalDonors() {
 		List<Donor> donors = donorService.getAllDonors();
 
-		donorService.checkforOldBloodSamples(donors);
+		if (donors.isEmpty()) {
+			throw new ResourceNotFoundException("No donors found.");
+		}
 
-		List<Integer> al = new ArrayList<>();
-		al.add(donors.size());
-		return new ResponseEntity<List<Integer>>(al, HttpStatus.OK);
+		donorService.checkForOldBloodSamples(donors);
+
+		List<Integer> totalDonors = new ArrayList<>();
+		totalDonors.add(donors.size());
+		return ResponseEntity.ok(totalDonors);
 	}
 
 	@GetMapping("/getTotalBloodGroups")
-	public ResponseEntity<List<Integer>> getTotalBloodGroups() throws Exception {
+	public ResponseEntity<List<Integer>> getTotalBloodGroups() {
 		List<Donor> bloodDetails = donorService.getBloodDetails();
-		Set<String> set = new LinkedHashSet<>();
-		for (Donor details : bloodDetails) {
-			set.add(details.getBloodGroup());
+
+		if (bloodDetails.isEmpty()) {
+			throw new ResourceNotFoundException("No blood details found.");
 		}
-		List<Integer> al = new ArrayList<>();
-		al.add(set.size());
-		return new ResponseEntity<List<Integer>>(al, HttpStatus.OK);
+
+		Set<String> bloodGroups = new LinkedHashSet<>();
+		for (Donor donor : bloodDetails) {
+			bloodGroups.add(donor.getBloodGroup());
+		}
+
+		List<Integer> totalBloodGroups = new ArrayList<>();
+		totalBloodGroups.add(bloodGroups.size());
+		return ResponseEntity.ok(totalBloodGroups);
 	}
 
 	@GetMapping("/getTotalUnits")
-	public ResponseEntity<List<Integer>> getTotalUnits() throws Exception {
-		List<Donor> bloodDetails = donorService.getBloodDetails();
-		int units = 0;
-		for (Donor details : bloodDetails) {
-			units += details.getUnits();
+	public ResponseEntity<List<Integer>> getTotalUnits() {
+		try {
+			List<Donor> bloodDetails = donorService.getBloodDetails();
+			int totalUnits = bloodDetails.stream().mapToInt(Donor::getUnits).sum();
+			List<Integer> result = new ArrayList<>();
+			result.add(totalUnits);
+			return ResponseEntity.ok(result);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
-		List<Integer> al = new ArrayList<>();
-		al.add(units);
-		return new ResponseEntity<List<Integer>>(al, HttpStatus.OK);
 	}
 
 	@GetMapping("/getTotalRequests/{email}")
-	public ResponseEntity<List<Integer>> getTotalRequests(@PathVariable String email) throws Exception {
-		List<Requesting> history = donorService.getRequestHistoryByEmail(email);
-		List<Integer> al = new ArrayList<>();
-		al.add(history.size());
-		return new ResponseEntity<List<Integer>>(al, HttpStatus.OK);
+	public ResponseEntity<List<Integer>> getTotalRequests(@PathVariable String email) {
+		try {
+			List<Requesting> requestHistory = donorService.getRequestHistoryByEmail(email);
+			List<Integer> result = new ArrayList<>();
+			result.add(requestHistory.size());
+			return ResponseEntity.ok(result);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
 	}
 
 	@GetMapping("/getTotalDonationCount/{email}")
-	public ResponseEntity<List<Integer>> getTotalDonationCount(@PathVariable String email) throws Exception {
-		List<Donor> donors = donorService.getAllDonors();
-		List<Integer> al = new ArrayList<>();
-		int count = 0;
-		for (Donor val : donors) {
-			if (val.getName().equalsIgnoreCase("gowtham"))
-				count++;
+	public ResponseEntity<List<Integer>> getTotalDonationCount(@PathVariable String email) {
+		try {
+			// Get all Donor records
+			List<Donor> donors = donorService.getAllDonors();
+
+			// Count the donations by this specific user
+			long donationCount = donors.stream()
+					.filter(donor -> donor.getUser() != null && donor.getUser().getEmail().equalsIgnoreCase(email))
+					.count();
+
+			List<Integer> result = new ArrayList<>();
+			result.add((int) donationCount);
+
+			return ResponseEntity.ok(result);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
-		al.add(count);
-		return new ResponseEntity<List<Integer>>(al, HttpStatus.OK);
 	}
 
+	@GetMapping("/getTotalDonations")
+	public ResponseEntity<List<Integer>> getTotalDonations() {
+		try {
+
+			List<Donor> donors = donorService.getAllDonors();
+
+			long donationCount = donors.size();
+
+			List<Integer> result = new ArrayList<>();
+			result.add((int) donationCount);
+
+			return ResponseEntity.ok(result);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+	}
 }
