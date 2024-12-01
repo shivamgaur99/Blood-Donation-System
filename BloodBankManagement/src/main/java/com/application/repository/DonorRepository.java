@@ -15,17 +15,14 @@ import com.application.model.User;
 
 public interface DonorRepository extends JpaRepository<Donor, Integer> {
 
-	// Native query to find all donors
 	@Query(value = "select * from donor", nativeQuery = true)
 	public List<Donor> findBloodDetails();
 
-	// Delete donor by name (native query with @Modifying and @Transactional)
 	@Transactional
 	@Modifying
 	@Query(value = "delete from donor where name = ?1", nativeQuery = true)
 	public void deleteByUsername(String name);
 
-	// Custom query methods
 	List<Donor> findByBloodGroup(String bloodGroup);
 
 	List<Donor> findByCity(String city);

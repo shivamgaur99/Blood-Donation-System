@@ -16,7 +16,6 @@ public enum Role {
         return role;
     }
 
-    // Optionally: add a method to get an enum by its string value
     public static Role fromString(String role) {
         for (Role r : Role.values()) {
             if (r.role.equalsIgnoreCase(role)) {

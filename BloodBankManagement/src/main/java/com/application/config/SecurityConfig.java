@@ -24,8 +24,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.application.filter.JwtFilter;
-import com.application.service.AdminService;
-import com.application.service.RegistrationService;
+import com.application.service.UserDetailsServiceImpl;
 
 @Configuration
 @EnableWebSecurity
@@ -35,18 +34,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private String frontendUrl;
 
 	@Autowired
-	private RegistrationService userService;
-
-	@Autowired
-	private AdminService adminService;
+	private UserDetailsServiceImpl userDetailsService;
 
 	@Autowired
 	private JwtFilter jwtFilter;
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
-		auth.userDetailsService(adminService).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
 	}
 
 	@Bean
@@ -75,8 +70,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			}
 		})).csrf(csrf -> csrf.disable())
 				.authorizeRequests(requests -> requests.antMatchers("/", "/authenticate").permitAll()
-						.antMatchers("/admin/login", "/admin/register", "/user/login", "/user/register").permitAll()
-						.anyRequest().fullyAuthenticated())
+						.antMatchers("/login", "/admin/login", "/admin/register", "/user/login", "/user/register")
+						.permitAll().anyRequest().fullyAuthenticated())
 				.exceptionHandling(
 						handling -> handling.accessDeniedHandler((request, response, accessDeniedException) -> {
 							AccessDeniedHandler defaultAccessDeniedHandler = new AccessDeniedHandlerImpl();

@@ -2,10 +2,15 @@ package com.application.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,17 +18,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.application.BloodBankManagementApplication;
 import com.application.custom_excs.InvalidCredentialsException;
-import com.application.custom_excs.RoleUpdateFailedException;
 import com.application.custom_excs.UserAlreadyExistsException;
 import com.application.custom_excs.UserNotFoundException;
 import com.application.model.AuthRequest;
 import com.application.model.JwtResponse;
 import com.application.model.User;
 import com.application.service.RegistrationService;
+import com.application.service.UserDetailsServiceImpl;
 import com.application.util.JwtUtils;
 
 @RestController
@@ -39,9 +44,12 @@ public class RegistrationController {
 	private AuthenticationManager authenticationManager;
 
 	@Autowired
+	private UserDetailsServiceImpl userDetailsService;
+
+	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	private static final List<String> VALID_ROLES = List.of("user", "volunteer", "admin", "superAdmin");
+	private static final Logger logger = LoggerFactory.getLogger(BloodBankManagementApplication.class);
 
 	@GetMapping("/")
 	public String welcomeMessage() {
@@ -61,6 +69,28 @@ public class RegistrationController {
 
 		String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
 		return ResponseEntity.ok(token);
+	}
+
+	@PostMapping("/login")
+	public ResponseEntity<String> login(@RequestBody User user) {
+
+		if (user.getEmail() == null || user.getPassword() == null) {
+			throw new IllegalArgumentException("Email and password are required.");
+		}
+
+		try {
+			authenticationManager
+					.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
+			UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
+			String token = jwtUtil.generateToken(userDetails.getUsername());
+			return new ResponseEntity<>(token, HttpStatus.OK);
+		} catch (BadCredentialsException e) {
+			logger.warn("Invalid credentials for email: {}", user.getEmail());
+			return new ResponseEntity<>("Incorrect username or password", HttpStatus.UNAUTHORIZED);
+		} catch (Exception e) {
+			logger.error("Unexpected error during login", e);
+			return new ResponseEntity<>("An error occurred during login", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	@PostMapping("/user/login")
