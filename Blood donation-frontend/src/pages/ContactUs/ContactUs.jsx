@@ -1,100 +1,103 @@
 import React, { useState } from "react";
-import './contact-us.css'; // Import your custom CSS for styling
+import ReCAPTCHA from "react-google-recaptcha";
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: '',
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
   });
+
+  const [captchaToken, setCaptchaToken] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleCaptchaChange = (token) => {
+    setCaptchaToken(token);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert('Your message has been sent!');
-    // Here you would typically handle the form submission to your server
+    if (!captchaToken) {
+      setErrorMessage("Please complete the CAPTCHA");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8080/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formData, captchaToken }),
+      });
+
+      if (response.ok) {
+        setSuccessMessage("Thank you for your message! We'll get back to you soon.");
+        setErrorMessage("");
+        setFormData({ name: "", email: "", subject: "", message: "" });
+        setCaptchaToken(null);
+      } else {
+        const error = await response.text();
+        setErrorMessage(error || "Failed to submit the form.");
+      }
+    } catch (error) {
+      setErrorMessage("An error occurred. Please try again.");
+    }
   };
 
   return (
-    <div className="contact-us-container">
-      {/* Hero Section */}
-      {/* <section className="contact-hero">
-        <div className="contact-hero-overlay">
-          <h1>Connect With Us</h1>
-          <p>We're here to guide you. Reach out and make a difference.</p>
-        </div>
-      </section> */}
-
-      {/* Contact Details Section */}
-      <section className="contact-details">
-        <div className="container">
-          <h2>Ways to Reach Us</h2>
-          <div className="contact-info">
-            <div className="contact-item">
-              <h3>📞 Call Us</h3>
-              <p>+1 (555) 123-4567</p>
-            </div>
-            <div className="contact-item">
-              <h3>📧 Email</h3>
-              <p>contact@lifegivers.org</p>
-            </div>
-            <div className="contact-item">
-              <h3>📍 Office Location</h3>
-              <p>123 Hope Street, Compassion City</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Form Section */}
-      <section className="contact-form">
-        <div className="container">
-          <h2>Send Us a Message</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="name">Full Name</label>
-              <input
-                type="text"
-                name="name"
-                id="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Your Name"
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="email">Email Address</label>
-              <input
-                type="email"
-                name="email"
-                id="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Your Email"
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="message">Your Message</label>
-              <textarea
-                name="message"
-                id="message"
-                value={formData.message}
-                onChange={handleChange}
-                placeholder="Write your message here"
-                rows="5"
-                required
-              ></textarea>
-            </div>
-            <button type="submit" className="submit-btn">Send Message</button>
-          </form>
-        </div>
-      </section>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label>Name:</label>
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div>
+        <label>Email:</label>
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div>
+        <label>Subject:</label>
+        <input
+          type="text"
+          name="subject"
+          value={formData.subject}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div>
+        <label>Message:</label>
+        <textarea
+          name="message"
+          value={formData.message}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <ReCAPTCHA
+        sitekey="YOUR_RECAPTCHA_SITE_KEY" // Replace with your reCAPTCHA site key
+        onChange={handleCaptchaChange}
+      />
+      <button type="submit">Submit</button>
+      {successMessage && <p>{successMessage}</p>}
+      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+    </form>
   );
 };
 

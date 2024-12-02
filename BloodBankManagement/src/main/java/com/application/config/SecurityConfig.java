@@ -69,9 +69,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				return corsConfiguration;
 			}
 		})).csrf(csrf -> csrf.disable())
-				.authorizeRequests(requests -> requests.antMatchers("/", "/authenticate").permitAll()
-						.antMatchers("/login", "/admin/login", "/admin/register", "/user/login", "/user/register")
-						.permitAll().anyRequest().fullyAuthenticated())
+				.authorizeRequests(requests -> requests.antMatchers("/", "/login", "/contact-us").permitAll()
+						.antMatchers("/admin/login", "/admin/register", "/user/login", "/user/register").permitAll()
+						.anyRequest().fullyAuthenticated())
 				.exceptionHandling(
 						handling -> handling.accessDeniedHandler((request, response, accessDeniedException) -> {
 							AccessDeniedHandler defaultAccessDeniedHandler = new AccessDeniedHandlerImpl();

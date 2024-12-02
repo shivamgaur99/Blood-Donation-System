@@ -31,7 +31,7 @@ import com.application.model.Donor;
 import com.application.model.Requesting;
 import com.application.model.User;
 import com.application.service.DonorService;
-import com.application.service.RegistrationService;
+import com.application.service.UserService;
 import com.application.util.JwtUtils;
 
 @RestController
@@ -41,7 +41,7 @@ public class DonorController {
 	private DonorService donorService;
 
 	@Autowired
-	private RegistrationService userService;
+	private UserService userService;
 
 	@Autowired
 	private JwtUtils jwtUtils;

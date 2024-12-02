@@ -18,24 +18,25 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.application.BloodBankManagementApplication;
 import com.application.custom_excs.InvalidCredentialsException;
 import com.application.custom_excs.UserAlreadyExistsException;
 import com.application.custom_excs.UserNotFoundException;
 import com.application.model.AuthRequest;
 import com.application.model.JwtResponse;
 import com.application.model.User;
-import com.application.service.RegistrationService;
 import com.application.service.UserDetailsServiceImpl;
+import com.application.service.UserService;
 import com.application.util.JwtUtils;
 
 @RestController
-public class RegistrationController {
+@RequestMapping("/user")
+public class UserController {
 
 	@Autowired
-	private RegistrationService userService;
+	private UserService userService;
 
 	@Autowired
 	private JwtUtils jwtUtil;
@@ -44,17 +45,7 @@ public class RegistrationController {
 	private AuthenticationManager authenticationManager;
 
 	@Autowired
-	private UserDetailsServiceImpl userDetailsService;
-
-	@Autowired
 	private PasswordEncoder passwordEncoder;
-
-	private static final Logger logger = LoggerFactory.getLogger(BloodBankManagementApplication.class);
-
-	@GetMapping("/")
-	public String welcomeMessage() {
-		return "Welcome to Blood Bank Management system !!!";
-	}
 
 	@PostMapping("/authenticate")
 	public ResponseEntity<String> authenticate(@RequestBody AuthRequest authRequest) {
@@ -72,28 +63,6 @@ public class RegistrationController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<String> login(@RequestBody User user) {
-
-		if (user.getEmail() == null || user.getPassword() == null) {
-			throw new IllegalArgumentException("Email and password are required.");
-		}
-
-		try {
-			authenticationManager
-					.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
-			UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
-			String token = jwtUtil.generateToken(userDetails.getUsername());
-			return new ResponseEntity<>(token, HttpStatus.OK);
-		} catch (BadCredentialsException e) {
-			logger.warn("Invalid credentials for email: {}", user.getEmail());
-			return new ResponseEntity<>("Incorrect username or password", HttpStatus.UNAUTHORIZED);
-		} catch (Exception e) {
-			logger.error("Unexpected error during login", e);
-			return new ResponseEntity<>("An error occurred during login", HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-
-	@PostMapping("/user/login")
 	public ResponseEntity<?> loginUser(@RequestBody User user) {
 		if (user.getEmail() == null || user.getPassword() == null) {
 			throw new IllegalArgumentException("Email and password are required.");
@@ -109,7 +78,7 @@ public class RegistrationController {
 		return ResponseEntity.ok(new JwtResponse(token, authenticatedUser.getEmail()));
 	}
 
-	@PostMapping("/user/register")
+	@PostMapping("/register")
 	public ResponseEntity<?> registerUser(@RequestBody User user) {
 		if (user.getEmail() == null || user.getEmail().isEmpty()) {
 			throw new IllegalArgumentException("Email is required for registration!");
@@ -135,7 +104,7 @@ public class RegistrationController {
 		return ResponseEntity.ok(savedUser);
 	}
 
-	@PutMapping("/user/update/{email}")
+	@PutMapping("/update/{email}")
 	public ResponseEntity<?> updateUserProfile(@PathVariable String email, @RequestBody User user) {
 		User updatedUser = userService.updateUserProfile(email, user);
 		if (updatedUser == null) {
@@ -144,7 +113,7 @@ public class RegistrationController {
 		return ResponseEntity.ok(updatedUser);
 	}
 
-	@DeleteMapping("/user/delete/{email}")
+	@DeleteMapping("/delete/{email}")
 	public ResponseEntity<String> deleteUser(@PathVariable String email) {
 		User user = userService.fetchUserByEmail(email);
 		if (user == null) {

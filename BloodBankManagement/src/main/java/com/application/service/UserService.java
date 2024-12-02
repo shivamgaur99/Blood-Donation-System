@@ -12,7 +12,7 @@ import com.application.model.User;
 import com.application.repository.UserRepository;
 
 @Service
-public class RegistrationService {
+public class UserService {
 	@Autowired
 	private UserRepository userRepository;
 

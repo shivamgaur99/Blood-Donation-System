@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,10 +21,12 @@ import com.application.custom_excs.UserAlreadyExistsException;
 import com.application.custom_excs.UserNotFoundException;
 import com.application.model.Admin;
 import com.application.model.AuthRequest;
+import com.application.model.ContactUs;
 import com.application.model.JwtResponse;
 import com.application.model.User;
 import com.application.service.AdminService;
-import com.application.service.RegistrationService;
+import com.application.service.ContactUsService;
+import com.application.service.UserService;
 import com.application.util.JwtUtils;
 
 @RestController
@@ -35,7 +37,10 @@ public class AdminController {
 	private AdminService adminService;
 
 	@Autowired
-	private RegistrationService registerService;
+	private UserService registerService;
+
+	@Autowired
+	private ContactUsService contactUsService;
 
 	@Autowired
 	private JwtUtils jwtUtils;
@@ -112,5 +117,11 @@ public class AdminController {
 		user.setRole(newRole);
 		registerService.saveUser(user);
 		return ResponseEntity.ok("Role updated successfully");
+	}
+
+	@GetMapping("/contact-us/all")
+	public ResponseEntity<List<ContactUs>> getAllContactForms() {
+		List<ContactUs> contactForms = contactUsService.getAllContactForms();
+		return ResponseEntity.ok(contactForms);
 	}
 }

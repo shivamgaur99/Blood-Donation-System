@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.application.service.AdminService;
-import com.application.service.RegistrationService;
+import com.application.service.UserService;
 import com.application.util.JwtUtils;
 
 @Component
@@ -26,7 +26,7 @@ public class JwtFilter extends OncePerRequestFilter
 	    private JwtUtils jwtUtil;
 	 
 	    @Autowired
-	    private RegistrationService userService;
+	    private UserService userService;
 	    
 	    @Autowired
 	    private AdminService adminService;
