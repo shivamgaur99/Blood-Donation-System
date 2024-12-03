@@ -17,7 +17,7 @@ public class ErrorResponse {
         this.errorCode = errorCode;
         this.message = message;
         this.status = status;
-        this.timestamp = LocalDateTime.now();  // Automatically include the timestamp
+        this.timestamp = LocalDateTime.now();  
     }
 
     public String getErrorCode() {

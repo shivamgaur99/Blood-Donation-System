@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.application.model.User;
@@ -13,8 +14,12 @@ import com.application.repository.UserRepository;
 
 @Service
 public class UserService {
+
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private PasswordEncoder bCryptPasswordEncoder;
 
 	public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
 		User user = userRepository.findByEmail(email);
@@ -27,7 +32,6 @@ public class UserService {
 	}
 
 	public User updateUserProfile(String email, User user) {
-
 		User existingUser = userRepository.findByEmail(email);
 
 		if (existingUser != null) {
@@ -36,8 +40,16 @@ public class UserService {
 			existingUser.setBloodgroup(user.getBloodgroup());
 			existingUser.setGender(user.getGender());
 			existingUser.setAge(user.getAge());
-			existingUser.setPassword(user.getPassword());
 
+			// Check if the password is updated. If so, hash it before saving.
+			if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+				existingUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+			} else {
+				// If no new password is provided, retain the existing one
+				existingUser.setPassword(existingUser.getPassword());
+			}
+
+			// Only update the role if it's provided (optional)
 			if (user.getRole() != null && !user.getRole().isEmpty()) {
 				existingUser.setRole(user.getRole());
 			}
@@ -47,7 +59,6 @@ public class UserService {
 		} else {
 			return null;
 		}
-
 	}
 
 	public void deleteUserByEmail(String email) {

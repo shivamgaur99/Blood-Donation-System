@@ -2,6 +2,8 @@ package com.application.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.application.constants.Role;
 import com.application.custom_excs.InvalidCredentialsException;
-import com.application.custom_excs.RoleUpdateFailedException;
 import com.application.custom_excs.UserAlreadyExistsException;
 import com.application.custom_excs.UserNotFoundException;
 import com.application.model.Admin;
@@ -48,8 +50,6 @@ public class AdminController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	private static final List<String> VALID_ROLES = List.of("user", "volunteer", "admin", "superAdmin");
-
 	@PostMapping("/login")
 	public ResponseEntity<?> loginAdmin(@RequestBody AuthRequest authRequest) {
 		Admin admin = adminService.fetchAdminByEmail(authRequest.getEmail());
@@ -62,7 +62,7 @@ public class AdminController {
 	}
 
 	@PostMapping("/register")
-	public ResponseEntity<?> registerAdmin(@RequestBody Admin admin) {
+	public ResponseEntity<?> registerAdmin(@Valid @RequestBody Admin admin) {
 		if (adminService.fetchAdminByEmail(admin.getEmail()) != null) {
 			throw new UserAlreadyExistsException("Admin with this email already exists!");
 		}
@@ -76,8 +76,11 @@ public class AdminController {
 			throw new IllegalArgumentException("Password must be at least 6 characters long!");
 		}
 
-		if (admin.getRole() == null || admin.getRole().isEmpty()) {
-			admin.setRole("admin");
+		if (admin.getRole() != null && !admin.getRole().isEmpty()) {
+			Role role = Role.fromString(admin.getRole());
+			admin.setRole(role.getRole());
+		} else {
+			admin.setRole(Role.ADMIN.getRole());
 		}
 
 		admin.setPassword(passwordEncoder.encode(admin.getPassword()));
@@ -110,11 +113,8 @@ public class AdminController {
 			throw new UserNotFoundException("User not found");
 		}
 
-		if (!VALID_ROLES.contains(newRole)) {
-			throw new RoleUpdateFailedException("Invalid role");
-		}
-
-		user.setRole(newRole);
+		Role role = Role.fromString(newRole);
+		user.setRole(role.getRole());
 		registerService.saveUser(user);
 		return ResponseEntity.ok("Role updated successfully");
 	}

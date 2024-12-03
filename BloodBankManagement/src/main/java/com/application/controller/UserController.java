@@ -2,15 +2,12 @@ package com.application.controller;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,13 +18,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.application.constants.Role;
 import com.application.custom_excs.InvalidCredentialsException;
 import com.application.custom_excs.UserAlreadyExistsException;
 import com.application.custom_excs.UserNotFoundException;
 import com.application.model.AuthRequest;
 import com.application.model.JwtResponse;
 import com.application.model.User;
-import com.application.service.UserDetailsServiceImpl;
 import com.application.service.UserService;
 import com.application.util.JwtUtils;
 
@@ -79,7 +76,7 @@ public class UserController {
 	}
 
 	@PostMapping("/register")
-	public ResponseEntity<?> registerUser(@RequestBody User user) {
+	public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
 		if (user.getEmail() == null || user.getEmail().isEmpty()) {
 			throw new IllegalArgumentException("Email is required for registration!");
 		}
@@ -98,7 +95,13 @@ public class UserController {
 
 		String hashedPassword = passwordEncoder.encode(user.getPassword());
 		user.setPassword(hashedPassword);
-		user.setRole(user.getRole() == null || user.getRole().isEmpty() ? "user" : user.getRole());
+
+		if (user.getRole() != null && !user.getRole().isEmpty()) {
+			Role role = Role.fromString(user.getRole());
+			user.setRole(role.getRole());
+		} else {
+			user.setRole(Role.USER.getRole());
+		}
 
 		User savedUser = userService.saveUser(user);
 		return ResponseEntity.ok(savedUser);

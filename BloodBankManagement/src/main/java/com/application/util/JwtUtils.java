@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.application.constants.Role;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -66,8 +68,14 @@ public class JwtUtils {
 		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
 	}
 
-	public boolean isAdminToken(String token) {
-		String role = extractClaim(token, claims -> claims.get("role", String.class));
-		return "ADMIN".equalsIgnoreCase(role) || "SUPER_ADMIN".equalsIgnoreCase(role);
-	}
+	 // Checks if the token contains an admin role
+    public boolean isAdminToken(String token) {
+        String roleString = extractClaim(token, claims -> claims.get("role", String.class));
+        try {
+            Role role = Role.fromString(roleString); 
+            return role == Role.ADMIN || role == Role.SUPER_ADMIN;
+        } catch (IllegalArgumentException e) {
+            return false; 
+        }
+    }
 }

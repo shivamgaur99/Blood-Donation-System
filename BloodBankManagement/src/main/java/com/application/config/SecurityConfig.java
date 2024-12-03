@@ -69,7 +69,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				return corsConfiguration;
 			}
 		})).csrf(csrf -> csrf.disable())
-				.authorizeRequests(requests -> requests.antMatchers("/", "/login", "/contact-us").permitAll()
+				.authorizeRequests(requests -> requests
+						.antMatchers("/", "/login", "/contact-us", "/volunteers/register").permitAll()
 						.antMatchers("/admin/login", "/admin/register", "/user/login", "/user/register").permitAll()
 						.anyRequest().fullyAuthenticated())
 				.exceptionHandling(

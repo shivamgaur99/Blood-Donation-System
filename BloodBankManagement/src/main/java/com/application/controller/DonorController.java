@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,7 @@ public class DonorController {
 	private static final Logger logger = LoggerFactory.getLogger(DonorController.class);
 
 	@PostMapping("/add")
-	public ResponseEntity<String> addDonor(@RequestBody Donor donor, HttpServletRequest request) {
+	public ResponseEntity<String> addDonor(@Valid @RequestBody Donor donor, HttpServletRequest request) {
 
 		String token = extractTokenFromRequest(request);
 		String email = jwtUtils.extractUsername(token);
@@ -145,7 +146,7 @@ public class DonorController {
 	}
 
 	@PostMapping("/blood-requests")
-	public ResponseEntity<String> addBloodRequest(@RequestBody Requesting requesting, HttpServletRequest request) {
+	public ResponseEntity<String> addBloodRequest(@Valid @RequestBody Requesting requesting, HttpServletRequest request) {
 		String token = extractTokenFromRequest(request);
 		String email = jwtUtils.extractUsername(token);
 
