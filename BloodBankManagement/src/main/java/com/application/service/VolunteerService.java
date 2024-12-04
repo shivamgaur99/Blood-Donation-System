@@ -29,23 +29,35 @@ public class VolunteerService {
 	}
 
 	public Volunteer updateVolunteer(Long id, Volunteer volunteerDetails) {
-		Volunteer existingVolunteer = getVolunteerById(id);
+	    // Fetch existing volunteer from the database
+	    Volunteer existingVolunteer = getVolunteerById(id); // Assuming this method fetches the Volunteer by ID
 
-		existingVolunteer.setFirstName(volunteerDetails.getFirstName());
-		existingVolunteer.setLastName(volunteerDetails.getLastName());
-		existingVolunteer.setEmail(volunteerDetails.getEmail());
-		existingVolunteer.setPhone(volunteerDetails.getPhone());
-		existingVolunteer.setAddress(volunteerDetails.getAddress());
-		existingVolunteer.setEmergencyContactName(volunteerDetails.getEmergencyContactName());
-		existingVolunteer.setEmergencyContactPhone(volunteerDetails.getEmergencyContactPhone());
-		existingVolunteer.setRole(volunteerDetails.getRole());
-		existingVolunteer.setFirstTimeDonor(volunteerDetails.isFirstTimeDonor());
-		existingVolunteer.setPreviousVolunteer(volunteerDetails.isPreviousVolunteer());
-		existingVolunteer.setConsent(volunteerDetails.isConsent());
+	    // Update the existing volunteer's fields with the details from the incoming volunteerDetails
+	    existingVolunteer.setFirstName(volunteerDetails.getFirstName());
+	    existingVolunteer.setLastName(volunteerDetails.getLastName());
+	    existingVolunteer.setEmail(volunteerDetails.getEmail());
+	    existingVolunteer.setPhone(volunteerDetails.getPhone());
+	    existingVolunteer.setAddress(volunteerDetails.getAddress());
+	    existingVolunteer.setEmergencyContactName(volunteerDetails.getEmergencyContactName());
+	    existingVolunteer.setEmergencyContactPhone(volunteerDetails.getEmergencyContactPhone());
+	    existingVolunteer.setRole(volunteerDetails.getRole());
+	    existingVolunteer.setVolunteerRole(volunteerDetails.getVolunteerRole());
+	    existingVolunteer.setConsentContact(volunteerDetails.getConsentContact());
+	    existingVolunteer.setConsentDataProcessing(volunteerDetails.getConsentDataProcessing());
+	    existingVolunteer.setDob(volunteerDetails.getDob());
+	    existingVolunteer.setGender(volunteerDetails.getGender());
+	    existingVolunteer.setCity(volunteerDetails.getCity());
+	    existingVolunteer.setState(volunteerDetails.getState());
+	    existingVolunteer.setZipCode(volunteerDetails.getZipCode());
+	    existingVolunteer.setEvent(volunteerDetails.getEvent()); // If event should be updated
 
-		return volunteerRepository.save(existingVolunteer);
+	    // Save the updated volunteer object back to the repository
+	    return volunteerRepository.save(existingVolunteer);
 	}
 
+
+	
+	
 	public void deleteVolunteer(Long id) {
 		Volunteer existingVolunteer = getVolunteerById(id);
 		volunteerRepository.delete(existingVolunteer);

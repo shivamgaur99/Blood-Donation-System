@@ -24,14 +24,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.application.constants.RequestStatus;
+import com.application.custom_excs.DonorNotFoundException;
 import com.application.custom_excs.InvalidTokenException;
 import com.application.custom_excs.ResourceNotFoundException;
 import com.application.custom_excs.UserNotFoundException;
 import com.application.model.BloodDetails;
 import com.application.model.Donor;
+import com.application.model.Event;
 import com.application.model.Requesting;
 import com.application.model.User;
 import com.application.service.DonorService;
+import com.application.service.EventService;
 import com.application.service.UserService;
 import com.application.util.JwtUtils;
 
@@ -43,6 +46,9 @@ public class DonorController {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private EventService eventService;
 
 	@Autowired
 	private JwtUtils jwtUtils;
@@ -61,6 +67,11 @@ public class DonorController {
 		}
 
 		donor.setUser(user);
+		
+		if (donor.getEvent() != null) {
+			Event event = eventService.getEventById(donor.getEvent().getId());
+			donor.setEvent(event);
+		}
 		donorService.saveDonor(donor);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body("Donor details added successfully.");
@@ -81,7 +92,7 @@ public class DonorController {
 	public ResponseEntity<Donor> getDonorById(@PathVariable int id) {
 		Donor donor = donorService.getDonorById(id);
 		if (donor == null) {
-			throw new ResourceNotFoundException("Donor with ID " + id + " not found.");
+			throw new DonorNotFoundException("Donor with ID " + id + " not found.");
 		}
 		return ResponseEntity.ok(donor);
 	}
@@ -93,7 +104,7 @@ public class DonorController {
 
 		if (!isDeleted) {
 			// Donor not found in the system
-			throw new ResourceNotFoundException("Donor with ID " + id + " not found.");
+			throw new DonorNotFoundException("Donor with ID " + id + " not found.");
 		}
 
 		// Return a success response
@@ -135,7 +146,7 @@ public class DonorController {
 		if (!donors.isEmpty()) {
 			return ResponseEntity.ok(donors);
 		} else {
-			throw new ResourceNotFoundException("No donors found for blood group: " + bloodGroup);
+			throw new DonorNotFoundException("No donors found for blood group: " + bloodGroup);
 		}
 	}
 

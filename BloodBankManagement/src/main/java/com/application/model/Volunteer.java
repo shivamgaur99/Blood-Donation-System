@@ -1,9 +1,13 @@
 package com.application.model;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,8 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -21,7 +25,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -29,7 +32,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Volunteer {
 
 	@Id
@@ -37,42 +39,61 @@ public class Volunteer {
 	private Long id;
 
 	@NotBlank(message = "First name is required")
-	@Size(max = 50, message = "First name cannot exceed 50 characters")
 	private String firstName;
 
 	@NotBlank(message = "Last name is required")
-	@Size(max = 50, message = "Last name cannot exceed 50 characters")
 	private String lastName;
 
-	@NotBlank(message = "Email is required")
-	@Email(message = "Invalid email format")
-	private String email;
+	@Past(message = "Date of birth must be in the past")
+	private LocalDate dob;
 
+	@NotBlank(message = "Gender is required")
+	private String gender;
+	
 	@NotBlank(message = "Phone number is required")
 	@Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid phone number")
 	private String phone;
 
-	@NotBlank(message = "Address is required")
-	@Size(max = 255, message = "Address cannot exceed 255 characters")
+	@Email(message = "Invalid email address")
+	@NotBlank(message = "Email is required")
+	private String email;
+
+	@NotBlank(message = "Street address is required")
 	private String address;
+
+	@NotBlank(message = "City is required")
+	private String city;
+
+	@NotBlank(message = "State is required")
+	private String state;
+
+	@NotBlank(message = "ZIP code is required")
+	private String zipCode;
 
 	@NotBlank(message = "Emergency contact name is required")
 	private String emergencyContactName;
 
-	@NotBlank(message = "Emergency contact phone is required")
 	@Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid emergency contact phone number")
 	private String emergencyContactPhone;
-
+	
 	private String role;
 
-	private boolean isFirstTimeDonor;
-	private boolean isPreviousVolunteer;
-	private boolean consent;
+	@ElementCollection(fetch = FetchType.EAGER)
+	private List<String> volunteerRole;
+
+	private Boolean consentContact;
+
+	private Boolean consentDataProcessing;
 
 	@ManyToOne
 	@JoinColumn(name = "user_email", foreignKey = @ForeignKey(name = "FK_user"))
 	@JsonBackReference("user-volunteer")
 	private User user;
+
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "event_id", foreignKey = @ForeignKey(name = "FK_event"))
+	@JsonBackReference("event-volunteer")
+	private Event event;
 
 	@CreationTimestamp
 	@Column(name = "created_at", updatable = false)
@@ -81,4 +102,5 @@ public class Volunteer {
 	@UpdateTimestamp
 	@Column(name = "updated_at")
 	private Instant updatedAt;
+
 }

@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
 import com.application.constants.ErrorCode;
+import com.application.custom_excs.DonorNotFoundException;
+import com.application.custom_excs.EventNotFoundException;
 import com.application.custom_excs.InvalidCredentialsException;
 import com.application.custom_excs.InvalidTokenException;
 import com.application.custom_excs.ResourceNotFoundException;
@@ -49,6 +51,18 @@ public class GlobalExceptionHandler {
 		logger.error("User not found: {} | Request URI: {}", ex.getMessage(), request.getDescription(false));
 		return createErrorResponse(ErrorCode.USER_NOT_FOUND, ex.getMessage(), HttpStatus.NOT_FOUND);
 	}
+	
+	@ExceptionHandler(DonorNotFoundException.class)
+	public ResponseEntity<ErrorResponse> handleDonorNotFoundException(DonorNotFoundException ex, WebRequest request) {
+	    logger.error("Donor not found: {} | Request URI: {}", ex.getMessage(), request.getDescription(false));
+	    return createErrorResponse(ErrorCode.DONOR_NOT_FOUND, ex.getMessage(), HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(EventNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEventNotFoundException(EventNotFoundException ex, WebRequest request) {
+        logger.error("Event not found: {} | Request URI: {}", ex.getMessage(), request.getDescription(false));
+        return createErrorResponse(ErrorCode.EVENT_NOT_FOUND, ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 
 	@ExceptionHandler(UserAlreadyExistsException.class)
 	public ResponseEntity<ErrorResponse> handleUserAlreadyExistsException(UserAlreadyExistsException ex,

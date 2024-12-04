@@ -12,11 +12,13 @@ public enum ErrorCode {
 	USER_UPDATE_FAILED("USER_UPDATE_FAILED", "Failed to update the user profile", 500),
 	ROLE_UPDATE_FAILED("ROLE_UPDATE_FAILED", "Failed to update the user role", 500),
 	RESOURCE_NOT_FOUND("RESOURCE_NOT_FOUND", "The requested resource could not be found", 404),
-    NULL_POINTER("NULL_POINTER", "A null pointer error occurred", 500),
-    CONSTRAINT_VIOLATION("CONSTRAINT_VIOLATION", "Validation constraint violated", 422),
-    METHOD_NOT_ALLOWED("METHOD_NOT_ALLOWED", "Request method not supported", 405),
-    INVALID_TOKEN("INVALID_TOKEN", "The provided token is invalid", 401),
-	JWT_EXPIRED("JWT_EXPIRED", "Your session has expired. Please log in again.", 401);
+	NULL_POINTER("NULL_POINTER", "A null pointer error occurred", 500),
+	CONSTRAINT_VIOLATION("CONSTRAINT_VIOLATION", "Validation constraint violated", 422),
+	METHOD_NOT_ALLOWED("METHOD_NOT_ALLOWED", "Request method not supported", 405),
+	INVALID_TOKEN("INVALID_TOKEN", "The provided token is invalid", 401),
+	JWT_EXPIRED("JWT_EXPIRED", "Your session has expired. Please log in again.", 401),
+	EVENT_NOT_FOUND("EVENT_NOT_FOUND", "The requested event could not be found", 404),
+	DONOR_NOT_FOUND("DONOR_NOT_FOUND", "The requested donor could not be found", 404);
 
 	private final String code;
 	private final String message;

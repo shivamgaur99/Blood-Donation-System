@@ -71,11 +71,16 @@ public class Donor {
 	@JsonBackReference("user-donor")
 	private User user;
 
-	@ManyToOne
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "request_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "FK_donor_request"))
 	@JsonBackReference("user-request")
 	private Requesting requesting;
-	
+
+	@ManyToOne
+	@JoinColumn(name = "event_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "FK_donor_event"))
+	@JsonBackReference("event-donor")
+	private Event event;
+
 	@CreationTimestamp
 	@Column(name = "created_at", updatable = false)
 	private Instant createdAt;

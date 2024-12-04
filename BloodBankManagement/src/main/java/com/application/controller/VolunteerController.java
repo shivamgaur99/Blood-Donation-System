@@ -3,6 +3,7 @@ package com.application.controller;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.application.constants.Role;
 import com.application.custom_excs.InvalidTokenException;
 import com.application.custom_excs.UserNotFoundException;
+import com.application.model.Event;
 import com.application.model.User;
 import com.application.model.Volunteer;
+import com.application.service.EventService;
 import com.application.service.SendGridEmailService;
 import com.application.service.UserService;
 import com.application.service.VolunteerService;
@@ -37,6 +40,9 @@ public class VolunteerController {
 	private VolunteerService volunteerService;
 
 	@Autowired
+	private EventService eventService;
+
+	@Autowired
 	private SendGridEmailService sendGridEmailService;
 
 	@Autowired
@@ -48,7 +54,8 @@ public class VolunteerController {
 	private static final Logger logger = LoggerFactory.getLogger(VolunteerController.class);
 
 	@PostMapping("/register")
-	public ResponseEntity<String> registerVolunteer(@RequestBody Volunteer volunteer, HttpServletRequest request) {
+	public ResponseEntity<String> registerVolunteer(@Valid @RequestBody Volunteer volunteer,
+			HttpServletRequest request) {
 
 		String token = extractTokenFromRequest(request);
 		String email = jwtUtils.extractUsername(token);
@@ -59,14 +66,19 @@ public class VolunteerController {
 		}
 
 		volunteer.setUser(user);
-		
+
 		if (volunteer.getRole() != null && !volunteer.getRole().isEmpty()) {
 			Role role = Role.fromString(volunteer.getRole());
 			volunteer.setRole(role.getRole());
 		} else {
 			volunteer.setRole(Role.VOLUNTEER.getRole());
 		}
-		
+
+		if (volunteer.getEvent() != null) {
+			Event event = eventService.getEventById(volunteer.getEvent().getId());
+			volunteer.setEvent(event);
+		}
+
 		volunteerService.saveVolunteer(volunteer);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body("Volunteer registration successful.");
