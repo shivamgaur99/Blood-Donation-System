@@ -208,6 +208,11 @@ a.nav-links-dark:hover {
   color: whitesmoke;
 }
 
+.nav-links.active-link,
+.nav-links-dark.active-link-dark:hover {
+  color: whitesmoke;
+}
+
 .nav-admin-button-dark.button-div-dark,
 .nav-admin-button.button-div {
   color: #fff;
@@ -283,7 +288,6 @@ a.nav-links-dark:hover {
   }
 
   .nav-menu.active {
-    background-color: #242222;
     background-color: #0a183d;
     left: 0;
     opacity: 1;

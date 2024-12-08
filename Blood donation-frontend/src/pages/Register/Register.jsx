@@ -3,7 +3,7 @@ import Joi from "joi-browser";
 import { useNavigate } from "react-router-dom";
 import { SimpleToast } from "../../components/util/Toast/Toast";
 import { useToast } from "../../services/toastService";
-import axios from "axios"; 
+import axios from "axios";
 import "./register.css";
 import { END_POINT } from "../../config/api";
 
@@ -65,7 +65,6 @@ const Register = (props) => {
       setIsLoading(true);
       const payload = { ...formData, bloodgroup: formData.bloodGroup };
 
-      // Use Axios to make the POST request
       axios
         .post(`${END_POINT}/user/register`, payload, {
           headers: {
@@ -73,12 +72,10 @@ const Register = (props) => {
           },
         })
         .then((response) => {
-          // Check if the registration was successful
           if (response.status === 200) {
             showToast("Registration Successful", "success");
             navigate("/login");
           } else {
-            // Handle unexpected success responses (if any)
             showToast(
               `Registration failed: ${response.data.error || "Unknown error"}`,
               "error"
@@ -86,30 +83,22 @@ const Register = (props) => {
           }
         })
         .catch((error) => {
-          // Handle Axios errors or failed responses
           if (error.response) {
-            // The request was made and the server responded with a status other than 2xx
-            console.error("Error Response Data:", error.response.data); // log the response for debugging
-            showToast(
-              `Registration failed: ${
-                error.response.data || "Something went wrong"
-              }`,
-              "error"
-            );
+            const errorMessage = error.response.data.message || "Registration failed. Please try again later.";
+            showToast(errorMessage, "error");
+            console.error("Error Response Data:", error.response.data);
           } else if (error.request) {
-            // The request was made but no response was received
             console.error("Error Request:", error.request);
             showToast(
               "No response received from server. Please try again later.",
               "error"
             );
           } else {
-            // Something happened in setting up the request that triggered an error
             console.error("Error Message:", error.message);
             showToast("An error occurred. Please try again later.", "error");
           }
         })
-        .finally(() => setIsLoading(false)); // Always stop loading
+        .finally(() => setIsLoading(false));
     }
   };
 
@@ -175,7 +164,7 @@ const Register = (props) => {
                     "Email",
                     "fas fa-envelope-open-text"
                   )}
-                  {renderInput("age", "number", "Age", "fas fa-calendar-alt")}
+                  {renderInput("age", "", "Age", "fas fa-calendar-alt")}
                   <div
                     className={`register-input ${
                       dark ? "register-input-dark" : "register-input-light"

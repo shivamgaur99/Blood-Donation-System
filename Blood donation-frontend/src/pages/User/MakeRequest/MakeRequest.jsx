@@ -32,7 +32,7 @@ const MakeRequest = () => {
     const requestData = {
       name,
       email,
-      bloodgroup: bloodGroup,
+      bloodGroup,
       units,
       disease,
       mobile,
@@ -43,7 +43,7 @@ const MakeRequest = () => {
 
     // Include the token in the Authorization header
     axios
-      .post(`${END_POINT}/requestblood`, requestData, {
+      .post(`${END_POINT}/blood-requests`, requestData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

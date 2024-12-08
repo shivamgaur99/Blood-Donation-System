@@ -3,6 +3,7 @@ import Joi from "joi-browser";
 import { Link } from "react-router-dom";
 import { SimpleToast } from "../../components/util/Toast/Toast"; 
 import { END_POINT } from "../../config/api";
+import axios from 'axios';
 import "./login.css";
 import { useToast } from "../../services/toastService";
 
@@ -57,97 +58,119 @@ function Login(props) {
     setErrorObj(errors);
   };
 
-  const loginUser = (e) => {
+  const loginUser = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+  
     if (isFormValid()) {
       const data = {
         email: credential.email,
         password: credential.password,
       };
-
-      fetch(`${END_POINT}/user/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) =>
-          response
-            .json()
-            .then((res) => {
-              if (response.status === 200 && res.token) {
-                showToast("Login successful!", "success"); // Updated to use showToast
-                localStorage.setItem("email", res.email);
-                localStorage.setItem("jwtToken", res.token);
-                localStorage.setItem("LoggedIn", "true");
-                localStorage.setItem("Role", "user");
-                window.location.href = "/user-dashboard";
-              } else {
-                showToast("Invalid credentials!", "error"); // Updated to use showToast
-              }
-            })
-            .catch((err) => {
-              showToast("Backend error, please try again later.", "error"); // Updated to use showToast
-              console.error(err);
-            })
-        )
-        .catch((err) => {
-          showToast("Network error, please check your connection.", "error"); // Updated to use showToast
-          console.error("must be a backend problem🤔:", err);
-        })
-        .finally(() => {
-          setIsLoading(false);
+  
+      try {
+        // Make the login request
+        const response = await axios.post(`${END_POINT}/auth/login`, data, {
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
+  
+        if (response.status === 200) {
+          const { accessToken, refreshToken, email } = response.data;
+  
+          if (accessToken && refreshToken) {
+            // Store tokens and user info in localStorage
+            localStorage.setItem("email", email);
+            localStorage.setItem("jwtToken", accessToken);
+            localStorage.setItem("refreshToken", refreshToken);
+            localStorage.setItem("LoggedIn", "true");
+            localStorage.setItem("Role", "user");
+  
+            showToast("Login successful!", "success");
+            window.location.href = "/user-dashboard"; // Redirect after successful login
+          } else {
+            showToast("Invalid server response. Please try again.", "error");
+          }
+        }
+      } catch (err) {
+        if (err.response) {
+          // Backend returned an error response
+          const errorMessage = err.response.data?.message || "Login failed. Please try again.";
+          showToast(errorMessage, "error");
+          console.error("Backend error:", err.response.data);
+        } else if (err.request) {
+          // Request made but no response received
+          showToast("Network error. Please check your connection.", "error");
+          console.error("Network error:", err.request);
+        } else {
+          // Something else caused the error
+          showToast("An unexpected error occurred. Please try again.", "error");
+          console.error("Error:", err.message);
+        }
+      } finally {
+        setIsLoading(false); // Stop the loader regardless of success or failure
+      }
     }
   };
-
-  const loginAdmin = (e) => {
+  
+  
+  const loginAdmin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+  
     if (isFormValid()) {
       const data = {
         email: credential.email,
         password: credential.password,
       };
-
-      fetch(`${END_POINT}/admin/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) =>
-          response
-            .json()
-            .then((res) => {
-              if (response.status === 200 && res.token) {
-                showToast("Login successful!", "success"); // Updated to use showToast
-                localStorage.setItem("email", res.email);
-                localStorage.setItem("jwtToken", res.token);
-                localStorage.setItem("LoggedIn", "true");
-                localStorage.setItem("Role", "admin");
-                window.location.href = "/admin-dashboard";
-              } else {
-                showToast("Invalid credentials!", "error"); // Updated to use showToast
-              }
-            })
-            .catch((err) => {
-              showToast("Backend error, please try again later.", "error"); // Updated to use showToast
-              console.error(err);
-            })
-        )
-        .catch((err) => {
-          showToast("Network error, please check your connection.", "error"); // Updated to use showToast
-          console.error("must be a backend problem🤔:", err);
-        })
-        .finally(() => {
-          setIsLoading(false);
+  
+      try {
+        // Make the login request
+        const response = await axios.post(`${END_POINT}/admin/login`, data, {
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
+  
+        if (response.status === 200) {
+          const { accessToken, refreshToken, email } = response.data;
+  
+          if (accessToken && refreshToken) {
+            // Store tokens and user info in localStorage
+            localStorage.setItem("email", email);
+            localStorage.setItem("jwtToken", accessToken);
+            localStorage.setItem("refreshToken", refreshToken);
+            localStorage.setItem("LoggedIn", "true");
+            localStorage.setItem("Role", "admin");
+  
+            showToast("Login successful!", "success");
+            window.location.href = "/admin-dashboard"; // Redirect after successful login
+          } else {
+            showToast("Invalid server response. Please try again.", "error");
+          }
+        }
+      } catch (err) {
+        if (err.response) {
+          // Backend returned an error response
+          const errorMessage = err.response.data?.message || "Login failed. Please try again.";
+          showToast(errorMessage, "error");
+          console.error("Backend error:", err.response.data);
+        } else if (err.request) {
+          // Request made but no response received
+          showToast("Network error. Please check your connection.", "error");
+          console.error("Network error:", err.request);
+        } else {
+          // Something else caused the error
+          showToast("An unexpected error occurred. Please try again.", "error");
+          console.error("Error:", err.message);
+        }
+      } finally {
+        setIsLoading(false); // Stop the loader regardless of success or failure
+      }
     }
   };
+  
 
   hidePassword ? (passwordInput.current = "text") : (passwordInput.current = "password");
 
@@ -241,7 +264,6 @@ function Login(props) {
                   </div>
                   <div className="submit-btns">
                     <button
-                      id="btn"
                       type="submit"
                       className="submit-btn primary"
                       onClick={loginUser}
@@ -249,8 +271,7 @@ function Login(props) {
                       Login as User
                     </button>
                     <button
-                      id="btn"
-                      type="submit"
+                       type="submit"
                       className="submit-btn secondary"
                       onClick={loginAdmin}
                     >

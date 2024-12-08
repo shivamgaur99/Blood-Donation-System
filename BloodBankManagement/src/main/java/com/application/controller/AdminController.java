@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.application.constants.Role;
 import com.application.custom_excs.InvalidCredentialsException;
+import com.application.custom_excs.ResourceNotFoundException;
 import com.application.custom_excs.UserAlreadyExistsException;
 import com.application.custom_excs.UserNotFoundException;
 import com.application.model.Admin;
@@ -39,7 +40,7 @@ public class AdminController {
 	private AdminService adminService;
 
 	@Autowired
-	private UserService registerService;
+	private UserService userService;
 
 	@Autowired
 	private ContactUsService contactUsService;
@@ -52,14 +53,19 @@ public class AdminController {
 
 	@PostMapping("/login")
 	public ResponseEntity<?> loginAdmin(@RequestBody AuthRequest authRequest) {
-		Admin admin = adminService.fetchAdminByEmail(authRequest.getEmail());
-		if (admin == null || !passwordEncoder.matches(authRequest.getPassword(), admin.getPassword())) {
-			throw new InvalidCredentialsException("Invalid credentials");
-		}
+	    Admin admin = adminService.fetchAdminByEmail(authRequest.getEmail());
+	    if (admin == null || !passwordEncoder.matches(authRequest.getPassword(), admin.getPassword())) {
+	        throw new InvalidCredentialsException("Invalid credentials");
+	    }
 
-		String token = jwtUtils.generateToken(admin.getEmail(), admin.getRole());
-		return ResponseEntity.ok(new JwtResponse(token, authRequest.getEmail()));
+	    // Generate both access and refresh tokens
+	    String accessToken = jwtUtils.generateToken(admin.getEmail(), admin.getRole());
+	    String refreshToken = jwtUtils.generateRefreshToken(admin.getEmail());
+
+	    // Return tokens in the response
+	    return ResponseEntity.ok(new JwtResponse(accessToken, refreshToken, authRequest.getEmail()));
 	}
+
 
 	@PostMapping("/register")
 	public ResponseEntity<?> registerAdmin(@Valid @RequestBody Admin admin) {
@@ -88,7 +94,7 @@ public class AdminController {
 		return ResponseEntity.ok(savedAdmin);
 	}
 
-	@PutMapping("/update/{email}")
+	@PutMapping("/{email}")
 	public ResponseEntity<?> updateAdmin(@PathVariable String email, @RequestBody Admin updatedAdmin) {
 		Admin updated = adminService.updateAdmin(email, updatedAdmin);
 		if (updated == null) {
@@ -97,7 +103,7 @@ public class AdminController {
 		return ResponseEntity.ok(updated);
 	}
 
-	@DeleteMapping("/delete/{email}")
+	@DeleteMapping("/{email}")
 	public ResponseEntity<?> deleteAdmin(@PathVariable String email) {
 		boolean deleted = adminService.deleteAdmin(email);
 		if (!deleted) {
@@ -106,16 +112,34 @@ public class AdminController {
 		return ResponseEntity.ok("Admin with email " + email + " has been deleted successfully.");
 	}
 
+	@GetMapping("/all")
+	public ResponseEntity<List<Admin>> getAllAdmins() {
+		List<Admin> admins = adminService.fetchAllAdmins();
+		if (admins.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+		return ResponseEntity.ok(admins);
+	}
+
+	@GetMapping("/userlist")
+	public ResponseEntity<?> getUsers() {
+		List<User> users = userService.getAllUsers();
+		if (users.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}
+		return ResponseEntity.ok(users);
+	}
+
 	@PutMapping("/updateRole/{email}")
 	public ResponseEntity<?> updateRole(@PathVariable String email, @RequestParam String newRole) {
-		User user = registerService.fetchUserByEmail(email);
+		User user = userService.fetchUserByEmail(email);
 		if (user == null) {
 			throw new UserNotFoundException("User not found");
 		}
 
 		Role role = Role.fromString(newRole);
 		user.setRole(role.getRole());
-		registerService.saveUser(user);
+		userService.saveUser(user);
 		return ResponseEntity.ok("Role updated successfully");
 	}
 
@@ -124,4 +148,15 @@ public class AdminController {
 		List<ContactUs> contactForms = contactUsService.getAllContactForms();
 		return ResponseEntity.ok(contactForms);
 	}
+
+	@DeleteMapping("/contact-us/delete/{id}")
+	public ResponseEntity<?> deleteContactForm(@PathVariable Long id) {
+
+		contactUsService.findContactFormById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Contact form not found with ID: " + id));
+
+		contactUsService.deleteContactFormById(id);
+		return ResponseEntity.ok("Contact form with ID " + id + " has been deleted successfully.");
+	}
+
 }

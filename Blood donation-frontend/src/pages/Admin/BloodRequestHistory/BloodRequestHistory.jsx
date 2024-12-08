@@ -1,28 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { END_POINT } from "../../../config/api";
+import { SimpleToast } from "../../../components/util/Toast/Toast";
+import { useToast } from "../../../services/toastService";
+import Loader from "../../../components/util/Loader/index";
 
 function BloodRequestHistory() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { toast, showToast, hideToast } = useToast();
 
-  // Function to fetch blood request history
   const fetchBloodRequestHistory = () => {
     setLoading(true);
-    const token = localStorage.getItem('jwtToken');  // Get the JWT token from localStorage (or another storage)
+    const token = localStorage.getItem("jwtToken");
 
     if (!token) {
-      setError('No token found, please login.');
+      setError("No token found, please login.");
       setLoading(false);
       return;
     }
 
-    // Add the token to the headers
     axios
       .get(`${END_POINT}/requestHistory`, {
         headers: {
-          Authorization: `Bearer ${token}`, // Add Authorization header with token
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
@@ -30,9 +32,16 @@ function BloodRequestHistory() {
         setLoading(false);
       })
       .catch((error) => {
-        console.error('Error fetching request history:', error);
-        setError('Failed to fetch request history');
+        console.error("Error fetching request history:", error);
+        if (error.response && error.response.status === 401) {
+          setError("Authentication failed. Please login again.");
+        } else if (error.response && error.response.status === 404) {
+          setError("Endpoint not found. Please check the API URL.");
+        } else {
+          setError("Failed to fetch request history. Please try again later.");
+        }
         setLoading(false);
+        showToast(error.message || "Failed to fetch request history.", "error");
       });
   };
 
@@ -40,54 +49,62 @@ function BloodRequestHistory() {
     fetchBloodRequestHistory();
   }, []);
 
-  const handleAcceptStatus = (email, status) => {
-    const token = localStorage.getItem('jwtToken');  // Get the JWT token from localStorage (or another storage)
+  const handleAcceptStatus = (id) => {
+    const token = localStorage.getItem("jwtToken");
 
     if (!token) {
-      setError('No token found, please login.');
+      setError("No token found, please login.");
+      showToast("No token found, please login.", "error");
       return;
     }
 
     axios
-      .post(
-        `${END_POINT}/updateStatus/${email}`,
-        { status },
+      .put(
+        `${END_POINT}/blood-requests/${id}/approve`,
+        {},
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Add Authorization header with token
+            Authorization: `Bearer ${token}`,
           },
         }
       )
       .then(() => {
-        fetchBloodRequestHistory(); // Refresh the data after updating the status
+        fetchBloodRequestHistory();
+        showToast("Request approved successfully!", "success");
       })
       .catch((error) => {
-        console.error('Error updating status:', error);
-        setError('Failed to update status');
+        console.error("Error updating status to accepted:", error);
+        setError("Failed to update status");
+        showToast("Failed to update status", "error");
       });
   };
 
-  const handleRejectStatus = (email) => {
-    const token = localStorage.getItem('jwtToken');  // Get the JWT token from localStorage (or another storage)
+  const handleRejectStatus = (id) => {
+    const token = localStorage.getItem("jwtToken");
 
     if (!token) {
-      setError('No token found, please login.');
+      setError("No token found, please login.");
+      showToast("No token found, please login.", "error");
       return;
     }
 
     axios
-      .get(`${END_POINT}/rejectstatus/${email}`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Add Authorization header with token
-        },
-      })
-      .then((response) => {
-        console.log('Status updated to rejected:', response.data);
-        fetchBloodRequestHistory(); // Refresh the data after updating the status
+      .put(
+        `${END_POINT}/blood-requests/${id}/reject`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then(() => {
+        fetchBloodRequestHistory();
+        showToast("Request rejected successfully!", "success");
       })
       .catch((error) => {
-        console.error('Error updating status to rejected:', error);
-        setError('Failed to update status to rejected');
+        setError("Failed to update status");
+        showToast("Failed to update status", "error");
       });
   };
 
@@ -96,100 +113,116 @@ function BloodRequestHistory() {
       <h1 className="text-center text-primary mb-4">Blood Request History</h1>
 
       {loading ? (
-        <div className="d-flex justify-content-center">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
+        <div className="text-center">
+          <Loader />
+        </div>
+      ) : error ? (
+        <div className="alert alert-danger text-center">{error}</div>
+      ) : requests.length === 0 ? (
+        <div className="alert alert-info text-center">
+          No blood requests available at the moment.
         </div>
       ) : (
-        <>
-          {error && (
-            <div className="alert alert-danger text-center">{error}</div>
-          )}
-
-          {requests.length === 0 ? (
-            <div className="alert alert-info text-center">
-              No blood requests available at the moment.
-            </div>
-          ) : (
-            <div className="table-responsive">
-              <table className="table table-striped table-bordered table-hover">
-                <thead className="table-dark">
-                  <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Mobile</th>
-                    <th>Gender</th>
-                    <th>Blood Group</th>
-                    <th>Age</th>
-                    <th>Disease</th>
-                    <th>Units</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {requests.map((request) => (
-                    <tr
-                      key={request.id}
-                      className={
-                        request.status === 'accepted'
-                          ? 'table-success'
-                          : request.status === 'rejected'
-                          ? 'table-danger'
-                          : ''
-                      }
+        <div className="table-responsive">
+          <table className="table table-striped table-bordered table-hover">
+            <thead className="table-dark">
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Mobile</th>
+                <th>Gender</th>
+                <th>Blood Group</th>
+                <th>Age</th>
+                <th>Disease</th>
+                <th>Units</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {requests.map((request) => (
+                <tr
+                  key={request.id}
+                  className={
+                    request.status === "accepted"
+                      ? "table-success"
+                      : request.status === "rejected"
+                      ? "table-danger"
+                      : ""
+                  }
+                >
+                  <td>{request.id}</td>
+                  <td>{request.name}</td>
+                  <td>{request.mobile}</td>
+                  <td>{request.gender}</td>
+                  <td>{request.bloodGroup}</td>
+                  <td>{request.age}</td>
+                  <td>{request.disease}</td>
+                  <td>{request.units}</td>
+                  <td>
+                    <span
+                      className={`badge ${
+                        request.status === "Approved"
+                          ? "bg-success"
+                          : request.status === "Rejected"
+                          ? "bg-danger"
+                          : "bg-warning"
+                      }`}
                     >
-                      <td>{request.id}</td>
-                      <td>{request.name}</td>
-                      <td>{request.mobile}</td>
-                      <td>{request.gender}</td>
-                      <td>{request.bloodgroup}</td>
-                      <td>{request.age}</td>
-                      <td>{request.disease}</td>
-                      <td>{request.units}</td>
-                      <td>
-                        <span
-                          className={`badge ${
-                            request.status === 'accepted'
-                              ? 'bg-success'
-                              : request.status === 'rejected'
-                              ? 'bg-danger'
-                              : 'bg-warning'
-                          }`}
-                        >
-                          {request.status === 'false'
-                            ? 'Pending'
-                            : request.status.charAt(0).toUpperCase() +
-                              request.status.slice(1)}
-                        </span>
-                      </td>
-                      <td>
-                      {request.status === 'false' && (
-                        <div className="d-flex gap-2">
+                      {request.status === "false"
+                        ? "Pending"
+                        : request.status.charAt(0).toUpperCase() +
+                          request.status.slice(1)}
+                    </span>
+                  </td>
+
+                  <td>
+                    <div className="d-flex gap-2">
+                      {request.status === "Pending" ? (
+                        <>
                           <button
                             className="btn btn-success"
-                            onClick={() => handleAcceptStatus(request.email, 'accepted')}
+                            onClick={() => handleAcceptStatus(request.id)}
                           >
                             Accept
                           </button>
                           <button
                             className="btn btn-danger"
-                            onClick={() => handleRejectStatus(request.email)}
+                            onClick={() => handleRejectStatus(request.id)}
                           >
                             Reject
                           </button>
-                        </div>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </>
+                        </>
+                      ) : request.status === "Approved" ? (
+                        <button
+                          className="btn btn-danger"
+                          onClick={() => handleRejectStatus(request.id)}
+                        >
+                          Reject
+                        </button>
+                      ) : request.status === "Rejected" ? (
+                        <button
+                          className="btn btn-success"
+                          onClick={() => handleAcceptStatus(request.id)}
+                        >
+                          Accept
+                        </button>
+                      ) : null}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
+
+      <SimpleToast
+        open={toast.open}
+        severity={toast.severity}
+        message={toast.message}
+        handleCloseToast={hideToast}
+      />
     </div>
   );
 }

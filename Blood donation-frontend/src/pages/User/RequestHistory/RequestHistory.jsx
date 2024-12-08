@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { END_POINT } from "../../../config/api";
+import Loader from "../../../components/util/Loader"; // Assuming you have a Loader component
+import { useToast } from "../../../services/toastService"; // Assuming you're using a toast service for notifications
+import { SimpleToast } from "../../../components/util/Toast/Toast"; // Toast Component
 
 const RequestHistory = () => {
   const [requests, setRequests] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { toast, showToast, hideToast } = useToast(); // Toast service
 
   useEffect(() => {
     const email = localStorage.getItem('email');
@@ -26,8 +30,9 @@ const RequestHistory = () => {
       return;
     }
 
+    setLoading(true); // Show loader before fetching data
     axios
-      .get(`${END_POINT}/requestHistory/${email}`, {
+      .get(`${END_POINT}/userRequestHistory`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -35,15 +40,17 @@ const RequestHistory = () => {
       .then((response) => {
         setRequests(response.data);
         setLoading(false);
+        showToast("Request history fetched successfully!", "success"); // Success toast
       })
       .catch((error) => {
+        setLoading(false);
         console.error('Error fetching request history:', error);
         if (error.response && error.response.status === 401) {
           setError('Authentication failed. Please login again.');
         } else {
           setError('Failed to fetch the request history. Please try again later.');
         }
-        setLoading(false);
+        showToast(error.message || "Failed to fetch request history. Please try again.", "error"); // Error toast
       });
   };
 
@@ -54,9 +61,7 @@ const RequestHistory = () => {
       {/* Loading Spinner */}
       {loading && (
         <div className="d-flex justify-content-center my-4">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
+          <Loader /> {/* Custom Loader component */}
         </div>
       )}
 
@@ -69,8 +74,8 @@ const RequestHistory = () => {
 
       {/* Request History Table */}
       {!loading && !error && (
-        <div className="card shadow-sm">
-          <div className="card-body">
+       
+          <div className="table-responsive">
             <table className="table table-striped table-bordered table-hover">
               <thead className="table-dark">
                 <tr>
@@ -93,12 +98,12 @@ const RequestHistory = () => {
                       <td>{request.name}</td>
                       <td>{request.mobile}</td>
                       <td>{request.gender}</td>
-                      <td>{request.bloodgroup}</td>
+                      <td>{request.bloodGroup}</td>
                       <td>{request.age}</td>
                       <td>{request.disease}</td>
                       <td>{request.units}</td>
                       <td>
-                        <span className={`badge ${request.status === 'accepted' ? 'bg-success' : request.status === 'rejected' ? 'bg-danger' : 'bg-warning'}`}>
+                        <span className={`badge ${request.status === 'Approved' ? 'bg-success' : request.status === 'Rejected' ? 'bg-danger' : 'bg-warning'}`}>
                           {request.status === 'false' ? 'Pending' : request.status.charAt(0).toUpperCase() + request.status.slice(1)}
                         </span>
                       </td>
@@ -112,7 +117,17 @@ const RequestHistory = () => {
               </tbody>
             </table>
           </div>
-        </div>
+        
+      )}
+
+      {/* Toast Notification */}
+      {toast.open && (
+        <SimpleToast
+          open={toast.open}
+          severity={toast.severity}
+          message={toast.message}
+          handleCloseToast={hideToast}
+        />
       )}
     </div>
   );

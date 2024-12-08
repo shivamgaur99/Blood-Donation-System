@@ -5,24 +5,23 @@ const Footer = () => {
   return (
     <footer>
       <div className="container">
-        <div className="footer-top">
+        <div className="footer-bottom">
           <div className="row">
             <div className="col-md-6 col-lg-3 about-footer">
-              <h3>Lorem Ipsum dummy text</h3>
+              <h3>Blood Donor</h3>
               <ul>
                 <li>
-                  <a href="tel:(010) 1234 4321">
-                    <i className="fas fa-phone fa-flip-horizontal"></i>(010)
-                    1234 4321
-                  </a>
+                <a href="tel:+919876543210">
+                  <i className="fas fa-phone fa-flip-horizontal"></i>+91 98765 43210
+                </a>
                 </li>
                 <li>
                   <i className="fas fa-map-marker-alt"></i>
-                  1 / 105 Bay Lights,
+                  b-52, Noida
                   <br />
-                  Lorem Ipsum,
+                  Gautam Buddha Nagar
                   <br />
-                  LIC 3201
+                  201301, India
                 </li>
               </ul>
             </div>
@@ -33,16 +32,16 @@ const Footer = () => {
               </div>
               <ul>
                 <li>
-                  <a href="#">Home</a>
+                  <a href="/">Home</a>
                 </li>
                 <li>
-                  <a href="#">About</a>
+                  <a href="/about-us">About Us</a>
                 </li>
                 <li>
-                  <a href="#">Testimonial</a>
+                  <a href="/events">Events</a>
                 </li>
                 <li>
-                  <a href="#">Contact</a>
+                  <a href="/contact-us">Contact Us</a>
                 </li>
               </ul>
             </div>
@@ -53,13 +52,10 @@ const Footer = () => {
               </div>
               <ul>
                 <li>
-                  <a href="#">Lorem ipsum</a>
+                  <a href="/privacy-policy">Privacy Policy</a>
                 </li>
                 <li>
-                  <a href="#">Privacy policy</a>
-                </li>
-                <li>
-                  <a href="#">Consectetur Adipisicing</a>
+                  <a href="/terms">Terms and Conditions</a>
                 </li>
                 <li>
                   <a href="/get-involved">Get Involved</a>
@@ -71,28 +67,28 @@ const Footer = () => {
               <div className="footer-title">
                 <h4>Open hours</h4>
                 <ul className="footer-social">
-                <li>
-                    <a href="#" target="_blank">
+                  <li>
+                    <a href="#" target="_blank" rel="noreferrer">
                       <i className="fab fa-facebook"></i>
                     </a>
                   </li>
                   <li>
-                    <a href="#" target="_blank">
+                    <a href="#" target="_blank" rel="noreferrer">
                       <i className="fab fa-twitter"></i>
                     </a>
                   </li>
                   <li>
-                    <a href="#" target="_blank">
+                    <a href="#" target="_blank" rel="noreferrer">
                       <i className="fab fa-github"></i>
                     </a>
                   </li>
                   <li>
-                    <a href="#" target="_blank">
+                    <a href="#" target="_blank" rel="noreferrer">
                       <i className="fab fa-instagram"></i>
                     </a>
                   </li>
                   <li>
-                    <a href="#" target="_blank">
+                    <a href="#" target="_blank" rel="noreferrer">
                       <i className="fab fa-linkedin-in"></i>
                     </a>
                   </li>
@@ -126,7 +122,6 @@ const Footer = () => {
                   </tr>
                 </tbody>
               </table>
-              <hr />
             </div>
           </div>
         </div>

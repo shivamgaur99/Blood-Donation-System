@@ -1,0 +1,65 @@
+/* HomePage.css */
+.event-container {
+  height: 100vh;
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  font-family: 'Poppins', sans-serif;
+}
+
+.event-container h1 {
+  font-size: 3rem;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  color: #333;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.ecards-container {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.ecard {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+  padding: 20px 30px;
+  width: 350px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 20px rgba(0, 0, 0, 0.3);
+}
+
+.ecard h2 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  font-weight: 600;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.ecard p {
+  font-size: 1rem;
+  text-align: center;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.ecard:hover h2, .ecard:hover p {
+  text-shadow: 1px 2px 5px rgba(255, 255, 255, 0.8);
+}
+
+.icon-spacing {
+  margin-top: 10px;
+}

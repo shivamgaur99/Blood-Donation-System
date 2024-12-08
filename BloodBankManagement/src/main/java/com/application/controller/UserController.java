@@ -1,7 +1,5 @@
 package com.application.controller;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,18 +59,19 @@ public class UserController {
 
 	@PostMapping("/login")
 	public ResponseEntity<?> loginUser(@RequestBody User user) {
-		if (user.getEmail() == null || user.getPassword() == null) {
-			throw new IllegalArgumentException("Email and password are required.");
-		}
+	    if (user.getEmail() == null || user.getPassword() == null) {
+	        throw new IllegalArgumentException("Email and password are required.");
+	    }
 
-		User authenticatedUser = userService.fetchUserByEmail(user.getEmail());
-		if (authenticatedUser == null
-				|| !passwordEncoder.matches(user.getPassword(), authenticatedUser.getPassword())) {
-			throw new InvalidCredentialsException("Invalid credentials");
-		}
+	    User authenticatedUser = userService.fetchUserByEmail(user.getEmail());
+	    if (authenticatedUser == null || !passwordEncoder.matches(user.getPassword(), authenticatedUser.getPassword())) {
+	        throw new InvalidCredentialsException("Invalid credentials");
+	    }
 
-		String token = jwtUtil.generateToken(authenticatedUser.getEmail(), authenticatedUser.getRole());
-		return ResponseEntity.ok(new JwtResponse(token, authenticatedUser.getEmail()));
+	    String accessToken = jwtUtil.generateToken(authenticatedUser.getEmail(), authenticatedUser.getRole());
+	    String refreshToken = jwtUtil.generateRefreshToken(authenticatedUser.getEmail());
+
+	    return ResponseEntity.ok(new JwtResponse(accessToken, refreshToken, authenticatedUser.getEmail()));
 	}
 
 	@PostMapping("/register")
@@ -107,7 +106,7 @@ public class UserController {
 		return ResponseEntity.ok(savedUser);
 	}
 
-	@PutMapping("/update/{email}")
+	@PutMapping("/{email}")
 	public ResponseEntity<?> updateUserProfile(@PathVariable String email, @RequestBody User user) {
 		User updatedUser = userService.updateUserProfile(email, user);
 		if (updatedUser == null) {
@@ -116,7 +115,7 @@ public class UserController {
 		return ResponseEntity.ok(updatedUser);
 	}
 
-	@DeleteMapping("/delete/{email}")
+	@DeleteMapping("/{email}")
 	public ResponseEntity<String> deleteUser(@PathVariable String email) {
 		User user = userService.fetchUserByEmail(email);
 		if (user == null) {
@@ -125,15 +124,6 @@ public class UserController {
 
 		userService.deleteUserByEmail(email);
 		return ResponseEntity.ok("User deleted successfully");
-	}
-
-	@GetMapping("/userlist")
-	public ResponseEntity<?> getUsers() {
-		List<User> users = userService.getAllUsers();
-		if (users.isEmpty()) {
-			throw new UserNotFoundException("No users found");
-		}
-		return ResponseEntity.ok(users);
 	}
 
 	@GetMapping("/profileDetails/{email}")

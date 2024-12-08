@@ -51,18 +51,26 @@ public class GlobalExceptionHandler {
 		logger.error("User not found: {} | Request URI: {}", ex.getMessage(), request.getDescription(false));
 		return createErrorResponse(ErrorCode.USER_NOT_FOUND, ex.getMessage(), HttpStatus.NOT_FOUND);
 	}
-	
+
 	@ExceptionHandler(DonorNotFoundException.class)
 	public ResponseEntity<ErrorResponse> handleDonorNotFoundException(DonorNotFoundException ex, WebRequest request) {
-	    logger.error("Donor not found: {} | Request URI: {}", ex.getMessage(), request.getDescription(false));
-	    return createErrorResponse(ErrorCode.DONOR_NOT_FOUND, ex.getMessage(), HttpStatus.NOT_FOUND);
+		logger.error("Donor not found: {} | Request URI: {}", ex.getMessage(), request.getDescription(false));
+		return createErrorResponse(ErrorCode.DONOR_NOT_FOUND, ex.getMessage(), HttpStatus.NOT_FOUND);
 	}
-	
+
 	@ExceptionHandler(EventNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleEventNotFoundException(EventNotFoundException ex, WebRequest request) {
-        logger.error("Event not found: {} | Request URI: {}", ex.getMessage(), request.getDescription(false));
-        return createErrorResponse(ErrorCode.EVENT_NOT_FOUND, ex.getMessage(), HttpStatus.NOT_FOUND);
-    }
+	public ResponseEntity<ErrorResponse> handleEventNotFoundException(EventNotFoundException ex, WebRequest request) {
+		logger.error("Event not found: {} | Request URI: {}", ex.getMessage(), request.getDescription(false));
+		return createErrorResponse(ErrorCode.EVENT_NOT_FOUND, ex.getMessage(), HttpStatus.NOT_FOUND);
+	}
+
+	// Handle ResourceNotFoundException
+	@ExceptionHandler(ResourceNotFoundException.class)
+	public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex,
+			WebRequest request) {
+		logger.error("Resource not found: {} | Request URI: {}", ex.getMessage(), request.getDescription(false));
+		return createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND, ex.getMessage(), HttpStatus.NOT_FOUND);
+	}
 
 	@ExceptionHandler(UserAlreadyExistsException.class)
 	public ResponseEntity<ErrorResponse> handleUserAlreadyExistsException(UserAlreadyExistsException ex,
@@ -165,14 +173,6 @@ public class GlobalExceptionHandler {
 				request.getDescription(false));
 		return createErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR, "Null Pointer Exception occurred.",
 				HttpStatus.INTERNAL_SERVER_ERROR);
-	}
-
-	// Handle ResourceNotFoundException
-	@ExceptionHandler(ResourceNotFoundException.class)
-	public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException ex,
-			WebRequest request) {
-		logger.error("Resource not found: {} | Request URI: {}", ex.getMessage(), request.getDescription(false));
-		return createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND, ex.getMessage(), HttpStatus.NOT_FOUND);
 	}
 
 	// Handle generic exceptions

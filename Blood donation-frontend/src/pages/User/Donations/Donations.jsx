@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { END_POINT } from "../../../config/api";
+import { useToast } from "../../../services/toastService"; // Import the custom toast hook
+import { SimpleToast } from "../../../components/util/Toast/Toast"; // Import the toast component
+import Loader from "../../../components/util/Loader"; // Import the loader component
 
-const DonorList = () => {
+const Donations = () => {
   const [donorList, setDonorList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { toast, showToast, hideToast } = useToast();
 
   useEffect(() => {
     fetchDonorList();
@@ -17,11 +21,12 @@ const DonorList = () => {
     if (!token) {
       setError('User is not authenticated');
       setLoading(false);
+      showToast('User is not authenticated', 'error');
       return;
     }
 
     axios
-      .get(`${END_POINT}/donorlist`, {
+      .get(`${END_POINT}/user-donors`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -29,11 +34,13 @@ const DonorList = () => {
       .then((response) => {
         setDonorList(response.data);
         setLoading(false);
+        showToast('Donation history loaded successfully', 'success'); // Display success toast
       })
       .catch((error) => {
         console.error('Error:', error);
-        setError('Failed to fetch donor list. Please try again later.');
+        setError('Failed to fetch donation history. Please try again later.');
         setLoading(false);
+        showToast(error.message || 'Failed to fetch donation history. Please try again later.', 'error'); // Display error toast
       });
   };
 
@@ -41,7 +48,11 @@ const DonorList = () => {
     <div className="container my-5">
       <h1 className="text-center text-primary mb-4">Available Blood Donors</h1>
 
-      {loading && <div className="spinner-border text-primary" role="status"><span className="sr-only">Loading...</span></div>}
+      {loading && (
+        <div className="text-center">
+          <Loader /> {/* Display the reusable Loader */}
+        </div>
+      )}
 
       {error && <div className="alert alert-danger">{error}</div>}
 
@@ -73,8 +84,15 @@ const DonorList = () => {
           </div>
         ))}
       </div>
+
+      <SimpleToast
+        open={toast.open}
+        severity={toast.severity}
+        message={toast.message}
+        handleCloseToast={hideToast}
+      />
     </div>
   );
 };
 
-export default DonorList;
+export default Donations;

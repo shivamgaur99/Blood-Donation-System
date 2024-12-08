@@ -2,6 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Toggle from "../util/Toggle/Toggle";
+import Swal from 'sweetalert2';
 import "./navbar.css";
 import { useToast } from "../../services/toastService";
 import { SimpleToast } from "../util/Toast/Toast";
@@ -29,11 +30,23 @@ export const Navbar = (props) => {
   };
 
   const handleLogout = () => {
-    // localStorage.removeItem('jwtToken');
-    localStorage.clear();
-    showToast("You have successfully logged out.", "success");
-    window.location.href = "/login";
+    Swal.fire({
+      title: 'Log Out',
+      text: "Are you sure you want to log out?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, log out',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true,  
+    }).then((result) => {
+      if (result.isConfirmed) {
+        localStorage.clear();
+        showToast("You have successfully logged out.", "success");
+        window.location.href = "/login";
+      }
+    });
   };
+
 
   useEffect(() => {
     checkAuthentication();
@@ -110,6 +123,21 @@ export const Navbar = (props) => {
             </NavLink>
           </li>
 
+          <li className={dark ? "nav-item-dark" : "nav-item"}>
+            <NavLink
+              activeClassName={"active-link"}
+              to="/events"
+              className={({ isActive }) =>
+                `${
+                  isActive ? (dark ? "active-link-dark" : "active-link") : ""
+                } ${dark ? "nav-links-dark" : "nav-links"}`
+              }
+              onClick={closeMobileMenu}
+            >
+              Events & Drives 
+            </NavLink>
+          </li>
+
           {Role === "admin" && (
             <li className={dark ? "nav-item-dark" : "nav-item"}>
               <NavLink
@@ -157,7 +185,7 @@ export const Navbar = (props) => {
           {loggedIn ? (
             <li className={dark ? "nav-item-dark" : "nav-item"}>
               <Link
-                to="/login"
+                to="#"
                 className={dark ? "nav-links-mobile-dark" : "nav-links-mobile"}
                 onClick={handleLogout}
               >
@@ -210,7 +238,7 @@ export const Navbar = (props) => {
 
         {loggedIn ? (
           <NavLink
-            to="/login"
+            to="#"
             activeClassName={"button-div"}
             className={({ isActive }) =>
               `${isActive ? (dark ? "button-div-dark" : "button-div") : ""} ${

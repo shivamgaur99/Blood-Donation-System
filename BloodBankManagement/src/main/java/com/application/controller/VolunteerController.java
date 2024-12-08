@@ -85,7 +85,30 @@ public class VolunteerController {
 	}
 
 	@PostMapping("/sg/register")
-	public ResponseEntity<String> registerAsVolunteer(@RequestBody Volunteer volunteer) {
+	public ResponseEntity<String> registerAsVolunteer(@RequestBody Volunteer volunteer, HttpServletRequest request) {
+		
+		String token = extractTokenFromRequest(request);
+		String email = jwtUtils.extractUsername(token);
+
+		User user = userService.fetchUserByEmail(email);
+		if (user == null) {
+			throw new UserNotFoundException("User not found for email: " + email);
+		}
+
+		volunteer.setUser(user);
+
+		if (volunteer.getRole() != null && !volunteer.getRole().isEmpty()) {
+			Role role = Role.fromString(volunteer.getRole());
+			volunteer.setRole(role.getRole());
+		} else {
+			volunteer.setRole(Role.VOLUNTEER.getRole());
+		}
+
+		if (volunteer.getEvent() != null) {
+			Event event = eventService.getEventById(volunteer.getEvent().getId());
+			volunteer.setEvent(event);
+		}
+
 		try {
 
 			Volunteer savedVolunteer = volunteerService.saveVolunteer(volunteer);

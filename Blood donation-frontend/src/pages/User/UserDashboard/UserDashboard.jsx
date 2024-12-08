@@ -66,13 +66,13 @@ const UserDashboard = () => {
             <img
               src="https://via.placeholder.com/500"
               className="card-img-top"
-              alt="Available Donors"
+              alt="Donation History"
             />
             <div className="card-body">
-              <h5 className="card-title">Available Donors</h5>
-              <p className="card-text">View available blood donors.</p>
-              <Link to="/donorlist" className="btn btn-warning btn-block">
-                Go to Available Donors
+              <h5 className="card-title">Donation History</h5>
+              <p className="card-text">View Donation History</p>
+              <Link to="/user-donors" className="btn btn-warning btn-block">
+                Go to Donation History
               </Link>
             </div>
           </div>

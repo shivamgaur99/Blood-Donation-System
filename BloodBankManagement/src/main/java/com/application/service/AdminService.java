@@ -1,6 +1,7 @@
 package com.application.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,6 +38,10 @@ public class AdminService {
 		return adminRepository.findByEmail(email);
 	}
 
+	public List<Admin> fetchAllAdmins() {
+		return adminRepository.findAll();
+	}
+
 	public Admin updateAdmin(String email, Admin updatedAdmin) {
 		Admin existingAdmin = adminRepository.findByEmail(email);
 		if (existingAdmin != null) {
@@ -49,7 +54,7 @@ public class AdminService {
 			if (updatedAdmin.getRole() != null && !updatedAdmin.getRole().isEmpty()) {
 				existingAdmin.setRole(updatedAdmin.getRole());
 			}
-			
+
 			// Only update the password if it's provided and hash it before saving
 			if (updatedAdmin.getPassword() != null && !updatedAdmin.getPassword().isEmpty()) {
 				existingAdmin.setPassword(bCryptPasswordEncoder.encode(updatedAdmin.getPassword()));

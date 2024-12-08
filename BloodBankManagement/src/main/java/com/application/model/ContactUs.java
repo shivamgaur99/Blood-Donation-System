@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -39,7 +40,10 @@ public class ContactUs {
 	@NotBlank(message = "Message is required")
 	@Size(max = 500, message = "Message must be less than 500 characters")
 	private String message;
-	
+
+	@Transient
+	private String captchaToken;
+
 	@CreationTimestamp
 	@Column(name = "created_at", updatable = false)
 	private Instant createdAt;

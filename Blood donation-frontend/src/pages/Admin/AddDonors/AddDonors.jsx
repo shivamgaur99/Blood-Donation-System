@@ -34,7 +34,7 @@ function AddDonors() {
     setIsLoading(true); // Start loading
 
     axios
-      .post(`${END_POINT}/addDonor`, donorData)
+      .post(`${END_POINT}/add`, donorData)
       .then((response) => {
         setIsLoading(false); // Stop loading
         if (response.status === 200) {

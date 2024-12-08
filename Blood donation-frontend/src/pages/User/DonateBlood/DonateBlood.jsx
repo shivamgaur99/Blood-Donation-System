@@ -44,7 +44,7 @@ const DonateBlood = () => {
     setIsLoading(true); // Start loading
 
     axios
-      .post(`${END_POINT}/addAsDonor`, donorData, {
+      .post(`${END_POINT}/add`, donorData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

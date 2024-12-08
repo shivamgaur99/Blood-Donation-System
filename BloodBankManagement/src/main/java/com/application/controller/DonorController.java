@@ -179,8 +179,9 @@ public class DonorController {
 		List<Requesting> history = donorService.getRequestHistory();
 
 		if (history.isEmpty()) {
-			throw new ResourceNotFoundException("No request history found.");
+			return ResponseEntity.noContent().build();
 		}
+		
 
 		return ResponseEntity.ok(history);
 	}
@@ -190,7 +191,7 @@ public class DonorController {
 		List<Requesting> history = donorService.getRequestHistoryByEmail(email);
 
 		if (history.isEmpty()) {
-			throw new ResourceNotFoundException("No request history found for email: " + email);
+			return ResponseEntity.noContent().build();
 		}
 
 		return ResponseEntity.ok(history);
@@ -237,7 +238,7 @@ public class DonorController {
 		return ResponseEntity.ok("Request rejected successfully.");
 	}
 
-	@GetMapping("/userDonors")
+	@GetMapping("/user-donors")
 	public ResponseEntity<List<Donor>> getDonorsByUser(HttpServletRequest request) {
 		String token = extractTokenFromRequest(request);
 		String email = jwtUtils.extractUsername(token);
@@ -260,7 +261,7 @@ public class DonorController {
 		List<Requesting> requests = donorService.getRequestsByBloodGroup(bloodGroup);
 
 		if (requests.isEmpty()) {
-			throw new ResourceNotFoundException("No requests found for blood group: " + bloodGroup);
+			return ResponseEntity.noContent().build();
 		}
 
 		return ResponseEntity.ok(requests);
@@ -285,7 +286,7 @@ public class DonorController {
 	public ResponseEntity<List<Requesting>> getRequestsByStatus(@PathVariable String status) {
 		List<Requesting> requests = donorService.getRequestsByStatus(status);
 		if (requests.isEmpty()) {
-			throw new ResourceNotFoundException("No requests found with status: " + status);
+			return ResponseEntity.noContent().build();
 		}
 		return ResponseEntity.ok(requests);
 	}
@@ -294,7 +295,7 @@ public class DonorController {
 	public ResponseEntity<List<BloodDetails>> getDonorUnitsByBloodGroup() {
 		List<BloodDetails> bloodDetails = donorService.getDonorUnitsByBloodGroup();
 		if (bloodDetails.isEmpty()) {
-			throw new ResourceNotFoundException("No donor units found by blood group.");
+			return ResponseEntity.noContent().build();
 		}
 		return ResponseEntity.ok(bloodDetails);
 	}
@@ -339,7 +340,7 @@ public class DonorController {
 		List<Donor> donors = donorService.getAllDonors();
 
 		if (donors.isEmpty()) {
-			throw new ResourceNotFoundException("No donors found.");
+			return ResponseEntity.noContent().build();
 		}
 
 		donorService.checkForOldBloodSamples(donors);
@@ -354,7 +355,7 @@ public class DonorController {
 		List<Donor> bloodDetails = donorService.getBloodDetails();
 
 		if (bloodDetails.isEmpty()) {
-			throw new ResourceNotFoundException("No blood details found.");
+			return ResponseEntity.noContent().build();
 		}
 
 		Set<String> bloodGroups = new LinkedHashSet<>();
