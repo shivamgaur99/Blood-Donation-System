@@ -4,8 +4,15 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,17 +25,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.application.constants.Role;
-import com.application.custom_excs.InvalidCredentialsException;
 import com.application.custom_excs.ResourceNotFoundException;
 import com.application.custom_excs.UserAlreadyExistsException;
 import com.application.custom_excs.UserNotFoundException;
 import com.application.model.Admin;
-import com.application.model.AuthRequest;
 import com.application.model.ContactUs;
 import com.application.model.JwtResponse;
 import com.application.model.User;
 import com.application.service.AdminService;
 import com.application.service.ContactUsService;
+import com.application.service.UserDetailsServiceImpl;
 import com.application.service.UserService;
 import com.application.util.JwtUtils;
 
@@ -51,21 +57,38 @@ public class AdminController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	@Autowired
+	private AuthenticationManager authenticationManager;
+
+	@Autowired
+	private UserDetailsServiceImpl userDetailsService;
+
+	private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
+
 	@PostMapping("/login")
-	public ResponseEntity<?> loginAdmin(@RequestBody AuthRequest authRequest) {
-	    Admin admin = adminService.fetchAdminByEmail(authRequest.getEmail());
-	    if (admin == null || !passwordEncoder.matches(authRequest.getPassword(), admin.getPassword())) {
-	        throw new InvalidCredentialsException("Invalid credentials");
-	    }
+	public ResponseEntity<?> loginAdmin(@RequestBody Admin admin) {
+		if (admin.getEmail() == null || admin.getPassword() == null) {
+			throw new IllegalArgumentException("Email and password are required.");
+		}
 
-	    // Generate both access and refresh tokens
-	    String accessToken = jwtUtils.generateToken(admin.getEmail(), admin.getRole());
-	    String refreshToken = jwtUtils.generateRefreshToken(admin.getEmail());
+		try {
+			authenticationManager
+					.authenticate(new UsernamePasswordAuthenticationToken(admin.getEmail(), admin.getPassword()));
 
-	    // Return tokens in the response
-	    return ResponseEntity.ok(new JwtResponse(accessToken, refreshToken, authRequest.getEmail()));
+			UserDetails userDetails = userDetailsService.loadUserByUsername(admin.getEmail());
+
+			String accessToken = jwtUtils.generateToken(userDetails.getUsername());
+			String refreshToken = jwtUtils.generateRefreshToken(userDetails.getUsername());
+
+			return ResponseEntity.ok(new JwtResponse(accessToken, refreshToken, admin.getEmail()));
+		} catch (BadCredentialsException e) {
+			logger.warn("Invalid credentials for email: {}", admin.getEmail());
+			return new ResponseEntity<>("Incorrect username or password", HttpStatus.UNAUTHORIZED);
+		} catch (Exception e) {
+			logger.error("Unexpected error during login", e);
+			return new ResponseEntity<>("An error occurred during login", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
-
 
 	@PostMapping("/register")
 	public ResponseEntity<?> registerAdmin(@Valid @RequestBody Admin admin) {

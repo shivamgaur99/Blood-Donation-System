@@ -15,52 +15,43 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.application.service.AdminService;
-import com.application.service.UserService;
+import com.application.service.UserDetailsServiceImpl;
 import com.application.util.JwtUtils;
 
 @Component
-public class JwtFilter extends OncePerRequestFilter 
-{
-	    @Autowired
-	    private JwtUtils jwtUtil;
-	 
-	    @Autowired
-	    private UserService userService;
-	    
-	    @Autowired
-	    private AdminService adminService;
+public class JwtFilter extends OncePerRequestFilter {
+	@Autowired
+	private JwtUtils jwtUtil;
 
-	    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
+	@Autowired
+	private UserDetailsServiceImpl userDetailsService;
 
-	        String authorizationHeader = httpServletRequest.getHeader("Authorization");
+	protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+			FilterChain filterChain) throws ServletException, IOException {
 
-	        String token = null;
-	        String userEmail = null;
+		String authorizationHeader = httpServletRequest.getHeader("Authorization");
 
-	        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-	            token = authorizationHeader.substring(7);
-	            userEmail = jwtUtil.extractUsername(token);
-	        }
+		String token = null;
+		String username = null;
 
-	        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+		if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+			token = authorizationHeader.substring(7);
+			username = jwtUtil.extractUsername(token);
+		}
 
-	        	UserDetails userDetails;
-	            if (jwtUtil.isAdminToken(token)) {
-	                userDetails = adminService.loadAdminByEmail(userEmail);
-	            } else {
-	                userDetails = userService.loadUserByEmail(userEmail);
-	            }
+		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-	            if (jwtUtil.validateToken(token, userDetails)) {
+			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-	                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-	                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-	                usernamePasswordAuthenticationToken
-	                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
-	                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-	            }
-	        }
-	        filterChain.doFilter(httpServletRequest, httpServletResponse);
-	    }
+			if (jwtUtil.validateToken(token, userDetails)) {
+
+				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+						userDetails, null, userDetails.getAuthorities());
+				usernamePasswordAuthenticationToken
+						.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
+				SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+			}
+		}
+		filterChain.doFilter(httpServletRequest, httpServletResponse);
 	}
+}

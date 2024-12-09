@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import com.application.constants.Role;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -22,10 +20,10 @@ public class JwtUtils {
 	private String SECRET_KEY;
 
 	@Value("${jwt.expiry-time}")
-	private long EXPIRY_TIME; 
+	private long EXPIRY_TIME;
 
 	@Value("${jwt.refresh-expiry-time}")
-	private long REFRESH_EXPIRY_TIME; 
+	private long REFRESH_EXPIRY_TIME;
 
 	public String extractUsername(String token) {
 		return extractClaim(token, Claims::getSubject);
@@ -47,11 +45,11 @@ public class JwtUtils {
 	private Boolean isTokenExpired(String token) {
 		return extractExpiration(token).before(new Date());
 	}
-	
+
 	// Method for generating a access token
 	public String generateToken(String username) {
 		Map<String, Object> claims = new HashMap<>();
-		return createToken(claims, username, EXPIRY_TIME); 
+		return createToken(claims, username, EXPIRY_TIME);
 	}
 
 	public String generateToken(String username, String role) {
@@ -77,17 +75,6 @@ public class JwtUtils {
 	public Boolean validateToken(String token, UserDetails userDetails) {
 		final String username = extractUsername(token);
 		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-	}
-
-	// Checks if the token contains an admin role
-	public boolean isAdminToken(String token) {
-		String roleString = extractClaim(token, claims -> claims.get("role", String.class));
-		try {
-			Role role = Role.fromString(roleString); 
-			return role == Role.ADMIN || role == Role.SUPER_ADMIN;
-		} catch (IllegalArgumentException e) {
-			return false; 
-		}
 	}
 
 	// Method to validate a refresh token (check if it's expired)

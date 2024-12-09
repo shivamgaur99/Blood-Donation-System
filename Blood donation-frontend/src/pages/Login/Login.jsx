@@ -96,7 +96,7 @@ function Login(props) {
       } catch (err) {
         if (err.response) {
           // Backend returned an error response
-          const errorMessage = err.response.data?.message || "Login failed. Please try again.";
+          const errorMessage = err.response.data || "Login failed. Please try again.";
           showToast(errorMessage, "error");
           console.error("Backend error:", err.response.data);
         } else if (err.request) {
@@ -153,7 +153,7 @@ function Login(props) {
       } catch (err) {
         if (err.response) {
           // Backend returned an error response
-          const errorMessage = err.response.data?.message || "Login failed. Please try again.";
+          const errorMessage = err.response.data || "Login failed. Please try again.";
           showToast(errorMessage, "error");
           console.error("Backend error:", err.response.data);
         } else if (err.request) {

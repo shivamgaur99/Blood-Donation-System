@@ -56,7 +56,7 @@ function App() {
     });
   };
 
-  useInactivityLogout();
+  // useInactivityLogout();
 
   useEffect(() => {
     const token = localStorage.getItem("jwtToken");
