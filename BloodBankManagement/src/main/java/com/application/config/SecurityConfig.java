@@ -70,7 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			}
 		})).csrf(csrf -> csrf.disable())
 				.authorizeRequests(requests -> requests
-						.antMatchers("/", "/auth/login", "/auth/refresh", "/contact-us").permitAll()
+						.antMatchers("/", "/auth/login", "/auth/refresh", "/auth/logout", "/contact-us").permitAll()
 						.antMatchers("/admin/login", "/admin/register", "/user/login", "/user/register").permitAll()
 						.antMatchers("/volunteers/register", "/events/all").permitAll()
 						.anyRequest().fullyAuthenticated())

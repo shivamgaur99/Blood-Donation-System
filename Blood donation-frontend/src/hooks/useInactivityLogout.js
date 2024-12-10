@@ -16,7 +16,6 @@ const useInactivityLogout = () => {
         dispatch(logout());
         localStorage.removeItem("email");
         localStorage.removeItem("jwtToken");
-        localStorage.removeItem("refreshToken");
         localStorage.removeItem("LoggedIn");
         localStorage.removeItem("Role");
         window.location.href = "/login";

@@ -6,15 +6,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.application.model.ContactUs;
@@ -44,7 +45,7 @@ public class AuthController {
 	private ContactUsService contactUsService;
 
 	private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
-
+	
 	@GetMapping("/")
 	public String welcomeMessage() {
 		return "Welcome to Blood Bank Management system !!!";
@@ -53,65 +54,120 @@ public class AuthController {
 	@PostMapping("/auth/login")
 	public ResponseEntity<?> login(@RequestBody User user) {
 
-		if (user.getEmail() == null || user.getPassword() == null) {
-			throw new IllegalArgumentException("Email and password are required.");
-		}
+	    if (user.getEmail() == null || user.getPassword() == null) {
+	        throw new IllegalArgumentException("Email and password are required.");
+	    }
 
-		try {
-			// Authenticate user
-			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
+	    try {
+	        authenticationManager.authenticate(
+	            new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
+	        );
 
-			// Load user details
-			UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
+	        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
 
-			// Generate access and refresh tokens
-			String accessToken = jwtUtil.generateToken(userDetails.getUsername());
-			String refreshToken = jwtUtil.generateRefreshToken(userDetails.getUsername());
+	        // Generate access and refresh tokens
+	        String accessToken = jwtUtil.generateToken(userDetails.getUsername());
+	        String refreshToken = jwtUtil.generateRefreshToken(userDetails.getUsername());
 
-			// Return tokens in the response
-			return ResponseEntity.ok(new JwtResponse(accessToken, refreshToken, user.getEmail()));
-		} catch (BadCredentialsException e) {
-			logger.warn("Invalid credentials for email: {}", user.getEmail());
-			return new ResponseEntity<>("Incorrect username or password", HttpStatus.UNAUTHORIZED);
-		} catch (Exception e) {
-			logger.error("Unexpected error during login", e);
-			return new ResponseEntity<>("An error occurred during login", HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	        // Set refresh token in an HttpOnly cookie
+	        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+	            .httpOnly(true)
+	            .secure(true) // Use secure flag for HTTPS
+	            .path("/auth/refresh") // Restrict path for refresh endpoint
+	            .maxAge(7 * 24 * 60 * 60) // 7 days
+	            .sameSite("Strict") // Strict SameSite policy
+	            .build();
+
+	        // Return access token in response and refresh token in cookie
+	        return ResponseEntity.ok()
+	            .header("Set-Cookie", cookie.toString())
+	            .body(new JwtResponse(accessToken, user.getEmail()));
+	    } catch (BadCredentialsException e) {
+	        logger.warn("Invalid credentials for email: {}", user.getEmail());
+	        return new ResponseEntity<>("Invalid login credentials", HttpStatus.UNAUTHORIZED);
+	    } catch (Exception e) {
+	        logger.error("Unexpected error during login", e);
+	        return new ResponseEntity<>("An error occurred during login", HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
 	}
 
+	@PostMapping("/auth/refreshAccessToken")
+	public ResponseEntity<?> refreshAccessToken(@CookieValue(name = "refreshToken", required = false) String refreshToken) {
+	    if (refreshToken == null || refreshToken.isEmpty()) {
+	        return new ResponseEntity<>("Refresh token is required", HttpStatus.BAD_REQUEST);
+	    }
+	    System.out.println(refreshToken);
+	    try {	        
+	        if (!jwtUtil.validateRefreshToken(refreshToken)) {
+	            return new ResponseEntity<>("Invalid or expired refresh token", HttpStatus.UNAUTHORIZED);
+	        }
+
+	        String username = jwtUtil.extractUsername(refreshToken);
+	        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+	        String newAccessToken = jwtUtil.generateToken(userDetails.getUsername());
+
+	        return ResponseEntity.ok(new JwtResponse(newAccessToken,  username));
+	    } catch (Exception e) {
+	        logger.error("Error while refreshing access token", e);
+	        return new ResponseEntity<>("Error while refreshing access token", HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+	
+	//Refresh Endpoint: Validate and Rotate Token
 	@PostMapping("/auth/refresh")
-	public ResponseEntity<?> refreshAccessToken(@RequestParam String refreshToken) {
-		// Validate refresh token
-		if (refreshToken == null || refreshToken.isEmpty()) {
-			return new ResponseEntity<>("Refresh token is required", HttpStatus.BAD_REQUEST);
-		}
+	public ResponseEntity<?> refreshToken(@CookieValue(name = "refreshToken", required = false) String refreshToken) {
+	    if (refreshToken == null || refreshToken.isEmpty()) {
+	        return new ResponseEntity<>("Refresh token is missing", HttpStatus.BAD_REQUEST);
+	    }
 
-		// Verify and extract username from refresh token
-		String username;
-		try {
-			if (!jwtUtil.validateRefreshToken(refreshToken)) {
-				return new ResponseEntity<>("Invalid or expired refresh token", HttpStatus.UNAUTHORIZED);
-			}
+	    try {
+	        if (!jwtUtil.validateRefreshToken(refreshToken)) {
+	            return new ResponseEntity<>("Invalid or expired refresh token", HttpStatus.UNAUTHORIZED);
+	        }
 
-			// Extract username from refresh token
-			username = jwtUtil.extractUsername(refreshToken);
-			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+	        String username = jwtUtil.extractUsername(refreshToken);
+	        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-			// Generate a new access token using the username
-			String newAccessToken = jwtUtil.generateToken(userDetails.getUsername());
+	        String newAccessToken = jwtUtil.generateToken(userDetails.getUsername());
+	        String newRefreshToken = jwtUtil.generateRefreshToken(userDetails.getUsername());
 
-			// Return the new access token
-			return ResponseEntity.ok(new JwtResponse(newAccessToken, refreshToken, username));
-		} catch (Exception e) {
-			logger.error("Error while refreshing access token", e);
-			return new ResponseEntity<>("Error while refreshing access token", HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	        // Set new refresh token cookie
+	        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", newRefreshToken)
+	            .httpOnly(true)
+	            .secure(true)
+	            .path("/auth/refresh")
+	            .maxAge(7 * 24 * 60 * 60)
+	            .sameSite("Strict")
+	            .build();
+
+	        return ResponseEntity.ok()
+	            .header("Set-Cookie", refreshCookie.toString())
+	            .body(new JwtResponse(newAccessToken,  username));
+	    } catch (Exception e) {
+	        return new ResponseEntity<>("Error refreshing token", HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+
+	@PostMapping("/auth/logout")
+	public ResponseEntity<?> logout() {
+	    ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
+	        .httpOnly(true)
+	        .secure(true)
+	        .path("/auth/refresh")
+	        .maxAge(0) // Expire immediately
+	        .sameSite("Strict")
+	        .build();
+
+	    return ResponseEntity.ok()
+	        .header("Set-Cookie", cookie.toString())
+	        .body("Logged out successfully");
 	}
 
 	@PostMapping("/contact-us")
 	public ResponseEntity<?> submitContactForm(@Valid @RequestBody ContactUs contactUs) {
 		
-		// working : uncaught timeout error in react
+		// working but: uncaught timeout error in react
 //		String captchaToken = contactUs.getCaptchaToken();
 		
 //		if (!captchaService.verifyCaptcha(captchaToken)) {

@@ -1,11 +1,13 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { NavLink, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Toggle from "../util/Toggle/Toggle";
 import Swal from 'sweetalert2';
 import "./navbar.css";
 import { useToast } from "../../services/toastService";
 import { SimpleToast } from "../util/Toast/Toast";
+import { logoutUser } from "../../utils/authUtils";
 
 export const Navbar = (props) => {
   const dark = props.theme;
@@ -29,20 +31,22 @@ export const Navbar = (props) => {
     setUsername(localStorage.getItem("Username"));
   };
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const handleLogout = () => {
     Swal.fire({
       title: 'Log Out',
       text: "Are you sure you want to log out?",
-      icon: 'warning',
+      icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Yes, log out',
       cancelButtonText: 'Cancel',
       reverseButtons: true,  
     }).then((result) => {
       if (result.isConfirmed) {
-        localStorage.clear();
+        logoutUser(dispatch, navigate);
         showToast("You have successfully logged out.", "success");
-        window.location.href = "/login";
       }
     });
   };

@@ -68,10 +68,9 @@ public class UserController {
 	        throw new InvalidCredentialsException("Invalid credentials");
 	    }
 
-	    String accessToken = jwtUtil.generateToken(authenticatedUser.getEmail(), authenticatedUser.getRole());
-	    String refreshToken = jwtUtil.generateRefreshToken(authenticatedUser.getEmail());
+	    String token = jwtUtil.generateToken(authenticatedUser.getEmail(), authenticatedUser.getRole());
 
-	    return ResponseEntity.ok(new JwtResponse(accessToken, refreshToken, authenticatedUser.getEmail()));
+	    return ResponseEntity.ok(new JwtResponse(token, authenticatedUser.getEmail()));
 	}
 
 	@PostMapping("/register")

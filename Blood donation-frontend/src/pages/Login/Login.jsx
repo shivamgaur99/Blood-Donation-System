@@ -1,9 +1,9 @@
 import React, { useState, useRef } from "react";
 import Joi from "joi-browser";
 import { Link } from "react-router-dom";
-import { SimpleToast } from "../../components/util/Toast/Toast"; 
+import { SimpleToast } from "../../components/util/Toast/Toast";
 import { END_POINT } from "../../config/api";
-import axios from 'axios';
+import axios from "axios";
 import "./login.css";
 import { useToast } from "../../services/toastService";
 
@@ -61,124 +61,120 @@ function Login(props) {
   const loginUser = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-  
+
     if (isFormValid()) {
       const data = {
         email: credential.email,
         password: credential.password,
       };
-  
+
       try {
-        // Make the login request
         const response = await axios.post(`${END_POINT}/auth/login`, data, {
           headers: {
             "Content-Type": "application/json",
           },
+          withCredentials: true,
         });
-  
+
         if (response.status === 200) {
-          const { accessToken, refreshToken, email } = response.data;
-  
-          if (accessToken && refreshToken) {
-            // Store tokens and user info in localStorage
+          const { accessToken, email } = response.data;
+
+          if (accessToken) {
             localStorage.setItem("email", email);
             localStorage.setItem("jwtToken", accessToken);
-            localStorage.setItem("refreshToken", refreshToken);
             localStorage.setItem("LoggedIn", "true");
             localStorage.setItem("Role", "user");
-  
+
             showToast("Login successful!", "success");
-            window.location.href = "/user-dashboard"; // Redirect after successful login
+
+            window.location.href = "/user-dashboard";
           } else {
             showToast("Invalid server response. Please try again.", "error");
           }
         }
       } catch (err) {
         if (err.response) {
-          // Backend returned an error response
-          const errorMessage = err.response.data || "Login failed. Please try again.";
+          const errorMessage =
+            err.response.data || "Login failed. Please try again.";
           showToast(errorMessage, "error");
           console.error("Backend error:", err.response.data);
         } else if (err.request) {
-          // Request made but no response received
           showToast("Network error. Please check your connection.", "error");
           console.error("Network error:", err.request);
         } else {
-          // Something else caused the error
           showToast("An unexpected error occurred. Please try again.", "error");
           console.error("Error:", err.message);
         }
       } finally {
-        setIsLoading(false); // Stop the loader regardless of success or failure
+        setIsLoading(false);
       }
     }
   };
-  
-  
+
   const loginAdmin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-  
+
     if (isFormValid()) {
       const data = {
         email: credential.email,
         password: credential.password,
       };
-  
+
       try {
-        // Make the login request
         const response = await axios.post(`${END_POINT}/admin/login`, data, {
           headers: {
             "Content-Type": "application/json",
           },
+          withCredentials: true,
         });
-  
+
         if (response.status === 200) {
-          const { accessToken, refreshToken, email } = response.data;
-  
-          if (accessToken && refreshToken) {
-            // Store tokens and user info in localStorage
+          const { accessToken, email } = response.data;
+
+          if (accessToken) {
             localStorage.setItem("email", email);
             localStorage.setItem("jwtToken", accessToken);
-            localStorage.setItem("refreshToken", refreshToken);
             localStorage.setItem("LoggedIn", "true");
             localStorage.setItem("Role", "admin");
-  
+
             showToast("Login successful!", "success");
-            window.location.href = "/admin-dashboard"; // Redirect after successful login
+
+            window.location.href = "/admin-dashboard";
           } else {
             showToast("Invalid server response. Please try again.", "error");
           }
         }
       } catch (err) {
         if (err.response) {
-          // Backend returned an error response
-          const errorMessage = err.response.data || "Login failed. Please try again.";
+          const errorMessage =
+            err.response.data || "Login failed. Please try again.";
           showToast(errorMessage, "error");
           console.error("Backend error:", err.response.data);
         } else if (err.request) {
-          // Request made but no response received
           showToast("Network error. Please check your connection.", "error");
           console.error("Network error:", err.request);
         } else {
-          // Something else caused the error
           showToast("An unexpected error occurred. Please try again.", "error");
           console.error("Error:", err.message);
         }
       } finally {
-        setIsLoading(false); // Stop the loader regardless of success or failure
+        setIsLoading(false);
       }
     }
   };
-  
 
-  hidePassword ? (passwordInput.current = "text") : (passwordInput.current = "password");
+  hidePassword
+    ? (passwordInput.current = "text")
+    : (passwordInput.current = "password");
 
   return (
     <>
       <div
         className={
-          dark ? "login-section login-section-dark" : "login-section login-section-light"
+          dark
+            ? "login-section login-section-dark"
+            : "login-section login-section-light"
         }
       >
         <div className="login-parent">
@@ -191,17 +187,29 @@ function Login(props) {
           </div>
           <div className="login-child child2">
             <div
-              className={dark ? "login-card login-card-dark" : "login-card login-card-light"}
+              className={
+                dark
+                  ? "login-card login-card-dark"
+                  : "login-card login-card-light"
+              }
             >
               <h1
-                className={dark ? "card-heading card-heading-dark" : "card-heading card-heading-light"}
+                className={
+                  dark
+                    ? "card-heading card-heading-dark"
+                    : "card-heading card-heading-light"
+                }
               >
                 Welcome Back
               </h1>
               <form onSubmit={loginUser} noValidate>
                 <div className="inside-contact">
                   <div
-                    className={dark ? "login-input login-input-dark" : "login-input login-input-light"}
+                    className={
+                      dark
+                        ? "login-input login-input-dark"
+                        : "login-input login-input-light"
+                    }
                   >
                     <input
                       autoFocus="on"
@@ -211,7 +219,11 @@ function Login(props) {
                       name="email"
                       placeholder="Username"
                       onChange={handleChange}
-                      className={dark ? "input-login-dark input-login" : "input-login-light input-login"}
+                      className={
+                        dark
+                          ? "input-login-dark input-login"
+                          : "input-login-light input-login"
+                      }
                     />
                     <i className="fas fa-user"></i>
                     <div className="validation">
@@ -223,13 +235,21 @@ function Login(props) {
                     </div>
                   </div>
                   <div
-                    className={dark ? "login-input login-input-dark" : "login-input login-input-light"}
+                    className={
+                      dark
+                        ? "login-input login-input-dark"
+                        : "login-input login-input-light"
+                    }
                   >
                     <input
                       id="password"
                       name="password"
                       placeholder="Password"
-                      className={dark ? "input-login-dark input-login" : "input-login-light input-login"}
+                      className={
+                        dark
+                          ? "input-login-dark input-login"
+                          : "input-login-light input-login"
+                      }
                       type={passwordInput.current}
                       onChange={handleChange}
                     />
@@ -271,7 +291,7 @@ function Login(props) {
                       Login as User
                     </button>
                     <button
-                       type="submit"
+                      type="submit"
                       className="submit-btn secondary"
                       onClick={loginAdmin}
                     >

@@ -1,13 +1,6 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import "./App.css";
-import {
-  checkTokenExpiration,
-  refreshToken,
-  handleAutoLogout,
-} from "./utils/authUtils";
 import useInactivityLogout from "./hooks/useInactivityLogout";
 import useTokenExpiration from "./hooks/useTokenExpiration";
 

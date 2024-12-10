@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -52,7 +53,7 @@ public class AdminController {
 	private ContactUsService contactUsService;
 
 	@Autowired
-	private JwtUtils jwtUtils;
+	private JwtUtils jwtUtil;
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -67,27 +68,43 @@ public class AdminController {
 
 	@PostMapping("/login")
 	public ResponseEntity<?> loginAdmin(@RequestBody Admin admin) {
-		if (admin.getEmail() == null || admin.getPassword() == null) {
-			throw new IllegalArgumentException("Email and password are required.");
-		}
+		  if (admin.getEmail() == null || admin.getPassword() == null) {
+		        throw new IllegalArgumentException("Email and password are required.");
+		    }
 
-		try {
-			authenticationManager
-					.authenticate(new UsernamePasswordAuthenticationToken(admin.getEmail(), admin.getPassword()));
+		    try {
+		        // Authenticate user
+		        authenticationManager.authenticate(
+		            new UsernamePasswordAuthenticationToken(admin.getEmail(), admin.getPassword())
+		        );
 
-			UserDetails userDetails = userDetailsService.loadUserByUsername(admin.getEmail());
+		        // Load user details
+		        UserDetails userDetails = userDetailsService.loadUserByUsername(admin.getEmail());
 
-			String accessToken = jwtUtils.generateToken(userDetails.getUsername());
-			String refreshToken = jwtUtils.generateRefreshToken(userDetails.getUsername());
+		        // Generate access and refresh tokens
+		        String accessToken = jwtUtil.generateToken(userDetails.getUsername());
+		        String refreshToken = jwtUtil.generateRefreshToken(userDetails.getUsername());
 
-			return ResponseEntity.ok(new JwtResponse(accessToken, refreshToken, admin.getEmail()));
-		} catch (BadCredentialsException e) {
-			logger.warn("Invalid credentials for email: {}", admin.getEmail());
-			return new ResponseEntity<>("Incorrect username or password", HttpStatus.UNAUTHORIZED);
-		} catch (Exception e) {
-			logger.error("Unexpected error during login", e);
-			return new ResponseEntity<>("An error occurred during login", HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		        // Set refresh token in an HttpOnly cookie
+		        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+		            .httpOnly(true)
+		            .secure(true) // Use secure flag for HTTPS
+		            .path("/auth/refresh") // Restrict path for refresh endpoint
+		            .maxAge(7 * 24 * 60 * 60) // 7 days
+		            .sameSite("Strict") // Strict SameSite policy
+		            .build();
+
+		        // Return access token in response and refresh token in cookie
+		        return ResponseEntity.ok()
+		            .header("Set-Cookie", cookie.toString())
+		            .body(new JwtResponse(accessToken, admin.getEmail()));
+		    } catch (BadCredentialsException e) {
+		        logger.warn("Invalid credentials for email: {}", admin.getEmail());
+		        return new ResponseEntity<>("Invalid login credentials", HttpStatus.UNAUTHORIZED);
+		    } catch (Exception e) {
+		        logger.error("Unexpected error during login", e);
+		        return new ResponseEntity<>("An error occurred during login", HttpStatus.INTERNAL_SERVER_ERROR);
+		    }
 	}
 
 	@PostMapping("/register")
