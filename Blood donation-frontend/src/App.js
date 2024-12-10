@@ -9,6 +9,7 @@ import {
   handleAutoLogout,
 } from "./utils/authUtils";
 import useInactivityLogout from "./hooks/useInactivityLogout";
+import useTokenExpiration from "./hooks/useTokenExpiration";
 
 import Home from "./pages/Home/Home";
 import AboutUs from "./pages/About/AboutUs";
@@ -44,9 +45,6 @@ function App() {
 
   const { toast, showToast, hideToast } = useToast();
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
   const toggleTheme = () => {
     setTheme((prevTheme) => {
       const newTheme = !prevTheme;
@@ -56,24 +54,8 @@ function App() {
     });
   };
 
+  useTokenExpiration();
   // useInactivityLogout();
-
-  useEffect(() => {
-    const token = localStorage.getItem("jwtToken");
-    const refreshTokenValue = localStorage.getItem("refreshToken");
-
-    if (checkTokenExpiration(token)) {
-      if (refreshTokenValue) {
-        refreshToken(refreshTokenValue).then((newToken) => {
-          if (!newToken) {
-            handleAutoLogout(dispatch, navigate);
-          }
-        });
-      } else {
-        handleAutoLogout(dispatch, navigate);
-      }
-    }
-  }, [dispatch, navigate]);
 
   return (
     <Fragment>
