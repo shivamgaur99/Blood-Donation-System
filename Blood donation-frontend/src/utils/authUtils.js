@@ -33,11 +33,11 @@ export const refreshToken = async () => {
 export const logoutUser = async (dispatch, navigate) => {
   try {
     const response = await axios.post(`${END_POINT}/auth/logout`, null, {
-      withCredentials: true, 
+      withCredentials: true,
     });
 
     if (response.status === 200) {
-      handleAutoLogout(dispatch, navigate); 
+      handleAutoLogout(dispatch, navigate);
     }
   } catch (error) {
     console.error("Error logging out", error);
@@ -49,7 +49,7 @@ export const handleAutoLogout = (dispatch, navigate) => {
   localStorage.removeItem("email");
   localStorage.removeItem("jwtToken");
   localStorage.removeItem("LoggedIn");
-  localStorage.removeItem("Role");
+  localStorage.removeItem("Roles");
   dispatch({ type: "LOG_OUT" }); // Redux action to update the state
   window.location.href = "/login";
 };

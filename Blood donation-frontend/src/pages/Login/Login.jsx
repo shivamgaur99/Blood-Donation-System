@@ -70,24 +70,45 @@ function Login(props) {
 
       try {
         const response = await axios.post(`${END_POINT}/auth/login`, data, {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           withCredentials: true,
         });
 
         if (response.status === 200) {
-          const { accessToken, email } = response.data;
+          const { accessToken, email, role } = response.data;
 
           if (accessToken) {
             localStorage.setItem("email", email);
             localStorage.setItem("jwtToken", accessToken);
             localStorage.setItem("LoggedIn", "true");
-            localStorage.setItem("Role", "user");
+
+            if (role && Array.isArray(role) && role.length > 0) {
+              const roleValues = role.map((r) =>
+                r.authority.replace("ROLE_", "")
+              );
+
+              localStorage.setItem("Roles", roleValues.join(","));
+            } else {
+              showToast("No valid role found.", "error");
+            }
 
             showToast("Login successful!", "success");
 
-            window.location.href = "/user-dashboard";
+            const roles = localStorage.getItem("Roles");
+
+            if (roles) {
+              const roleArray = roles.split(",");
+              if (
+                roleArray.includes("admin") ||
+                roleArray.includes("superAdmin")
+              ) {
+                window.location.href = "/admin-dashboard";
+              } else {
+                window.location.href = "/user-dashboard";
+              }
+            } else {
+              showToast("No valid roles found.", "error");
+            }
           } else {
             showToast("Invalid server response. Please try again.", "error");
           }
@@ -106,60 +127,7 @@ function Login(props) {
           console.error("Error:", err.message);
         }
       } finally {
-        setIsLoading(false);
-      }
-    }
-  };
-
-  const loginAdmin = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    if (isFormValid()) {
-      const data = {
-        email: credential.email,
-        password: credential.password,
-      };
-
-      try {
-        const response = await axios.post(`${END_POINT}/admin/login`, data, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        });
-
-        if (response.status === 200) {
-          const { accessToken, email } = response.data;
-
-          if (accessToken) {
-            localStorage.setItem("email", email);
-            localStorage.setItem("jwtToken", accessToken);
-            localStorage.setItem("LoggedIn", "true");
-            localStorage.setItem("Role", "admin");
-
-            showToast("Login successful!", "success");
-
-            window.location.href = "/admin-dashboard";
-          } else {
-            showToast("Invalid server response. Please try again.", "error");
-          }
-        }
-      } catch (err) {
-        if (err.response) {
-          const errorMessage =
-            err.response.data || "Login failed. Please try again.";
-          showToast(errorMessage, "error");
-          console.error("Backend error:", err.response.data);
-        } else if (err.request) {
-          showToast("Network error. Please check your connection.", "error");
-          console.error("Network error:", err.request);
-        } else {
-          showToast("An unexpected error occurred. Please try again.", "error");
-          console.error("Error:", err.message);
-        }
-      } finally {
-        setIsLoading(false);
+        setIsLoading(false); 
       }
     }
   };
@@ -286,17 +254,18 @@ function Login(props) {
                     <button
                       type="submit"
                       className="submit-btn primary"
+                      style={{ paddingLeft: "50px", paddingRight: "50px" }}
                       onClick={loginUser}
                     >
-                      Login as User
+                      Login 
                     </button>
-                    <button
+                    {/* <button
                       type="submit"
                       className="submit-btn secondary"
                       onClick={loginAdmin}
                     >
                       Login as Admin
-                    </button>
+                    </button> */}
                   </div>
                   <Link to="#">
                     <p

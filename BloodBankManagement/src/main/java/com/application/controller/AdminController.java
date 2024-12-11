@@ -89,7 +89,7 @@ public class AdminController {
 			ResponseCookie cookie = cookieService.createRefreshTokenCookie(refreshToken);
 
 			return ResponseEntity.ok().header("Set-Cookie", cookie.toString())
-					.body(new JwtResponse(accessToken, admin.getEmail()));
+					.body(new JwtResponse(accessToken, admin.getEmail(), userDetails.getAuthorities()));
 		} catch (BadCredentialsException e) {
 			logger.warn("Invalid credentials for email: {}", admin.getEmail());
 			return new ResponseEntity<>("Invalid login credentials", HttpStatus.UNAUTHORIZED);

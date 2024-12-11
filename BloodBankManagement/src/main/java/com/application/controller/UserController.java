@@ -58,7 +58,7 @@ public class UserController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<?> loginUser(@RequestBody User user) {
+	public ResponseEntity<String> loginUser(@RequestBody User user) {
 	    if (user.getEmail() == null || user.getPassword() == null) {
 	        throw new IllegalArgumentException("Email and password are required.");
 	    }
@@ -70,7 +70,7 @@ public class UserController {
 
 	    String token = jwtUtil.generateToken(authenticatedUser.getEmail(), authenticatedUser.getRole());
 
-	    return ResponseEntity.ok(new JwtResponse(token, authenticatedUser.getEmail()));
+	    return ResponseEntity.ok(token);
 	}
 
 	@PostMapping("/register")

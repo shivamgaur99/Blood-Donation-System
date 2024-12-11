@@ -17,7 +17,7 @@ const useInactivityLogout = () => {
         localStorage.removeItem("email");
         localStorage.removeItem("jwtToken");
         localStorage.removeItem("LoggedIn");
-        localStorage.removeItem("Role");
+        localStorage.removeItem("Roles");
         window.location.href = "/login";
       }, 1000 * 60 * 30); // 30 minutes of inactivity
     };

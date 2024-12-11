@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Toggle from "../util/Toggle/Toggle";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import "./navbar.css";
 import { useToast } from "../../services/toastService";
 import { SimpleToast } from "../util/Toast/Toast";
@@ -14,7 +14,7 @@ export const Navbar = (props) => {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
-  const [Role, setRole] = useState("");
+  const [roles, setRoles] = useState("");
 
   const { toast, showToast, hideToast } = useToast();
 
@@ -23,11 +23,11 @@ export const Navbar = (props) => {
 
   const checkAuthentication = () => {
     const user = localStorage.getItem("LoggedIn");
-    const role = localStorage.getItem("Role");
+    const roles = localStorage.getItem("Roles");
     const isAuthenticated = user ? true : false;
 
     setLoggedIn(isAuthenticated);
-    setRole(role);
+    setRoles(roles);
     setUsername(localStorage.getItem("Username"));
   };
 
@@ -36,13 +36,13 @@ export const Navbar = (props) => {
 
   const handleLogout = () => {
     Swal.fire({
-      title: 'Log Out',
+      title: "Log Out",
       text: "Are you sure you want to log out?",
-      icon: 'question',
+      icon: "question",
       showCancelButton: true,
-      confirmButtonText: 'Yes, log out',
-      cancelButtonText: 'Cancel',
-      reverseButtons: true,  
+      confirmButtonText: "Yes, log out",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
         logoutUser(dispatch, navigate);
@@ -51,10 +51,11 @@ export const Navbar = (props) => {
     });
   };
 
-
   useEffect(() => {
     checkAuthentication();
   }, []);
+
+  const hasRole = (role) => roles && roles.split(",").includes(role);
 
   return (
     <Fragment>
@@ -64,7 +65,6 @@ export const Navbar = (props) => {
           <img
             src="logo2.png"
             alt="logo"
-            // width="65px"
             height="25px"
           />
         </NavLink>
@@ -138,11 +138,12 @@ export const Navbar = (props) => {
               }
               onClick={closeMobileMenu}
             >
-              Events & Drives 
+              Events & Drives
             </NavLink>
           </li>
 
-          {Role === "admin" && (
+          {/* Admin Dashboard Link */}
+          {hasRole("admin") && (
             <li className={dark ? "nav-item-dark" : "nav-item"}>
               <NavLink
                 activeClassName={"active-link"}
@@ -159,7 +160,26 @@ export const Navbar = (props) => {
             </li>
           )}
 
-          {Role === "user" && (
+          {/* Superadmin Dashboard Link */}
+          {hasRole("superAdmin") && (
+            <li className={dark ? "nav-item-dark" : "nav-item"}>
+              <NavLink
+                activeClassName={"active-link"}
+                to="/admin-dashboard"
+                className={({ isActive }) =>
+                  `${
+                    isActive ? (dark ? "active-link-dark" : "active-link") : ""
+                  } ${dark ? "nav-links-dark" : "nav-links"}`
+                }
+                onClick={closeMobileMenu}
+              >
+                Admin Dashboard
+              </NavLink>
+            </li>
+          )}
+
+          {/* User Dashboard Link */}
+          {hasRole("user") && (
             <li className={dark ? "nav-item-dark" : "nav-item"}>
               <NavLink
                 activeClassName={"active-link"}
@@ -175,16 +195,6 @@ export const Navbar = (props) => {
               </NavLink>
             </li>
           )}
-
-          {/* <li className={dark ? "nav-item-dark" : "nav-item"}>
-            <Link
-              to="/admin"
-              className={dark ? "nav-links-mobile-dark" : "nav-links-mobile"}
-              onClick={closeMobileMenu}
-            >
-              Admin ?
-            </Link>
-          </li> */}
 
           {loggedIn ? (
             <li className={dark ? "nav-item-dark" : "nav-item"}>
@@ -226,19 +236,6 @@ export const Navbar = (props) => {
             <Toggle handleClick={props.handleClick} theme={props.theme} />
           </div>
         </ul>
-
-        {/* Admin Button */}
-        {/* <NavLink
-          to="/admin"
-            activeClassName={"button-div"}
-              className={({ isActive }) =>
-                `${isActive ? (dark ? "button-div-dark" : "button-div") : ""} ${isActive ? "" : ""} ${
-                  dark ? "nav-admin-button-dark" : "nav-admin-button"
-                }`
-              }
-        >
-          Admin ?
-        </NavLink> */}
 
         {loggedIn ? (
           <NavLink

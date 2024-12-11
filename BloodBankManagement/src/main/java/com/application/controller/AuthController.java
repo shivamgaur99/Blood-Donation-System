@@ -77,7 +77,7 @@ public class AuthController {
 
 			// Return access token in response and refresh token in cookie
 			return ResponseEntity.ok().header("Set-Cookie", cookie.toString())
-					.body(new JwtResponse(accessToken, user.getEmail()));
+					.body(new JwtResponse(accessToken, user.getEmail(),  userDetails.getAuthorities()));
 		} catch (BadCredentialsException e) {
 			logger.warn("Invalid credentials for email: {}", user.getEmail());
 			return new ResponseEntity<>("Invalid login credentials", HttpStatus.UNAUTHORIZED);
@@ -104,7 +104,7 @@ public class AuthController {
 
 			String newAccessToken = jwtUtil.generateToken(userDetails.getUsername());
 
-			return ResponseEntity.ok(new JwtResponse(newAccessToken, username));
+			return ResponseEntity.ok(new JwtResponse(newAccessToken, username, userDetails.getAuthorities()));
 		} catch (Exception e) {
 			logger.error("Error while refreshing access token", e);
 			return new ResponseEntity<>("Error while refreshing access token", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -133,7 +133,7 @@ public class AuthController {
 			ResponseCookie refreshCookie = cookieService.createRefreshTokenCookie(newRefreshToken);
 
 			return ResponseEntity.ok().header("Set-Cookie", refreshCookie.toString())
-					.body(new JwtResponse(newAccessToken, username));
+					.body(new JwtResponse(newAccessToken, username,  userDetails.getAuthorities()));
 		} catch (Exception e) {
 			return new ResponseEntity<>("Error refreshing token", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
