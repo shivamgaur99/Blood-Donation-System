@@ -35,6 +35,7 @@ import com.application.model.JwtResponse;
 import com.application.model.User;
 import com.application.service.AdminService;
 import com.application.service.ContactUsService;
+import com.application.service.CookieService;
 import com.application.service.UserDetailsServiceImpl;
 import com.application.service.UserService;
 import com.application.util.JwtUtils;
@@ -64,47 +65,38 @@ public class AdminController {
 	@Autowired
 	private UserDetailsServiceImpl userDetailsService;
 
+	@Autowired
+	private CookieService cookieService;
+
 	private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
 
 	@PostMapping("/login")
 	public ResponseEntity<?> loginAdmin(@RequestBody Admin admin) {
-		  if (admin.getEmail() == null || admin.getPassword() == null) {
-		        throw new IllegalArgumentException("Email and password are required.");
-		    }
+		if (admin.getEmail() == null || admin.getPassword() == null) {
+			throw new IllegalArgumentException("Email and password are required.");
+		}
 
-		    try {
-		        // Authenticate user
-		        authenticationManager.authenticate(
-		            new UsernamePasswordAuthenticationToken(admin.getEmail(), admin.getPassword())
-		        );
+		try {
 
-		        // Load user details
-		        UserDetails userDetails = userDetailsService.loadUserByUsername(admin.getEmail());
+			authenticationManager
+					.authenticate(new UsernamePasswordAuthenticationToken(admin.getEmail(), admin.getPassword()));
 
-		        // Generate access and refresh tokens
-		        String accessToken = jwtUtil.generateToken(userDetails.getUsername());
-		        String refreshToken = jwtUtil.generateRefreshToken(userDetails.getUsername());
+			UserDetails userDetails = userDetailsService.loadUserByUsername(admin.getEmail());
 
-		        // Set refresh token in an HttpOnly cookie
-		        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
-		            .httpOnly(true)
-		            .secure(true) // Use secure flag for HTTPS
-		            .path("/auth/refresh") // Restrict path for refresh endpoint
-		            .maxAge(7 * 24 * 60 * 60) // 7 days
-		            .sameSite("Strict") // Strict SameSite policy
-		            .build();
+			String accessToken = jwtUtil.generateToken(userDetails.getUsername());
+			String refreshToken = jwtUtil.generateRefreshToken(userDetails.getUsername());
 
-		        // Return access token in response and refresh token in cookie
-		        return ResponseEntity.ok()
-		            .header("Set-Cookie", cookie.toString())
-		            .body(new JwtResponse(accessToken, admin.getEmail()));
-		    } catch (BadCredentialsException e) {
-		        logger.warn("Invalid credentials for email: {}", admin.getEmail());
-		        return new ResponseEntity<>("Invalid login credentials", HttpStatus.UNAUTHORIZED);
-		    } catch (Exception e) {
-		        logger.error("Unexpected error during login", e);
-		        return new ResponseEntity<>("An error occurred during login", HttpStatus.INTERNAL_SERVER_ERROR);
-		    }
+			ResponseCookie cookie = cookieService.createRefreshTokenCookie(refreshToken);
+
+			return ResponseEntity.ok().header("Set-Cookie", cookie.toString())
+					.body(new JwtResponse(accessToken, admin.getEmail()));
+		} catch (BadCredentialsException e) {
+			logger.warn("Invalid credentials for email: {}", admin.getEmail());
+			return new ResponseEntity<>("Invalid login credentials", HttpStatus.UNAUTHORIZED);
+		} catch (Exception e) {
+			logger.error("Unexpected error during login", e);
+			return new ResponseEntity<>("An error occurred during login", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	@PostMapping("/register")
