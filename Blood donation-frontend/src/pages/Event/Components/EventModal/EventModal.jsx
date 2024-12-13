@@ -6,29 +6,29 @@ const EventModal = ({ event, isOpen, onClose, dark }) => {
   if (!isOpen) return null;
 
   return (
-    <div className={`modal-overlay ${dark ? "dark" : ""}`} onClick={onClose}>
+    <div className={`event-modal-overlay ${dark ? "dark" : ""}`} onClick={onClose}>
       <div
-        className={`modal-container ${dark ? "dark" : ""}`}
+        className={`event-modal-container ${dark ? "dark" : ""}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className={`modal-header ${dark ? "dark" : ""}`}>
+        <div className={`event-modal-header ${dark ? "dark" : ""}`}>
           <h1>{event.name}</h1>
         </div>
-        <div className={`modal-content ${dark ? "dark" : ""}`}>
-          <p className="modal-description">{event.description}</p>
-          <p>
+        <div className={`event-modal-content ${dark ? "dark" : ""}`}>
+          <p className={`event-modal-description ${dark ? "dark" : ""}`}>{event.description}</p>
+          <p className={`event-modal-organizer ${dark ? "dark" : ""}`}>
             <strong>Organizer:</strong> {event.organizer}
           </p>
-          <p>
+          <p className={`event-modal-dateTime ${dark ? "dark" : ""}`}>
             <strong>Date & Time:</strong>{" "}
             {new Date(event.dateTime).toLocaleString()}
           </p>
-          <p>
+          <p className={`event-modal-location ${dark ? "dark" : ""}`}>
             <strong>Location:</strong> {event.location}
           </p>
         </div>
-        <div className="modal-footer">
-          <button className={`modal-action-btn ${dark ? "dark" : ""}`} onClick={onClose}>
+        <div className={`event-modal-footer ${dark ? "dark" : ""}`}>
+          <button className={`event-modal-action-btn ${dark ? "dark" : ""}`} onClick={onClose}>
             Close
           </button>
         </div>

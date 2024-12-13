@@ -5,7 +5,7 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.all-events.dark-mode {
+.all-events.dark {
   background: #121212;
   color: #e0e0e0;
 }
@@ -18,7 +18,7 @@
   letter-spacing: 1.5px;
 }
 
-.all-events.dark-mode h2 {
+.all-events.dark h2 {
   color: #76c7ff;
 }
 
@@ -55,17 +55,17 @@
   }
 }
 
-
 .filters-container {
   display: flex;
   justify-content: space-around;
   align-items: center;
   gap: 25px;
   margin-bottom: 20px;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
 }
 
 .search-bar {
+  position: relative;
   flex: 0 0 300px;
 }
 
@@ -77,6 +77,15 @@
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  padding-left: 35px;
+}
+
+.search-bar .search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #1d3557;
 }
 
 .search-bar input:focus {
@@ -85,13 +94,28 @@
   outline: none;
 }
 
-.all-events.dark-mode .search-bar input {
+.all-events.dark .search-bar input {
   background-color: #1e1e1e;
   color: #e0e0e0;
   border-color: #76c7ff;
 }
 
-.all-events.dark-mode .search-bar input:focus {
+.all-events.dark .search-bar input:focus {
+  border-color: #48cae4;
+  box-shadow: 0 4px 10px rgba(72, 202, 228, 0.3);
+}
+
+.all-events.dark .search-bar .search-icon {
+  color: #76c7ff;
+}
+
+.all-events.dark .search-bar input {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  border-color: #76c7ff;
+}
+
+.all-events.dark .search-bar input:focus {
   border-color: #48cae4;
   box-shadow: 0 4px 10px rgba(72, 202, 228, 0.3);
 }
@@ -100,7 +124,7 @@
   display: flex;
   justify-content: center;
   gap: 15px;
-  flex: 0 0 300px; 
+  flex: 0 0 300px;
 }
 
 .filters select {
@@ -112,13 +136,13 @@
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.all-events.dark-mode .filters select {
+.all-events.dark .filters select {
   background-color: #2c2c2c;
   color: #e0e0e0;
   border-color: #76c7ff;
 }
 
-.all-events.dark-mode .filters select:focus {
+.all-events.dark .filters select:focus {
   border-color: #48cae4;
   box-shadow: 0 4px 10px rgba(72, 202, 228, 0.3);
 }

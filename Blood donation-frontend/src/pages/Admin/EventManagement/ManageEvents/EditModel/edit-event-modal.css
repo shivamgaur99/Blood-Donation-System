@@ -1,0 +1,189 @@
+/* Modal Structure */
+.edit-event-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  width: 90%;
+  max-width: 700px;
+  background-color: #e7e7e7;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 5px 5px 15px #888888, -5px -5px 15px #ffffff;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Dark Mode Styles */
+.edit-event-modal.dark .modal-content {
+  background-color: #282c35;
+  color: whitesmoke;
+  box-shadow: 0px 8px 16px 0px rgba(72, 127, 255, 0.1),
+    0px -8px 16px 0px rgba(72, 127, 255, 0.1);
+}
+
+.edit-event-modal.dark .form-group label {
+  color: whitesmoke;
+}
+
+.edit-event-modal.dark .form-group input,
+.edit-event-modal.dark .form-group textarea {
+  border: 1px solid #414a4c;
+  color: whitesmoke;
+  background-color: #333333;
+  box-shadow: inset 2px 2px 5px rgba(72, 127, 255, 0.1),
+    inset -2px -2px 5px rgba(72, 127, 255, 0.4);
+}
+
+.edit-event-modal.dark .form-group input:focus,
+.edit-event-modal.dark .form-group textarea:focus {
+  border-color: #69a9dd;
+  background-color: black;
+  background-image: linear-gradient(to right, #2b5876, #4e4376);
+}
+
+.edit-event-modal.dark .form-group select {
+  border: 1px solid #414a4c;
+  color: whitesmoke;
+  background-color: #333333;
+  box-shadow: inset 2px 2px 5px rgba(72, 127, 255, 0.1),
+    inset -2px -2px 5px rgba(72, 127, 255, 0.4);
+}
+
+.edit-event-modal.dark .form-group select:focus {
+  border-color: #69a9dd;
+  background-color: black;
+  background-image: linear-gradient(to right, #2b5876, #4e4376);
+}
+
+/* Modal Content Title */
+.modal-content h3 {
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+/* Form Group Styling */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: flex;
+  font-size: 1rem;
+  margin-bottom: 5px;
+  margin-left: 10px;
+  color: #555;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 12px 20px;
+  border: 1px solid #bbbaba;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #777777;
+  background-color: #f1f1f1;
+  box-shadow: inset 2px 2px 5px #888888, inset -2px -2px 5px #ffffff;
+}
+
+/* Focus States */
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #1863ff;
+  background-color: #ffffff;
+}
+
+/* Textarea Specific Styling */
+.form-group textarea {
+  resize: none;
+  height: 150px;
+}
+
+/* Modal Actions */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Button Styling */
+.cancel-btn,
+.save-btn {
+  font-size: 1.1rem;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cancel-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.cancel-btn:hover {
+  background-color: #c82333;
+}
+
+.save-btn {
+  background-image: linear-gradient(135deg, #1f2a8e, #0f09ab);
+  color: white;
+}
+
+.save-btn:hover {
+  background-image: linear-gradient(135deg, #0f09ab, #09147d);
+  transform: translateY(-2px);
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Mobile Responsiveness */
+@media screen and (max-width: 750px) {
+  .modal-content {
+    width: 95%;
+    padding: 15px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 10px;
+  }
+
+  .cancel-btn,
+  .save-btn {
+    padding: 10px 15px;
+  }
+}
+
+.form-group select {
+  appearance: none;
+}
+
+.form-group select option {
+  padding: 10px;
+  font-size: 14px;
+}

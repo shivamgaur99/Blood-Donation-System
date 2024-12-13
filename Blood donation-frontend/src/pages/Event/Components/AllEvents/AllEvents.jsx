@@ -90,7 +90,7 @@ const AllEvents = (props) => {
   };
 
   return (
-    <div className={`all-events ${dark ? "dark-mode" : ""}`}>
+    <div className={`all-events ${dark ? "dark" : ""}`}>
       <h2>All Events</h2>
 
       <div className="filters-container">
@@ -101,6 +101,7 @@ const AllEvents = (props) => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
+           <i className="fas fa-search search-icon fa-sm"></i> 
         </div>
 
         <div className="filters">

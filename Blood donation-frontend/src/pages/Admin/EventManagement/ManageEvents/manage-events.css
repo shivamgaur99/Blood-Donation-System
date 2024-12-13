@@ -1,107 +1,244 @@
-/* General styles for the manage-events component */
 .manage-events {
-    padding: 20px;
-    font-family: Arial, sans-serif;
-  }
-  
-  .manage-events h1 {
-    font-size: 2rem;
-    margin-bottom: 20px;
+    background-color: #f4f4f9;
+    padding: 20px 60px;
     text-align: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
   
-  /* Modal styles */
-  .event-form {
+  .manage-events.dark {
+    background: #121212;
+    color: #e0e0e0;
+  }
+  
+  .manage-events h2 {
+    font-size: 2.8em;
+    color: #1d3557;
+    padding: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+  
+  .manage-events.dark h2 {
+    color: #76c7ff;
+  }
+
+  
+.filters-container {
     display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 100%;
+    justify-content: space-around;
+    align-items: center;
+    gap: 25px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
   }
   
-  .event-form input,
-  .event-form textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
+  .search-bar {
+    position: relative;
+    flex: 0 0 300px;
   }
   
-  .event-form button {
+  .search-bar input {
+    width: 100%;
     padding: 10px 15px;
-    border: none;
-    background-color: #4CAF50;
-    color: white;
-    font-size: 1rem;
-    border-radius: 5px;
-    cursor: pointer;
+    font-size: 1em;
+    border: 2px solid #1d3557;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    padding-left: 35px;
   }
   
-  .event-form button:disabled {
-    background-color: #a5d6a7;
-    cursor: not-allowed;
+  .search-bar .search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #1d3557;
   }
   
-  /* Event cards */
-  .events-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
+  .search-bar input:focus {
+    border-color: #457b9d;
+    box-shadow: 0 4px 10px rgba(69, 123, 157, 0.3);
+    outline: none;
   }
   
-  .event-card {
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 15px;
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  .manage-events.dark .search-bar input {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    border-color: #76c7ff;
+  }
+  
+  .manage-events.dark .search-bar input:focus {
+    border-color: #48cae4;
+    box-shadow: 0 4px 10px rgba(72, 202, 228, 0.3);
+  }
+  
+  .manage-events.dark .search-bar .search-icon {
+    color: #76c7ff;
+  }
+  
+  .manage-events.dark .search-bar input {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    border-color: #76c7ff;
+  }
+  
+  .manage-events.dark .search-bar input:focus {
+    border-color: #48cae4;
+    box-shadow: 0 4px 10px rgba(72, 202, 228, 0.3);
+  }
+  
+  .filters {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex: 0 0 300px;
+  }
+  
+  .filters select {
+    padding: 10px;
+    font-size: 1em;
+    border: 2px solid #1d3557;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .manage-events.dark .filters select {
+    background-color: #2c2c2c;
+    color: #e0e0e0;
+    border-color: #76c7ff;
+  }
+  
+  .manage-events.dark .filters select:focus {
+    border-color: #48cae4;
+    box-shadow: 0 4px 10px rgba(72, 202, 228, 0.3);
+  }
+  
+  
+  
+  .all-event {
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    padding: 30px;
+    border-radius: 18px;
+    width: 340px;
+    min-height: 350px;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    color: #fff;
+    margin: 15px auto;
   }
   
-  .event-card:hover {
-    transform: scale(1.02);
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  .all-event.dark {
+    background: linear-gradient(135deg, #8585c9, #0c0cd1);
+    color: #d1d1d1;
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
   }
   
-  .event-card h3 {
+  .all-event .header h3 {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+  
+  .all-event p {
+    font-size: 1em;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  
+  .all-event .badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 5px 10px;
+    font-size: 0.9em;
+    border-radius: 8px;
+    display: inline-block;
     margin-bottom: 10px;
   }
   
-  .event-card p {
-    margin: 5px 0;
-  }
-  
-  .event-card .actions {
-    margin-top: 15px;
+  .all-event .all-event-date,
+  .all-event .all-event-location,
+  .all-event .all-event-organizer {
+    font-size: 0.9em;
+    margin-bottom: 10px;
+    line-height: 1;
     display: flex;
-    gap: 10px;
-  }
-  
-  .event-card .edit-btn,
-  .event-card .delete-btn {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
-  
-  .event-card .edit-btn {
-    background-color: #2196F3;
-    color: white;
-  }
-  
-  .event-card .delete-btn {
-    background-color: #f44336;
-    color: white;
-  }
-  
-  /* Loader alignment */
-  .manage-events .loader {
-    display: flex;
-    justify-content: center;
     align-items: center;
-    height: 100%;
   }
+  
+  .all-event .all-event-description {
+    font-style: italic;
+  }
+  
+  .all-event .all-event-btn {
+    padding: 12px 30px;
+    font-size: 1em;
+    font-weight: 600;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #ff758c;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .all-event .all-event-btn:hover {
+    background-color: #fff;
+    transform: translateY(-3px);
+  }
+  
+  .all-event-btn,
+.edit-btn,
+.delete-btn {
+  display: inline-block;
+  margin: 5px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Primary Button (Learn More) */
+.all-event-btn {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.all-event-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Edit Button */
+.edit-btn {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.edit-btn:hover {
+  background-color: #218838;
+}
+
+/* Delete Button */
+.delete-btn {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.delete-btn:hover {
+  background-color: #c82333;
+}
+
+/* Align buttons horizontally */
+.actions {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-top: 10px;
+}
+
   
