@@ -31,6 +31,7 @@ import Event from "./pages/Event/Event";
 import Donations from "./pages/User/Donations/Donations";
 import CreateEvent from "./pages/Admin/EventManagement/CreateEvent/CreateEvent";
 import ManageEvents from "./pages/Admin/EventManagement/ManageEvents/ManageEvents";
+import AllEvents from "./pages/Event/Components/AllEvents/AllEvents";
 
 function App() {
   const getTheme = () => JSON.parse(localStorage.getItem("dark")) || false;
@@ -88,6 +89,7 @@ function App() {
             element={<EventManagement theme={theme} />}
           />
           <Route path="/events" element={<Event theme={theme} />} />
+          <Route path="/all-events" element={<AllEvents theme={theme} />} />
           <Route path="/create-event" element={<CreateEvent theme={theme} />} />
           <Route
             path="/manage-events"

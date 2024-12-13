@@ -1,0 +1,222 @@
+.events {
+  background-color: #f4f4f9;
+  padding: 20px 60px;
+  text-align: center;
+}
+
+.events.dark-mode {
+  background: #121212;
+  color: #e0e0e0;
+}
+
+.events.dark-mode h2 {
+  color: #76c7ff;
+}
+
+.events h2 {
+  font-size: 2.8em;
+  color: #1d3557;
+  padding: 40px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  text-align: center;
+}
+
+.event-list {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+/* Event Card */
+.event {
+  background: linear-gradient(135deg, #ff758c, #ff7eb3);
+  padding: 30px;
+  border-radius: 18px;
+  width: 320px;
+  min-height: 350px;
+  /* max-height: 400px; */
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  color: #fff;
+}
+
+.event:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.2);
+}
+
+.event::before {
+  content: "";
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 150px;
+  height: 150px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.event h3 {
+  font-size: 1.8em;
+  font-weight: 700;
+  z-index: 2;
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.event p {
+  font-size: 1em;
+  color: #f0f0f0;
+  line-height: 1.6;
+  z-index: 2;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.event .event-btn {
+  padding: 12px 30px;
+  font-size: 1em;
+  font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #ff758c;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  z-index: 2;
+  position: relative;
+}
+
+.event .event-btn:hover {
+  background-color: #fff;
+  transform: translateY(-3px);
+}
+
+.event.dark {
+  background: linear-gradient(135deg, #8585c9, #0c0cd1);
+  color: #d1d1d1;
+  border: 1px solid rgb(0, 0, 0);
+  box-shadow: 0 12px 25px rgb(0, 0, 0);
+}
+
+.event.dark:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 25px rgba(50, 53, 54, 0.656);
+}
+
+.event-btn.dark {
+  background: linear-gradient(135deg, #5757d6, #c7c7e1);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.event-btn.dark:hover {
+  background: linear-gradient(135deg, #a3a3e8, #0707ca);
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+}
+
+.event .event-date,
+.event .event-location {
+  font-size: 1em;
+  color: #f0f0f0;
+  line-height: 1.2; 
+  margin-bottom: 10px; 
+}
+
+.event .event-date {
+  font-weight: 500;
+}
+
+.event .event-location {
+  font-style: italic;
+}
+
+.event .event-organizer {
+  font-size: 1em;
+  color: #f0f0f0;
+  line-height: 1.2; 
+  margin-bottom: 10px; 
+}
+
+.event .event-description {
+  font-size: 1em;
+}
+
+.event .event-date,
+.event .event-location,
+.event .event-organizer {
+  font-size: 0.9em;
+  margin-bottom: 10px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+
+.event .event-date i, .event .event-location i, .event .badge i {
+  margin-right: 8px; 
+}
+
+.event .event-date, .event .event-location, .event .badge {
+  display: flex;
+  align-items: center;
+}
+
+
+@media (max-width: 768px) {
+  .event-list {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .event {
+    width: 90%;
+    margin-bottom: 30px;
+  }
+}
+
+.all-events-btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px; 
+}
+
+.all-events-btn {
+  padding: 10px 20px;
+  font-size: 20px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #f490a1, #ff7eb3);
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s ease;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+}
+
+.all-events-btn:hover {
+  background: linear-gradient(135deg, #ff7eb3, #f490a1);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+}
+
+.events.dark-mode .all-events-btn {
+  background: linear-gradient(135deg, #5757d6, #c7c7e1);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.events.dark-mode .all-events-btn:hover {
+  background: linear-gradient(135deg, #a3a3e8, #0707ca);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+}
+

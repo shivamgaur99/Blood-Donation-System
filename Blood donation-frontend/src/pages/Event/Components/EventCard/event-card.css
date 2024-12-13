@@ -1,0 +1,129 @@
+.all-event {
+  background: linear-gradient(135deg, #ff758c, #ff7eb3);
+  padding: 30px;
+  border-radius: 18px;
+  width: 340px;
+  min-height: 350px;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  color: #fff;
+  margin: 15px auto;
+}
+
+.all-event:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.2);
+}
+
+.all-event.dark {
+  background: linear-gradient(135deg, #8585c9, #0c0cd1);
+  color: #d1d1d1;
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
+}
+
+.all-event.dark:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 16px 35px rgba(50, 53, 54, 0.7);
+}
+
+.all-event .header h3 {
+  font-size: 1.8em;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.all-event p {
+  font-size: 1em;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.all-event .badge {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 5px 10px;
+  font-size: 0.9em;
+  border-radius: 8px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.all-event .all-event-date,
+.all-event .all-event-location,
+.all-event .all-event-organizer {
+  font-size: 0.9em;
+  margin-bottom: 10px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+
+.all-event .all-event-description {
+  font-style: italic;
+}
+
+.all-event .all-event-date i,
+.all-event .all-event-location i,
+.all-event .badge i {
+  margin-right: 8px;
+}
+
+/* Buttons */
+.all-event .all-event-btn {
+  padding: 12px 30px;
+  font-size: 1em;
+  font-weight: 600;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #ff758c;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.all-event .all-event-btn:hover {
+  background-color: #fff;
+  transform: translateY(-3px);
+}
+
+.all-event .all-event-btn.dark {
+  background: linear-gradient(135deg, #5757d6, #c7c7e1);
+  color: #ffffff;
+}
+
+.all-event .all-event-btn.dark:hover {
+  background: linear-gradient(135deg, #a3a3e8, #0707ca);
+  transform: scale(1.05);
+}
+
+.all-events-btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.all-events-btn {
+  padding: 10px 20px;
+  font-size: 1.2em;
+  background: linear-gradient(135deg, #f490a1, #ff7eb3);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.all-events-btn:hover {
+  background: linear-gradient(135deg, #ff7eb3, #f490a1);
+  transform: translateY(-3px);
+}
+
+.all-events.dark-mode .all-events-btn {
+  background: linear-gradient(135deg, #5757d6, #c7c7e1);
+}
+
+.all-events.dark-mode .all-events-btn:hover {
+  background: linear-gradient(135deg, #a3a3e8, #0707ca);
+}

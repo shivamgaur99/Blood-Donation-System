@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { END_POINT } from "../../../../config/api";
-import Loader from "../../../../components/util/Loader";
-import { SimpleToast } from "../../../../components/util/Toast/Toast";
-import { useToast } from "../../../../services/toastService";
-import Modal from "../../../../components/util/Modal/Modal"; 
+import { END_POINT } from '../../../../config/api';
+import Loader from '../../../../components/util/Loader';
+import { SimpleToast } from '../../../../components/util/Toast/Toast';
+import { useToast } from '../../../../services/toastService';
+import './manage-events.css';
 
-const ManageEvents = () => {
+const ManageEvents = (props) => {
   const [events, setEvents] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
@@ -20,6 +20,7 @@ const ManageEvents = () => {
   const [loading, setLoading] = useState(false);
   const { toast, showToast, hideToast } = useToast();
 
+  let dark = props.theme;
   const token = localStorage.getItem('jwtToken');
 
   useEffect(() => {
@@ -31,7 +32,7 @@ const ManageEvents = () => {
     try {
       const response = await axios.get(`${END_POINT}/events/all`);
       setEvents(response.data);
-      showToast("Events fetched successfully!", "success");
+      // showToast("Events fetched successfully!", "success");
     } catch (error) {
       console.error('Error fetching events:', error);
       showToast('Failed to fetch events. Please try again.', 'error');
@@ -84,12 +85,12 @@ const ManageEvents = () => {
   };
 
   return (
-    <div className="container">
-      <h1>Event Management</h1>
+    <div className={`manage-events ${isEditing ? 'editing' : ''}`}>
+      <h1>All Events</h1>
 
-      {isEditing && (
+      {/* {isEditing && (
         <Modal onClose={() => setIsEditing(false)}>
-          <form>
+          <form className="event-form">
             <input
               type="text"
               name="name"
@@ -132,26 +133,28 @@ const ManageEvents = () => {
             </button>
           </form>
         </Modal>
-      )}
+      )} */}
 
-      <h2>All Events</h2>
       {loading ? (
         <Loader />
       ) : (
-        <ul>
+        <div className="events-list">
           {events.map((event) => (
-            <li key={event.id}>
+            <div className="event-card" key={event.id}>
               <h3>{event.name}</h3>
-              <p>{event.location}</p>
-              <p>{new Date(event.dateTime).toLocaleString()}</p>
-              <p>{event.organizer}</p>
-              <p>{event.description}</p>
-              <button onClick={() => handleEdit(event)}>Edit</button>
-              <button onClick={() => handleDelete(event.id)}>Delete</button>
-            </li>
+              <p className="description">{event.description}</p>
+              <p className="organizer">Organizer: {event.organizer}</p>     
+              <p className="datetime">Date & Time: {new Date(event.dateTime).toLocaleString()}</p>       
+              <p className="location">Location: {event.location}</p>
+              <div className="actions">
+                <button onClick={() => handleEdit(event)} className="edit-btn">Edit</button>
+                <button onClick={() => handleDelete(event.id)} className="delete-btn">Delete</button>
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
+
       {toast.open && (
         <SimpleToast
           open={toast.open}

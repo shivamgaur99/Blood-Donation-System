@@ -1,19 +1,19 @@
 .impact-stats {
   padding: 80px 20px;
   text-align: center;
-  background-color: #c8c4c4;
+  background-color: #a4001b;
 }
 
 .impact-stats h2 {
   font-size: 2.8em;
-  color: #1d3557;
+  color: #ffffff;
   /* margin-bottom: 40px; */
   text-transform: uppercase;
   letter-spacing: 1.5px;
 }
 
 .impact-stats p {
-  color: #070724;
+  color: #ffffff;
   margin-bottom: 40px;
 }
 
@@ -27,7 +27,7 @@
 }
 
 .stat {
-  background: #1d3557;
+  background: #ffffff;
   border-radius: 16px;
   width: 250px;
   padding: 30px;
@@ -45,13 +45,13 @@
 .stat h3 {
   font-size: 2.5em;
   font-weight: 800;
-  color: #ff758c;
+  color: #ff002b;
   margin-bottom: 10px;
 }
 
 .stat p {
   font-size: 1em;
-  color: #848383;
+  color: #cc1616;
   margin-top: 10px;
   font-weight: 500;
 }
