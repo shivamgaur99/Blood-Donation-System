@@ -30,34 +30,40 @@ function AddDonors() {
       date,
     };
 
+    const token = localStorage.getItem("jwtToken");
+    if (!token) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "User is not authenticated. Please login again.",
+      });
+      return;
+    }
+
     setIsLoading(true); // Start loading
 
     axios
-      .post(`${END_POINT}/add`, donorData)
-      .then((response) => {
+      .post(`${END_POINT}/add`, donorData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(() => {
         setIsLoading(false); // Stop loading
-        if (response.status === 200) {
-          Swal.fire({
-            icon: "success",
-            title: "Donor Added",
-            text: "The donor has been successfully added.",
-          });
-          resetForm();
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Failed to add the donor. Please try again later.",
-          });
-        }
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: "Donation data added successfully!",
+        });
+        resetForm();
       })
       .catch((error) => {
-        setIsLoading(false);
+        setIsLoading(false); // Stop loading
         console.error("Error:", error);
         Swal.fire({
           icon: "error",
           title: "Error",
-          text: "Failed to add the donor. Please try again later.",
+          text: "Failed to add donation data. Please try again later.",
         });
       });
   };

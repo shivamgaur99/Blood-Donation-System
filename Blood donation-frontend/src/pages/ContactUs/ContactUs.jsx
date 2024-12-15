@@ -113,6 +113,7 @@ const ContactUs = (props) => {
                     dark ? "contact-input-dark" : "contact-input-light"
                   }`}
                 >
+                  <i className="fas fa-user"></i>
                   <label htmlFor="name">Name:</label>
                   <input
                     id="name"
@@ -129,6 +130,7 @@ const ContactUs = (props) => {
                     dark ? "contact-input-dark" : "contact-input-light"
                   }`}
                 >
+                  <i className="fas fa-envelope"></i>
                   <label htmlFor="email">Email:</label>
                   <input
                     id="email"
@@ -145,6 +147,7 @@ const ContactUs = (props) => {
                     dark ? "contact-input-dark" : "contact-input-light"
                   }`}
                 >
+                  <i className="fas fa-comment-dots"></i>
                   <label htmlFor="subject">Subject:</label>
                   <input
                     id="subject"
@@ -161,6 +164,7 @@ const ContactUs = (props) => {
                     dark ? "contact-input-dark" : "contact-input-light"
                   }`}
                 >
+                  <i className="fas fa-paper-plane"></i>
                   <label htmlFor="message">Message:</label>
                   <textarea
                     id="message"
@@ -171,14 +175,18 @@ const ContactUs = (props) => {
                     required
                   />
                 </div>
+
+                {/* CAPTCHA Section */}
+                {/* You can uncomment the below section for reCAPTCHA integration */}
                 {/* <div className={"text-xs-center"}>
-                  <div className={"g-recaptcha"} >
+                  <div className={"g-recaptcha"}>
                     <ReCAPTCHA
-                      sitekey="6LcEmpIqAAAAAI3ftY0F-Yhs5gv61q51SiEwAlMU"
+                      sitekey="your-site-key"
                       onChange={handleCaptchaChange}
                     />
                   </div>
                 </div> */}
+
                 <div className="submit-btns">
                   <button
                     type="submit"
@@ -193,6 +201,7 @@ const ContactUs = (props) => {
           </div>
         </div>
       </div>
+
       <SimpleToast
         open={toast.open}
         severity={toast.severity}

@@ -38,6 +38,7 @@
   color: white;
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
   padding: 20px;
+  animation: fadeIn 1s ease-out;
 }
 
 .hero-content h1 {
@@ -111,7 +112,7 @@
 
 /* Overview Section */
 .overview {
-  background: linear-gradient(135deg, #ff758c, #ff7eb3);
+  background: radial-gradient(circle, rgb(131, 171, 240), #efa8db);
   /* padding: 80px 20px; */
   text-align: center;
   color: #fff;
@@ -139,7 +140,7 @@
 }
 
 .overview h2 {
-  font-size: 3.2em;
+  font-size: 2.8rem;
   margin-bottom: 20px;
   font-weight: 700;
   text-transform: uppercase;
@@ -164,6 +165,55 @@
   gap: 20px;
   animation: fadeIn 2s ease-out;
 }
+
+.cta-buttons {
+  display: flex;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.cta-button {
+  padding: 16px 40px;
+  font-size: 1.1em;
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: white;
+  color: #ff758c;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.cta-button:hover {
+  transform: translateY(-5px);
+  background-color: #ff7eb3;
+  color: #fff;
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.cta-button.primary {
+  background-color: #ff758c;
+  color: white;
+  border: none;
+}
+
+.cta-button.primary:hover {
+  background-color: #d62e3d;
+  transform: translateY(-5px);
+}
+
+.cta-button.secondary {
+  background-color: transparent;
+  border: 2px solid white;
+  color: white;
+}
+
+.cta-button.secondary:hover {
+  background-color: white;
+  color: #ff758c;
+} 
 
 /* Keyframes for Animation */
 @keyframes fadeIn {

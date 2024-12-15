@@ -179,12 +179,6 @@ public class VolunteerController {
 		}
 	}
 
-	@GetMapping("/search")
-	public ResponseEntity<List<Volunteer>> searchVolunteersByName(@RequestParam String firstName) {
-		List<Volunteer> volunteers = volunteerService.searchVolunteersByFirstName(firstName);
-		return ResponseEntity.ok(volunteers);
-	}
-
 	private String extractTokenFromRequest(HttpServletRequest request) {
 		String authorizationHeader = request.getHeader("Authorization");
 

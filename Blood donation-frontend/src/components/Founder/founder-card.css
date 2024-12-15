@@ -1,0 +1,342 @@
+.aboutus-img {
+  width: 100%;
+  object-fit: cover;
+}
+
+.about-section {
+  position: relative;
+}
+
+.dash {
+  width: 250px;
+  height: 5px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  background: rgb(255, 0, 90);
+  background: linear-gradient(
+    45deg,
+    rgba(255, 0, 90, 1) 0%,
+    rgba(10, 24, 61, 1) 90%
+  );
+}
+
+.dash-light {
+  background: rgb(255, 0, 90);
+  background: linear-gradient(
+    45deg,
+    rgba(255, 0, 90, 1) 0%,
+    rgba(10, 24, 61, 1) 90%
+  );
+}
+
+
+.dash-dark {
+  background: #2b5876;
+  background: linear-gradient(45deg, #2b5876 0%, #4e4376 90%);
+}
+
+.by-line {
+  color: grey;
+}
+
+.about {
+  background-color: hsl(210, 64%, 9%);
+  padding: 60px 60px 60px 60px;
+}
+
+.text-dark {
+  color: whitesmoke;
+}
+
+.about-light {
+  color: white;
+}
+
+
+.about-dark {
+  color: #69a9dd;
+}
+
+.meet {
+  padding: 30px 60px 30px 60px;
+  background-color: #1165af;
+}
+
+.meet h1 {
+  font-weight: 900;
+  font-family: "Futura LT Book";
+  font-size: 40px;
+  color: white;
+  text-shadow: 2px 2px black;
+  padding-top: 120px;
+}
+
+.team-img {
+  width: 80%;
+}
+
+.team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 10px 0;
+  gap: 16px;
+  padding-bottom: 40px;
+  background-image: url("");
+}
+
+.row1,
+.row2 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 3rem;
+}
+
+.row1 > * {
+  flex: 49% 49%;
+}
+h1 {
+  line-height: 1.9;
+}
+.heading-dark {
+  font-size: 2.3vw;
+  color: #fac87b;
+}
+
+.heading-light {
+  font-size: 2.3vw;
+  color: #000;
+}
+
+.cover {
+  object-fit: cover;
+  object-position: center;
+  width: 130px;
+  height: 130px;
+  border-radius: 100%;
+  margin-bottom: 20px;
+}
+
+.card-footer {
+  color: #000;
+  padding: 5px;
+  margin: 5px;
+}
+
+.card1 {
+  display: flex;
+  min-width: 345px;
+  max-width: 400px;
+  background: white;
+  box-shadow: 0 0 16px 2px #00000029;
+  padding: 15px;
+  transition: 0.5s;
+  border-radius: 15px;
+}
+
+
+.card1-dark {
+  background: #171717;
+  -webkit-box-shadow: 0px 8px 16px 15px rgba(72, 127, 255, 0.1),
+    0px -8px 16px 0px rgba(72, 127, 255, 0.1);
+  -moz-box-shadow: 0px 8px 16px 15px rgba(72, 127, 255, 0.1),
+    0px -8px 16px 0px rgba(72, 127, 255, 0.1);
+  box-shadow: 0px 8px 16px 15px rgba(72, 127, 255, 0.1),
+    0px -8px 16px 0px rgba(72, 127, 255, 0.1);
+}
+
+.card1-light {
+  background: white;
+  box-shadow: 10px 10px 16px 5px #00000029;
+}
+
+.team-social {
+  display: flex;
+  justify-content: center;
+  visibility: hidden;
+  margin-top: -14px;
+}
+
+.card1-light:hover {
+  transform: translateY(-5px);
+  background: linear-gradient(59deg, #ffc95cc2 0%, #fff1d6 64%);
+}
+
+.card1-dark:hover {
+  transform: translateY(-5px);
+  background: linear-gradient(45deg, #2b5876 0%, #4e4376 74%);
+}
+
+.card1:hover .team-social {
+  visibility: visible;
+}
+
+.photo {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.badge-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.badge {
+  margin: 6px 0;
+}
+
+.default {
+  background-color: #2bbbad;
+}
+
+.primary {
+  background-color: #fb3;
+}
+
+.broadcast {
+  background-color: rgb(140, 134, 199);
+}
+
+.info {
+  background-color: #f8bbd0;
+}
+
+.dark {
+  background-color: #171717;
+  color: whitesmoke;
+}
+
+#Mui-h6 {
+  font-size: 1.2rem;
+}
+
+.intro {
+  font-size: 0.85rem;
+  padding-top: 2px;
+}
+
+
+#content {
+  padding: 10px 10px;
+}
+
+
+.fa-twitter-square {
+  color: #1da1f2 !important;
+}
+
+.fa-twitter-square-light:hover {
+  color: #1e5475 !important;
+  cursor: pointer;
+}
+
+.fa-twitter-square-dark:hover {
+  color: whitesmoke !important;
+  cursor: pointer;
+}
+
+.sl {
+  color: #ecb22e !important;
+}
+
+.fa-3x {
+  font-size: 28px;
+}
+
+.in {
+  color: #0e76a8 !important;
+}
+
+.in-light:hover {
+  cursor: pointer;
+  color: #133646 !important;
+}
+
+.in-dark:hover {
+  cursor: pointer;
+  color: whitesmoke !important;
+}
+
+.fa-github-square {
+  color: #6e5494 !important;
+}
+
+.fa-github-square-light:hover {
+  color: #402b5f !important;
+  cursor: pointer;
+}
+
+.fa-github-square-dark:hover {
+  color: whitesmoke !important;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 720px) {
+  .heading-dark {
+    font-size: 1.6rem;
+    text-align: center;
+  }
+
+ .heading-dark {
+    font-size: 1.6rem;
+    text-align: center;
+  }
+
+  .card1 {
+    min-width: 315px;
+    max-width: 300px;
+    max-height: 200px;
+    padding: 14px;
+  }
+
+  .card1:hover {
+    transform: none;
+  }
+
+  #Mui-h6 {
+    font-size: 1.2rem;
+  }
+
+  .cover {
+    width: 120px;
+    height: 120px;
+    margin: 10px 0px;
+  }
+
+  .intro {
+    font-size: 0.85rem;
+    padding-top: 2px;
+  }
+
+  .badge {
+    padding: 3px;
+  }
+
+  .badge-container {
+    gap: 5px;
+    margin-top: 12px;
+    font-size: 0.85em;
+  }
+
+  #content {
+    padding: 10px 10px;
+  }
+
+  .card-footer {
+    margin-top: 7px;
+    padding: 5px;
+  }
+}
+
+@media screen and( max-width:449px) {
+  h1 {
+    line-height: 1.9;
+    font-size: 5.4vw;
+  }
+}

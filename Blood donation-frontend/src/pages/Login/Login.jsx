@@ -2,10 +2,10 @@ import React, { useState, useRef } from "react";
 import Joi from "joi-browser";
 import { Link } from "react-router-dom";
 import { SimpleToast } from "../../components/util/Toast/Toast";
+import { useToast } from "../../services/toastService";
 import { END_POINT } from "../../config/api";
 import axios from "axios";
 import "./login.css";
-import { useToast } from "../../services/toastService";
 
 function Login(props) {
   const [hidePassword, setHidePassword] = useState(false);

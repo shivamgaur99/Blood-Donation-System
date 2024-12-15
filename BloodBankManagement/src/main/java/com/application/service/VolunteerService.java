@@ -38,17 +38,13 @@ public class VolunteerService {
 	    existingVolunteer.setEmail(volunteerDetails.getEmail());
 	    existingVolunteer.setPhone(volunteerDetails.getPhone());
 	    existingVolunteer.setAddress(volunteerDetails.getAddress());
-	    existingVolunteer.setEmergencyContactName(volunteerDetails.getEmergencyContactName());
-	    existingVolunteer.setEmergencyContactPhone(volunteerDetails.getEmergencyContactPhone());
-	    existingVolunteer.setRole(volunteerDetails.getRole());
-	    existingVolunteer.setVolunteerRole(volunteerDetails.getVolunteerRole());
-	    existingVolunteer.setConsentContact(volunteerDetails.getConsentContact());
-	    existingVolunteer.setConsentDataProcessing(volunteerDetails.getConsentDataProcessing());
 	    existingVolunteer.setDob(volunteerDetails.getDob());
 	    existingVolunteer.setGender(volunteerDetails.getGender());
 	    existingVolunteer.setCity(volunteerDetails.getCity());
 	    existingVolunteer.setState(volunteerDetails.getState());
 	    existingVolunteer.setZipCode(volunteerDetails.getZipCode());
+	    existingVolunteer.setMessage(volunteerDetails.getMessage());
+	    existingVolunteer.setRole(volunteerDetails.getRole());
 	    existingVolunteer.setEvent(volunteerDetails.getEvent()); // If event should be updated
 
 	    // Save the updated volunteer object back to the repository
@@ -63,8 +59,5 @@ public class VolunteerService {
 		volunteerRepository.delete(existingVolunteer);
 	}
 	
-	public List<Volunteer> searchVolunteersByFirstName(String firstName) {
-	    return volunteerRepository.findByFirstNameContainingIgnoreCase(firstName);
-	}
-
+	
 }

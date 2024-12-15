@@ -3,7 +3,7 @@
     padding: 80px 20px;
     text-align: center;
     /* background: linear-gradient(45deg, #b00dc2 0%, #ff6b86 90%); */
-    background-color: #ff758c;
+    background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgb(149, 172, 233) 99%);
     color: white;
   }
   
@@ -43,7 +43,7 @@
 }
 
 .join-us-button.primary:hover {
-  background-color: #ea193c;
+  background-color: #95ace9;
   transform: translateY(-5px);
 }
 

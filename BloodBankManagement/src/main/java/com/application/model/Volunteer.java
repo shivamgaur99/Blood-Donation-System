@@ -2,12 +2,9 @@ package com.application.model;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -69,21 +66,11 @@ public class Volunteer {
 
 	@NotBlank(message = "ZIP code is required")
 	private String zipCode;
-
-	@NotBlank(message = "Emergency contact name is required")
-	private String emergencyContactName;
-
-	@Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid emergency contact phone number")
-	private String emergencyContactPhone;
+	
+	@NotBlank(message = "Message is required")
+	private String message;
 	
 	private String role;
-
-	@ElementCollection(fetch = FetchType.EAGER)
-	private List<String> volunteerRole;
-
-	private Boolean consentContact;
-
-	private Boolean consentDataProcessing;
 
 	@ManyToOne
 	@JoinColumn(name = "user_email", foreignKey = @ForeignKey(name = "FK_user"))

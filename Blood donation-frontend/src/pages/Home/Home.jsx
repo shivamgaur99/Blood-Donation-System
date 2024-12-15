@@ -17,7 +17,7 @@ const Home = () => {
 
       <Mission/>
       
-      <Events/>
+      {/* <Events/> */}
 
       <JoinUs/>
 

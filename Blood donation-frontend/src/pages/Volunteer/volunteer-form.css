@@ -1,16 +1,16 @@
-.contact-section {
+.volunteer-section {
   padding: 0 20px;
 }
 
-.contact-section-light {
+.volunteer-section-light {
   background: #fff;
 }
 
-.contact-section-dark {
+.volunteer-section-dark {
   background: #171717;
 }
 
-.contact-parent {
+.volunteer-parent {
   display: flex;
   padding: 30px 0;
 }
@@ -35,11 +35,11 @@
   padding-bottom: 10px;
 }
 
-.contact-image {
+.volunteer-image {
   max-width: 100%;
 }
 
-.contact-child {
+.volunteer-child {
   flex: 1;
 }
 
@@ -56,8 +56,8 @@
   align-items: center;
 }
 
-.contact-card {
-  width: 75%;
+.volunteer-card {
+  width: 90%;
   height: auto;
   margin: 0% auto;
   padding-bottom: 20px;
@@ -73,12 +73,12 @@
   box-shadow: 5px 5px 15px #888888, -5px -5px 15px #ffffff;
 }
 
-.contact-card-light {
+.volunteer-card-light {
   background-color: #e7e7e7;
   box-shadow: 5px 5px 15px #888888, -5px -5px 15px #ffffff;
 }
 
-.contact-card-dark {
+.volunteer-card-dark {
   color: whitesmoke;
   background-color: #282c35;
   -webkit-box-shadow: 0px 8px 16px 0px rgba(72, 127, 255, 0.1),
@@ -89,7 +89,7 @@
     0px -8px 16px 0px rgba(72, 127, 255, 0.1);
 }
 
-.contact-header-text {
+.volunteer-header-text {
   padding: 15px 0;
   margin-bottom: 0px;
   text-transform: capitalize;
@@ -97,15 +97,15 @@
   font-size: 1.5rem;
 }
 
-.contact-header-text-light {
+.volunteer-header-text-light {
   color: var(--secondary-color);
 }
 
-.contact-header-text-dark {
+.volunteer-header-text-dark {
   color: #69a9dd;
 }
 
-.inside-contact {
+.inside-volunteer {
   width: 85%;
   margin: 0 auto;
 }
@@ -116,13 +116,13 @@
   font-weight: 580;
 }
 
-.contact-input {
+.volunteer-input {
   position: relative;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
-.contact-input input,
-.contact-input textarea {
+.volunteer-input input,
+.volunteer-input textarea {
   width: 100%;
   height: 50px;
   border: 1px solid #bbbaba;
@@ -137,16 +137,16 @@
   box-shadow: inset 2px 2px 5px #888888, inset -2px -2px 5px #ffffff;
 }
 
-.contact-input-light input,
-.contact-input-light textarea {
+.volunteer-input-light input,
+.volunteer-input-light textarea {
   border: 1px solid #bbbaba;
   color: #777777;
   background-color: #f1f1f1;
   box-shadow: inset 2px 2px 5px #888888, inset -2px -2px 5px #ffffff;
 }
 
-.contact-input-dark input,
-.contact-input-dark textarea {
+.volunteer-input-dark input,
+.volunteer-input-dark textarea {
   border: 1px solid #414a4c;
   color: whitesmoke;
   background-color: #333333;
@@ -154,44 +154,44 @@
     inset -2px -2px 5px rgba(72, 127, 255, 0.4);
 }
 
-.contact-input input::placeholder,
-.contact-input textarea::placeholder {
+.volunteer-input input::placeholder,
+.volunteer-input textarea::placeholder {
   opacity: 1;
   color: #777777;
 }
 
-.contact-input input::-moz-placeholder,
-.contact-input textarea::-moz-placeholder {
+.volunteer-input input::-moz-placeholder,
+.volunteer-input textarea::-moz-placeholder {
   opacity: 1;
   color: #777777;
 }
 
-.contact-input input::-webkit-input-placeholder,
-.contact-input textarea::-webkit-input-placeholder {
+.volunteer-input input::-webkit-input-placeholder,
+.volunteer-input textarea::-webkit-input-placeholder {
   opacity: 1;
   color: #777777;
 }
 
-.contact-input-dark input::placeholder,
-.contact-input-dark textarea::placeholder {
+.volunteer-input-dark input::placeholder,
+.volunteer-input-dark textarea::placeholder {
   opacity: 1;
   color: whitesmoke;
 }
 
-.contact-input-dark input::-moz-placeholder,
-.contact-input-dark textarea::-moz-placeholder {
+.volunteer-input-dark input::-moz-placeholder,
+.volunteer-input-dark textarea::-moz-placeholder {
   opacity: 1;
   color: whitesmoke;
 }
 
-.contact-input-dark input::-webkit-input-placeholder,
-.contact-input-dark textarea::-webkit-input-placeholder {
+.volunteer-input-dark input::-webkit-input-placeholder,
+.volunteer-input-dark textarea::-webkit-input-placeholder {
   opacity: 1;
   color: whitesmoke;
 }
 
-.contact-input-light input:focus,
-.contact-input-light textarea:focus {
+.volunteer-input-light input:focus,
+.volunteer-input-light textarea:focus {
   border-color: #1863ff;
   outline: none;
   border: double 2px transparent;
@@ -203,8 +203,8 @@
   background-color: #ffffff;
 }
 
-.contact-input-dark input:focus,
-.contact-input-dark textarea:focus {
+.volunteer-input-dark input:focus,
+.volunteer-input-dark textarea:focus {
   outline: none;
   border: double 2px transparent;
   border-radius: 10px;
@@ -214,42 +214,29 @@
   background-color: black;
 }
 
-.contact-input textarea {
+.volunteer-input textarea {
   padding-top: 15px;
   height: 180px;
   resize: none;
 }
 
-.contact-input i {
+.volunteer-input i {
   position: absolute;
   right: 25px;
-  top: 50px;
+  top: 15px;
   font-size: 16px;
 }
 
-.contact-input-light i {
+.volunteer-input-light i {
   color: #777777;
 }
 
-.contact-input-dark i {
+.volunteer-input-dark i {
   color: whitesmoke;
 }
 
-/* .submit-btn {
-  display: flex;
-  justify-content: center;
-  width: 40%;
-  margin: 0 auto;
-} */
-
-/* .submit-btn-text {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-} */
-
 @media screen and (max-width: 750px) {
-  .contact-parent {
+  .volunteer-parent {
     display: block;
     width: 100%;
   }
@@ -258,18 +245,18 @@
     padding: 0 0 10px;
   }
 
-  .contact-card {
+  .volunteer-card {
     width: 95%;
     margin: 10% auto;
   }
 
-  .contact-input input,
-  .contact-btn {
+  .volunteer-input input,
+  .volunteer-btn {
     height: 40px;
   }
 
-  .contact-input i {
-    top: 45px;
+  .volunteer-input i {
+    top: 10px;
   }
 
   .goodbye-card {
@@ -288,31 +275,82 @@
     font-size: 1.3rem;
   }
 
-  /* .contact-btn {
-    font-size: 20px;
-  }
-
-  .submit-btn {
-    width: 60% !important;
-    margin: 0 auto;
-  }
-
-  .submit-btn-text {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: x-small;
-    color: black;
-  } */
 }
 .text-xs-center {
   text-align: center;
 }
 
-.g-recaptcha {
-  display: flex;
-  justify-content: center;
-}
-.contact-input-dark i {
+.volunteer-input-dark i {
   color: whitesmoke;
+}
+
+/* For light theme */
+.volunteer-input-light select {
+  width: 100%;
+  height: 50px;
+  border: 1px solid #bbbaba;
+  border-radius: 10px;
+  padding: 0 25px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 14px;
+  color: #777777;
+  background-color: #f1f1f1;
+  box-shadow: inset 2px 2px 5px #888888, inset -2px -2px 5px #ffffff;
+}
+
+.volunteer-input-light select:focus {
+  border-color: #1863ff;
+  outline: none;
+  border: double 2px transparent;
+  background-color: #ffffff;
+  background-image: linear-gradient(white, white),
+    linear-gradient(to right, rgba(255, 0, 90, 1), rgba(10, 24, 61, 1));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+/* For dark theme */
+.volunteer-input-dark select {
+  width: 100%;
+  height: 50px;
+  border: 1px solid #414a4c;
+  border-radius: 10px;
+  padding: 0 25px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 14px;
+  color: whitesmoke;
+  background-color: #333333;
+  box-shadow: inset 2px 2px 5px rgba(72, 127, 255, 0.1),
+    inset -2px -2px 5px rgba(72, 127, 255, 0.4);
+}
+
+.volunteer-input-dark select:focus {
+  outline: none;
+  border: double 2px transparent;
+  border-radius: 10px;
+  background-image: linear-gradient(to right, #2b5876, #4e4376);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  background-color: black;
+}
+
+/* Styling for select options */
+.volunteer-input-light select option {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.volunteer-input-dark select option {
+  background-color: #333;
+  color: whitesmoke;
+}
+
+.volunteer-input-light select option:hover {
+  background-color: #e7e7e7;
+}
+
+.volunteer-input-dark select option:hover {
+  background-color: #444;
 }
