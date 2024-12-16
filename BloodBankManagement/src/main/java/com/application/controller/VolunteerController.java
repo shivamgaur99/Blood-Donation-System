@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.application.constants.Role;
 import com.application.custom_excs.InvalidTokenException;
 import com.application.custom_excs.UserNotFoundException;
+import com.application.dto.VolunteerDTO;
 import com.application.model.Event;
 import com.application.model.User;
 import com.application.model.Volunteer;
@@ -79,6 +79,11 @@ public class VolunteerController {
 			volunteer.setEvent(event);
 		}
 
+		boolean alreadyRegistered = volunteerService.existsByUserAndEvent(user, volunteer.getEvent());
+		if (alreadyRegistered) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body("You are already registered for this event.");
+		}
+
 		volunteerService.saveVolunteer(volunteer);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body("Volunteer registration successful.");
@@ -86,7 +91,7 @@ public class VolunteerController {
 
 	@PostMapping("/sg/register")
 	public ResponseEntity<String> registerAsVolunteer(@RequestBody Volunteer volunteer, HttpServletRequest request) {
-		
+
 		String token = extractTokenFromRequest(request);
 		String email = jwtUtils.extractUsername(token);
 
@@ -135,6 +140,18 @@ public class VolunteerController {
 	public ResponseEntity<List<Volunteer>> getAllVolunteers() {
 		List<Volunteer> volunteers = volunteerService.getAllVolunteers();
 		return ResponseEntity.ok(volunteers);
+	}
+	
+	@GetMapping("/with-event/{id}")
+	public ResponseEntity<VolunteerDTO> getVolunteerWithEvent(@PathVariable Long id) {
+		VolunteerDTO volunteerDTO = volunteerService.getVolunteerWithEvent(id);
+		return ResponseEntity.ok(volunteerDTO);
+	}
+
+	@GetMapping("/all-with-event")
+	public ResponseEntity<List<VolunteerDTO>> getAllVolunteersWithEvent() {
+		List<VolunteerDTO> volunteerDTOs = volunteerService.getAllVolunteersWithEvent();
+		return ResponseEntity.ok(volunteerDTOs);
 	}
 
 	@GetMapping("/{id}")

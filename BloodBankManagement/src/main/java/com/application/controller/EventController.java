@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.application.dto.EventDTO;
 import com.application.model.Event;
 import com.application.service.EventService;
 
@@ -34,7 +35,13 @@ public class EventController {
 
 	@GetMapping("/all")
 	public ResponseEntity<?> getAllEvents() {
-		List<Event> events = eventService.getAllEvents();
+	    List<EventDTO> eventDTOs = eventService.getAllEvents();
+	    return new ResponseEntity<>(eventDTOs, HttpStatus.OK);
+	}
+	
+	@GetMapping("/all-with-details")
+	public ResponseEntity<?> getAllEventsWithDetails() {
+		List<Event> events = eventService.getAllEventsWithDetails();
 		return new ResponseEntity<>(events, HttpStatus.OK);
 	}
 
@@ -55,4 +62,5 @@ public class EventController {
 		eventService.deleteEvent(id);
 		return new ResponseEntity<>("Event deleted successfully", HttpStatus.NO_CONTENT);
 	}
+
 }
