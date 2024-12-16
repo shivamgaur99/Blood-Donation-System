@@ -32,6 +32,8 @@ import Donations from "./pages/User/Donations/Donations";
 import CreateEvent from "./pages/Admin/EventManagement/CreateEvent/CreateEvent";
 import ManageEvents from "./pages/Admin/EventManagement/ManageEvents/ManageEvents";
 import AllEvents from "./pages/Event/Components/AllEvents/AllEvents";
+import Contacts from "./pages/Admin/Contacts/Contacts";
+import VolunteerList from "./pages/Admin/Volunteers/VolunteerList";
 
 function App() {
   const getTheme = () => JSON.parse(localStorage.getItem("dark")) || false;
@@ -95,6 +97,8 @@ function App() {
             path="/manage-events"
             element={<ManageEvents theme={theme} />}
           />
+          <Route path="/contacts" element={<Contacts theme={theme} />} />
+          <Route path="/volunteers" element={<VolunteerList theme={theme} />} />
           {/* NotFound Route */}
           <Route path="*" element={<NotFound theme={theme} />} />
         </Routes>

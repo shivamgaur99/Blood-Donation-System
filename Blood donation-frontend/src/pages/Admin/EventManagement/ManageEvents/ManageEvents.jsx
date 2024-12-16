@@ -7,6 +7,7 @@ import { useToast } from "../../../../services/toastService";
 import EventModal from "../../../Event/Components/EventModal/EventModal";
 import EditEventModal from "./EditModel/EditEventModal";
 import "./manage-events.css";
+import Swal from 'sweetalert2';
 
 const ManageEvents = ({ theme }) => {
   const [events, setEvents] = useState([]);
@@ -62,18 +63,34 @@ const ManageEvents = ({ theme }) => {
   };
 
   const handleDelete = async (id) => {
-    setLoading(true);
-    try {
-      await axios.delete(`${END_POINT}/events/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      showToast("Event deleted successfully!", "success");
-      setEvents((prev) => prev.filter((event) => event.id !== id));
-    } catch (error) {
-      showToast("Failed to delete event. Please try again.", "error");
-    } finally {
-      setLoading(false);
-    }
+    // SweetAlert2 confirmation dialog
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      reverseButtons: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        setLoading(true);
+        try {
+          await axios.delete(`${END_POINT}/events/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          showToast("Event deleted successfully!", "success");
+          setEvents((prev) => prev.filter((event) => event.id !== id));
+          // Swal.fire('Deleted!', 'Your event has been deleted.', 'success');
+        } catch (error) {
+          showToast("Failed to delete event. Please try again.", "error");
+          // Swal.fire('Error!', 'Something went wrong while deleting the event.', 'error');
+        } finally {
+          setLoading(false);
+        }
+      }
+    });
   };
 
   const handleFilterChange = (field, value) => {

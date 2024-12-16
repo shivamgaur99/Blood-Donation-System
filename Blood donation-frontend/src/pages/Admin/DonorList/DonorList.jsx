@@ -3,7 +3,7 @@ import axios from "axios";
 import { END_POINT } from "../../../config/api";
 import { SimpleToast } from "../../../components/util/Toast/Toast";
 import { useToast } from "../../../services/toastService";
-import Loader from "../../../components/util/Loader"; // Import the Loader component
+import Loader from "../../../components/util/Loader"; 
 
 const DonorList = () => {
   const [donorList, setDonorList] = useState([]);
@@ -21,7 +21,7 @@ const DonorList = () => {
     if (!token) {
       setError("User is not authenticated");
       setLoading(false);
-      showToast("User is not authenticated", "error"); // Show error toast
+      showToast("User is not authenticated", "error"); 
       return;
     }
 

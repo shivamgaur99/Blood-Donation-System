@@ -187,3 +187,21 @@
   padding: 10px;
   font-size: 14px;
 }
+
+.form-group select option {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.form-group.dark select option {
+  background-color: #333;
+  color: whitesmoke;
+}
+
+.form-group select option:hover {
+  background-color: #e7e7e7;
+}
+
+.form-group.dark select option:hover {
+  background-color: #444;
+}

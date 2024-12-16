@@ -4,6 +4,9 @@ import { END_POINT } from "../../../config/api";
 import { SimpleToast } from "../../../components/util/Toast/Toast";
 import { useToast } from "../../../services/toastService";
 import Loader from "../../../components/util/Loader/index";
+import { IconButton } from "@mui/material";  // Importing Material-UI IconButton
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";  // Importing CheckCircle icon for "Accept"
+import CancelIcon from "@mui/icons-material/Cancel";  // Importing Cancel icon for "Reject"
 
 function BloodRequestHistory() {
   const [requests, setRequests] = useState([]);
@@ -180,33 +183,37 @@ function BloodRequestHistory() {
                     <div className="d-flex gap-2">
                       {request.status === "Pending" ? (
                         <>
-                          <button
-                            className="btn btn-success"
+                          <IconButton
+                            color="success"
                             onClick={() => handleAcceptStatus(request.id)}
+                            aria-label="accept"
                           >
-                            Accept
-                          </button>
-                          <button
-                            className="btn btn-danger"
+                            <CheckCircleIcon /> {/* Accept Icon */}
+                          </IconButton>
+                          <IconButton
+                            color="error"
                             onClick={() => handleRejectStatus(request.id)}
+                            aria-label="reject"
                           >
-                            Reject
-                          </button>
+                            <CancelIcon /> {/* Reject Icon */}
+                          </IconButton>
                         </>
                       ) : request.status === "Approved" ? (
-                        <button
-                          className="btn btn-danger"
+                        <IconButton
+                          color="error"
                           onClick={() => handleRejectStatus(request.id)}
+                          aria-label="reject"
                         >
-                          Reject
-                        </button>
+                          <CancelIcon /> {/* Reject Icon */}
+                        </IconButton>
                       ) : request.status === "Rejected" ? (
-                        <button
-                          className="btn btn-success"
+                        <IconButton
+                          color="success"
                           onClick={() => handleAcceptStatus(request.id)}
+                          aria-label="accept"
                         >
-                          Accept
-                        </button>
+                          <CheckCircleIcon /> {/* Accept Icon */}
+                        </IconButton>
                       ) : null}
                     </div>
                   </td>

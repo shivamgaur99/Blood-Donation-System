@@ -3,13 +3,16 @@ import axios from 'axios';
 import { END_POINT } from "../../../config/api";
 import { SimpleToast } from "../../../components/util/Toast/Toast";
 import { useToast } from "../../../services/toastService";
-import Loader from "../../../components/util/Loader"; // Import the loader component
+import Loader from "../../../components/util/Loader"; 
+import Swal from 'sweetalert2';
+import { IconButton } from '@mui/material';  
+import DeleteIcon from '@mui/icons-material/Delete';  
 
 function UserList() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { toast, showToast, hideToast } = useToast(); // Using toast
+  const { toast, showToast, hideToast } = useToast(); 
 
   const fetchUsers = async () => {
     const token = localStorage.getItem('jwtToken');
@@ -43,7 +46,6 @@ function UserList() {
     }
   };
 
-  // Fetch users when the component mounts
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -55,21 +57,32 @@ function UserList() {
       return;
     }
 
-    // Deleting the user
-    axios
-      .delete(`${END_POINT}/user/${email}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then(() => {
-        setUsers(users.filter((user) => user.email !== email));
-        showToast('User deleted successfully!', 'success');
-      })
-      .catch((error) => {
-        console.error('Error deleting user:', error);
-        showToast('Failed to delete user.', 'error');
-      });
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(`${END_POINT}/user/${email}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then(() => {
+            setUsers(users.filter((user) => user.email !== email));
+            showToast('User deleted successfully!', 'success');
+          })
+          .catch((error) => {
+            console.error('Error deleting user:', error);
+            showToast('Failed to delete user.', 'error');
+          });
+      }
+    });
   };
 
   return (
@@ -111,12 +124,13 @@ function UserList() {
                     <td>{user.mobile}</td>
                     <td>{user.role}</td>
                     <td>
-                      <button
-                        className="btn btn-danger"
+                      <IconButton
+                        color="error"
                         onClick={() => handleDeleteUser(user.email)}
+                        aria-label="delete"
                       >
-                        Delete
-                      </button>
+                        <DeleteIcon /> {/* Delete icon */}
+                      </IconButton>
                     </td>
                   </tr>
                 ))}
@@ -136,4 +150,4 @@ function UserList() {
   );
 }
 
-export default UserList; 
+export default UserList;

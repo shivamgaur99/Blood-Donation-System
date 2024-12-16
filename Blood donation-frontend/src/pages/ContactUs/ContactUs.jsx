@@ -36,10 +36,11 @@ const ContactUs = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!captchaToken) {
-      setErrorMessage("Please complete the CAPTCHA");
-      return;
-    }
+    // if (!captchaToken) {
+    //   setErrorMessage("Please complete the CAPTCHA");
+    //   showToast("Please complete the CAPTCHA", "error");
+    //   return;
+    // }
 
     setIsLoading(true);
 
