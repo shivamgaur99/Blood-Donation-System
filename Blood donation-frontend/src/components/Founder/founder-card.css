@@ -29,7 +29,6 @@
   );
 }
 
-
 .dash-dark {
   background: #2b5876;
   background: linear-gradient(45deg, #2b5876 0%, #4e4376 90%);
@@ -51,7 +50,6 @@
 .about-light {
   color: white;
 }
-
 
 .about-dark {
   color: #69a9dd;
@@ -82,7 +80,7 @@
   padding: 4rem 10px 0;
   gap: 16px;
   padding-bottom: 40px;
-  background-image: url("");
+  /* background-image: url(""); */
 }
 
 .row1,
@@ -135,7 +133,6 @@ h1 {
   transition: 0.5s;
   border-radius: 15px;
 }
-
 
 .card1-dark {
   background: #171717;
@@ -221,11 +218,9 @@ h1 {
   padding-top: 2px;
 }
 
-
 #content {
   padding: 10px 10px;
 }
-
 
 .fa-twitter-square {
   color: #1da1f2 !important;
@@ -283,7 +278,7 @@ h1 {
     text-align: center;
   }
 
- .heading-dark {
+  .heading-dark {
     font-size: 1.6rem;
     text-align: center;
   }

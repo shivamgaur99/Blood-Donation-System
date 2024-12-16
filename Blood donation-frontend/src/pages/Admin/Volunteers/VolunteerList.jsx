@@ -18,8 +18,18 @@ import {
   Typography,
   Grid,
   TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  TablePagination,
 } from "@mui/material";
-import { Delete, Reply } from "@mui/icons-material";
+import { Delete, Visibility, Info } from "@mui/icons-material";
 import Loader from "../../../components/util/Loader";
 import useToast from "../../../hooks/useToast";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -54,10 +64,16 @@ const darkTheme = createTheme({
 const VolunteerList = (props) => {
   const [volunteers, setVolunteers] = useState([]);
   const [filteredVolunteers, setFilteredVolunteers] = useState([]);
+  const [events, setEvents] = useState([]); // To store events for selection
+  const [selectedEventId, setSelectedEventId] = useState(""); // Selected event ID for filtering
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState("table"); // 'table' or 'card' view
   const [searchQuery, setSearchQuery] = useState(""); // Search query
+  const [selectedVolunteer, setSelectedVolunteer] = useState(null); // Store selected volunteer for details view
+  const [selectedEvent, setSelectedEvent] = useState(null); // Store selected event for details view
   const { showToast, SnackbarToast } = useToast();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   let dark = props.theme;
 
@@ -65,16 +81,35 @@ const VolunteerList = (props) => {
     return localStorage.getItem("jwtToken");
   };
 
-  const fetchVolunteers = async () => {
+  const fetchEvents = async () => {
     const token = getJwtToken();
     try {
-      const response = await axios.get(`${END_POINT}/volunteers/all`, {
+      const response = await axios.get(`${END_POINT}/events/all`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      setVolunteers(response.data);
-      setFilteredVolunteers(response.data); // Initialize filtered volunteers
+      setEvents(response.data); // Store events for selection
+    } catch (error) {
+      showToast("Failed to fetch events. Please try again later.", "error");
+    }
+  };
+
+  const fetchVolunteers = async () => {
+    const token = getJwtToken();
+    try {
+      const response = await axios.get(`${END_POINT}/volunteers/all-with-event`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      // Ensure the event information is included correctly
+      const volunteersWithEvent = response.data.map(volunteer => ({
+        ...volunteer,
+        event: volunteer.event, // This includes the event information
+      }));
+      setVolunteers(volunteersWithEvent);
+      setFilteredVolunteers(volunteersWithEvent); // Initialize filtered volunteers with event data
       showToast("Volunteer list loaded successfully", "success");
     } catch (error) {
       showToast("Failed to fetch volunteers. Please try again later.", "error");
@@ -84,7 +119,6 @@ const VolunteerList = (props) => {
   };
 
   const handleDelete = async (id) => {
-    // SweetAlert2 confirmation dialog
     const result = await Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -106,12 +140,10 @@ const VolunteerList = (props) => {
         setVolunteers(volunteers.filter((volunteer) => volunteer.id !== id));
         setFilteredVolunteers(filteredVolunteers.filter((volunteer) => volunteer.id !== id));
         showToast("Volunteer deleted successfully.", "success");
-        // Swal.fire("Deleted!", "The volunteer has been deleted.", "success");
       } catch (error) {
         showToast("Failed to delete volunteer.", "error", [
           { label: "Retry", onClick: () => handleDelete(id) },
         ]);
-        // Swal.fire("Error", "Failed to delete the volunteer.", "error");
       }
     }
   };
@@ -131,13 +163,52 @@ const VolunteerList = (props) => {
         )
       );
     } else {
-      setFilteredVolunteers(volunteers); 
+      setFilteredVolunteers(volunteers);
     }
   };
 
+  // Filter volunteers based on selected event ID
+  const filterVolunteersByEvent = (eventId) => {
+    if (eventId) {
+      setFilteredVolunteers(
+        volunteers.filter((volunteer) => volunteer.event.id === eventId)
+      );
+    } else {
+      setFilteredVolunteers(volunteers); // Show all volunteers if no event is selected
+    }
+  };
+
+  const handleViewDetails = (volunteer) => {
+    setSelectedVolunteer(volunteer); // Set selected volunteer for details
+  };
+
+  const handleViewEventDetails = (eventId) => {
+    const event = events.find((event) => event.id === eventId);
+    setSelectedEvent(event); // Set selected event for details
+  };
+
+  const handleCloseDialog = () => {
+    setSelectedVolunteer(null); // Close the details dialog
+    setSelectedEvent(null); // Close event details dialog
+  };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   useEffect(() => {
-    fetchVolunteers();
+    fetchEvents(); // Fetch event list when component mounts
+    fetchVolunteers(); // Fetch volunteers
   }, []);
+
+  useEffect(() => {
+    filterVolunteersByEvent(selectedEventId); // Filter volunteers based on selected event
+  }, [selectedEventId, volunteers]);
 
   if (isLoading) {
     return (
@@ -178,7 +249,7 @@ const VolunteerList = (props) => {
             Volunteer List
           </h2>
 
-          {/* Search and View Mode Toggle in a Single Row */}
+          {/* Search, Event Filter and View Mode Toggle in a Single Row */}
           <Box
             display="flex"
             alignItems="center"
@@ -198,43 +269,69 @@ const VolunteerList = (props) => {
                   fullWidth
                   value={searchQuery}
                   onChange={handleSearchChange}
-                  size="small" // Set to small initially
-                  sx={{
-                    maxWidth: 500,
-                    "& .MuiInputBase-root": {
-                      padding: "6px 12px", // Custom padding
-                      fontSize: "0.875rem", // Custom font size
-                    },
-                    "& .MuiOutlinedInput-root": {
-                      backgroundColor: dark ? "#333" : "#f5f5f5", // Ensure background contrast
-                    },
-                    "& .MuiInputLabel-root": {
-                      color: dark ? "#ccc" : "#000", // Adjust label color for dark mode
-                    },
-                    "& .MuiInputBase-input": {
-                      color: dark ? "#fff" : "#000", // Adjust input text color for dark mode
-                    },
-                  }}
+                  size="medium" 
+                  // sx={{
+                  //   maxWidth: 500,
+                  //   "& .MuiInputBase-root": {
+                  //     padding: "6px 12px", 
+                  //     fontSize: "0.875rem", 
+                  //   },
+                  //   "& .MuiOutlinedInput-root": {
+                  //     backgroundColor: dark ? "#333" : "#f5f5f5",
+                  //   },
+                  //   "& .MuiInputLabel-root": {
+                  //     color: dark ? "#ccc" : "#000", 
+                  //   },
+                  //   "& .MuiInputBase-input": {
+                  //     color: dark ? "#fff" : "#000", 
+                  //   },
+                  // }}
                 />
               </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <FormControl fullWidth 
+                // size="small" 
+                // sx={{
+                //     maxWidth: 500,
+                //     "& .MuiInputBase-root": {
+                //       padding: "6px 12px", 
+                //       fontSize: "0.875rem", 
+                //     },
+                //     "& .MuiOutlinedInput-root": {
+                //       backgroundColor: dark ? "#333" : "#f5f5f5",
+                //     },
+                //     "& .MuiInputLabel-root": {
+                //       color: dark ? "#ccc" : "#000", 
+                //     },
+                //     "& .MuiInputBase-input": {
+                //       color: dark ? "#fff" : "#000", 
+                //     },
+                //   }}
+                >
+                  <InputLabel>Event</InputLabel>
+                  <Select
+                    value={selectedEventId}
+                    onChange={(e) => setSelectedEventId(e.target.value)}
+                    label="Event"
+                  >
+                    <MenuItem value="">
+                      <em>All Events</em>
+                    </MenuItem>
+                    {events.map((event) => (
+                      <MenuItem key={event.id} value={event.id}>
+                        {event.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+
               <Grid item>
                 <ToggleButtonGroup
                   value={viewMode}
                   exclusive
                   onChange={(_, newViewMode) => setViewMode(newViewMode)}
-                  sx={{
-                    "& .MuiToggleButton-root": {
-                      backgroundColor: dark ? "#444" : "#e0e0e0", // Toggle button background
-                      color: dark ? "#fff" : "#000", // Button text color
-                      "&.Mui-selected": {
-                        backgroundColor: dark ? "#90caf9" : "#1976d2", // Selected state color
-                        color: "#fff",
-                      },
-                      "&:hover": {
-                        backgroundColor: dark ? "#555" : "#ccc", // Hover effect (adjust for visibility)
-                      },
-                    },
-                  }}
                 >
                   <ToggleButton value="table">Table</ToggleButton>
                   <ToggleButton value="card">Card</ToggleButton>
@@ -252,17 +349,19 @@ const VolunteerList = (props) => {
                     <TableCell>Name</TableCell>
                     <TableCell>Email</TableCell>
                     <TableCell>Phone</TableCell>
+                    <TableCell>Event</TableCell> {/* Event column */}
                     <TableCell>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredVolunteers.map((volunteer) => (
+                {filteredVolunteers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((volunteer) => (
                     <TableRow key={volunteer.id}>
                       <TableCell>
                         {volunteer.firstName} {volunteer.lastName}
                       </TableCell>
                       <TableCell>{volunteer.email}</TableCell>
                       <TableCell>{volunteer.phone}</TableCell>
+                      <TableCell>{volunteer.event ? volunteer.event.name : "No Event"}</TableCell> {/* Display Event */}
                       <TableCell>
                         <IconButton
                           color="error"
@@ -272,29 +371,37 @@ const VolunteerList = (props) => {
                         </IconButton>
                         <IconButton
                           color="primary"
-                          onClick={() =>
-                            console.log("Reply to:", volunteer.firstName)
-                          }
+                          onClick={() => handleViewDetails(volunteer)} // View Details button
                         >
-                          <Reply />
+                          <Visibility />
+                        </IconButton>
+                        <IconButton
+                          color="info"
+                          onClick={() => handleViewEventDetails(volunteer.event.id)} // View Event Details button
+                        >
+                          <Info />
                         </IconButton>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={filteredVolunteers.length}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
             </TableContainer>
           ) : (
             // Card View
             <Grid container spacing={2}>
               {filteredVolunteers.map((volunteer) => (
                 <Grid item xs={12} sm={6} md={4} key={volunteer.id}>
-                  <Card
-                    sx={{
-                      backgroundColor: dark ? "#1e1e1e" : "#fff", // Card background
-                      boxShadow: dark ? "none" : 3, // Shadow for light mode
-                    }}
-                  >
+                  <Card>
                     <CardContent>
                       <Typography variant="h6">
                         {volunteer.firstName} {volunteer.lastName}
@@ -305,6 +412,9 @@ const VolunteerList = (props) => {
                       <Typography variant="body2">
                         Phone: {volunteer.phone}
                       </Typography>
+                      <Typography variant="body2">
+                        Event: {volunteer.event ? volunteer.event.name : "No Event"} {/* Display Event */}
+                      </Typography>
                       <Box mt={2}>
                         <IconButton
                           color="error"
@@ -314,11 +424,15 @@ const VolunteerList = (props) => {
                         </IconButton>
                         <IconButton
                           color="primary"
-                          onClick={() =>
-                            console.log("Reply to:", volunteer.firstName)
-                          }
+                          onClick={() => handleViewDetails(volunteer)} // View Details button
                         >
-                          <Reply />
+                          <Visibility />
+                        </IconButton>
+                        <IconButton
+                          color="info"
+                          onClick={() => handleViewEventDetails(volunteer.event.id)} // View Event Details button
+                        >
+                          <Info />
                         </IconButton>
                       </Box>
                     </CardContent>
@@ -328,7 +442,53 @@ const VolunteerList = (props) => {
             </Grid>
           )}
 
-          {/* Toast notification */}
+          {/* View Details Dialog */}
+          {selectedVolunteer && (
+            <Dialog open={Boolean(selectedVolunteer)} onClose={handleCloseDialog}>
+              <DialogTitle>Volunteer Details</DialogTitle>
+              <DialogContent>
+                <Typography variant="h6">
+                  {selectedVolunteer.firstName} {selectedVolunteer.lastName}
+                </Typography>
+                <Typography variant="body2">
+                  Date of Birth: {selectedVolunteer.dob}
+                </Typography>
+                <Typography variant="body2">Gender: {selectedVolunteer.gender}</Typography>
+                <Typography variant="body2">Phone: {selectedVolunteer.phone}</Typography>
+                <Typography variant="body2">Email: {selectedVolunteer.email}</Typography>
+                <Typography variant="body2">Address: {selectedVolunteer.address}</Typography>
+                <Typography variant="body2">City: {selectedVolunteer.city}</Typography>
+                <Typography variant="body2">State: {selectedVolunteer.state}</Typography>
+                <Typography variant="body2">Zip Code: {selectedVolunteer.zipCode}</Typography>
+                <Typography variant="body2">Message: {selectedVolunteer.message}</Typography>
+                <Typography variant="body2">
+                  Event: {selectedVolunteer.event ? selectedVolunteer.event.name : "No Event"}
+                </Typography>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleCloseDialog}>Close</Button>
+              </DialogActions>
+            </Dialog>
+          )}
+
+          {/* Event Details Dialog */}
+          {selectedEvent && (
+            <Dialog open={Boolean(selectedEvent)} onClose={handleCloseDialog}>
+              <DialogTitle>Event Details</DialogTitle>
+              <DialogContent>
+                <Typography variant="h6">{selectedEvent.name}</Typography>
+                <Typography variant="body2">Date: {selectedEvent.dateTime}</Typography>
+                <Typography variant="body2">Location: {selectedEvent.location}</Typography>
+                <Typography variant="body2">Description: {selectedEvent.description}</Typography>
+                <Typography variant="body2">Organizer: {selectedEvent.organizer}</Typography>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleCloseDialog}>Close</Button>
+              </DialogActions>
+            </Dialog>
+          )}
+
+          {/* Snackbar Toast */}
           <SnackbarToast />
         </div>
       </Box>
