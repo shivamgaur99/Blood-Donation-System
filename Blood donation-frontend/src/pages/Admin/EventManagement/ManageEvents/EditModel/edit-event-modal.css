@@ -9,16 +9,16 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 100;
 }
 
 .modal-content {
   width: 90%;
-  max-width: 700px;
+  max-width: 600px;
   background-color: #e7e7e7;
   border-radius: 10px;
   padding: 20px;
-  box-shadow: 5px 5px 15px #888888, -5px -5px 15px #ffffff;
+  /* box-shadow: 5px 5px 15px #888888, -5px -5px 15px #ffffff; */
   animation: fadeIn 0.3s ease-out;
 }
 

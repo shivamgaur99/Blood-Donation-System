@@ -1,27 +1,78 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { END_POINT } from "../../../config/api";
-import { useToast } from "../../../services/toastService"; // Import the custom toast hook
-import { SimpleToast } from "../../../components/util/Toast/Toast"; // Import the toast component
-import Loader from "../../../components/util/Loader"; // Import the loader component
+import { useToast } from "../../../services/toastService";
+import { SimpleToast } from "../../../components/util/Toast/Toast";
+import Loader from "../../../components/util/Loader";
+import {
+  Box,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  TablePagination,
+  Card,
+  CardContent,
+  CardHeader,
+  CardActions,
+  Grid,
+} from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-const Donations = () => {
+// Define themes for light and dark modes
+const lightTheme = createTheme({
+  palette: {
+    mode: "light",
+    primary: {
+      main: "#1976d2",
+    },
+    background: {
+      default: "#fff",
+      paper: "#f5f5f5",
+    },
+  },
+});
+
+const darkTheme = createTheme({
+  palette: {
+    mode: "dark",
+    primary: {
+      main: "#90caf9",
+    },
+    background: {
+      default: "#121212",
+      paper: "#1e1e1e",
+    },
+  },
+});
+
+const Donations = (props) => {
   const [donorList, setDonorList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(0); // Current page
+  const [rowsPerPage, setRowsPerPage] = useState(5); // Rows per page
+  const [viewMode, setViewMode] = useState("table"); // Default view is table
+
   const { toast, showToast, hideToast } = useToast();
+  let dark = props.theme;
 
   useEffect(() => {
-    fetchDonorList();
+    fetchDonationHistory();
   }, []);
 
-  const fetchDonorList = () => {
-    const token = localStorage.getItem('jwtToken');
+  const fetchDonationHistory = () => {
+    const token = localStorage.getItem("jwtToken");
 
     if (!token) {
-      setError('User is not authenticated');
+      setError("User is not authenticated");
       setLoading(false);
-      showToast('User is not authenticated', 'error');
+      showToast("User is not authenticated", "error");
       return;
     }
 
@@ -34,64 +85,191 @@ const Donations = () => {
       .then((response) => {
         setDonorList(response.data);
         setLoading(false);
-        showToast('Donation history loaded successfully', 'success'); // Display success toast
+        showToast("Donation history loaded successfully", "success");
       })
       .catch((error) => {
-        console.error('Error:', error);
-        setError('Failed to fetch donation history. Please try again later.');
+        console.error("Error:", error);
+        setError("Failed to fetch donation history. Please try again later.");
         setLoading(false);
-        showToast(error.message || 'Failed to fetch donation history. Please try again later.', 'error'); // Display error toast
+        showToast(
+          error.message || "Failed to fetch donation history. Please try again later.",
+          "error"
+        );
       });
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  // Paginate the donorList based on the current page and rows per page
+  const paginatedDonors = donorList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
   return (
-    <div className="container my-5">
-      <h1 className="text-center text-primary mb-4">Available Blood Donors</h1>
+    <ThemeProvider theme={dark ? darkTheme : lightTheme}>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="flex-start"
+        sx={{
+          minHeight: "100vh",
+          padding: 2,
+          backgroundColor: dark ? "#121212" : "#fff",
+        }}
+      >
+        <div style={{ width: "90%" }}>
+          <Typography
+            variant="h4"
+            align="center"
+            sx={{
+              fontWeight: "bold",
+              color: dark ? "#90caf9" : "#1976d2",
+              margin: "20px",
+              fontFamily: "'Roboto', sans-serif",
+            }}
+          >
+            Donation History
+          </Typography>
 
-      {loading && (
-        <div className="text-center">
-          <Loader /> {/* Display the reusable Loader */}
+          {/* Toggle Button */}
+          <Box textAlign="center" sx={{ marginBottom: 2 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setViewMode(viewMode === "table" ? "card" : "table")}
+            >
+              Switch to {viewMode === "table" ? "Card" : "Table"} View
+            </Button>
+          </Box>
+
+          {/* Loading Spinner */}
+          {loading && (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              height="100vh"
+            >
+              <Loader />
+            </Box>
+          )}
+
+          {/* Error Message */}
+          {error && (
+            <Box textAlign="center" color="error.main">
+              <Typography variant="h6">{error}</Typography>
+            </Box>
+          )}
+
+          {/* Display Donations */}
+          {!loading && !error && (
+            <>
+              {viewMode === "table" ? (
+                <TableContainer component={Paper}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Name</TableCell>
+                        <TableCell>Age</TableCell>
+                        <TableCell>Gender</TableCell>
+                        <TableCell>Blood Group</TableCell>
+                        <TableCell>City</TableCell>
+                        <TableCell>Mobile</TableCell>
+                        <TableCell>Units</TableCell>
+                        <TableCell>Date</TableCell>
+                        <TableCell>Action</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {paginatedDonors.length > 0 ? (
+                        paginatedDonors.map((donor) => (
+                          <TableRow key={donor.id}>
+                            <TableCell>{donor.name}</TableCell>
+                            <TableCell>{donor.age || "Not Available"}</TableCell>
+                            <TableCell>{donor.gender || "Not Available"}</TableCell>
+                            <TableCell>{donor.bloodGroup || "Not Available"}</TableCell>
+                            <TableCell>{donor.city || "Not Available"}</TableCell>
+                            <TableCell>{donor.mobile || "Not Available"}</TableCell>
+                            <TableCell>{donor.units || "Not Available"}</TableCell>
+                            <TableCell>{donor.date || "Not Available"}</TableCell>
+                            <TableCell>
+                              <Button variant="contained" color="primary">
+                                View Event
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan="9" align="center">
+                            No donors available at the moment.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                  <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={donorList.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                  />
+                </TableContainer>
+              ) : (
+                // Card View
+                <Grid container spacing={3}>
+                  {donorList.length > 0 ? (
+                    donorList.map((donor) => (
+                      <Grid item xs={12} sm={6} md={4} key={donor.id}>
+                        <Card>
+                          <CardHeader title={donor.name} />
+                          <CardContent>
+                            <Typography variant="body2">Age: {donor.age || "Not Available"}</Typography>
+                            <Typography variant="body2">Gender: {donor.gender || "Not Available"}</Typography>
+                            <Typography variant="body2">Blood Group: {donor.bloodGroup || "Not Available"}</Typography>
+                            <Typography variant="body2">City: {donor.city || "Not Available"}</Typography>
+                            <Typography variant="body2">Mobile: {donor.mobile || "Not Available"}</Typography>
+                            <Typography variant="body2">Units: {donor.units || "Not Available"}</Typography>
+                            <Typography variant="body2">Date: {donor.date || "Not Available"}</Typography>
+                          </CardContent>
+                          <CardActions>
+                            <Button variant="contained" color="primary">
+                              View Event
+                            </Button>
+                          </CardActions>
+                        </Card>
+                      </Grid>
+                    ))
+                  ) : (
+                    <Typography variant="h6" align="center">
+                      No donors available at the moment.
+                    </Typography>
+                  )}
+                </Grid>
+              )}
+            </>
+          )}
+
+          {/* Toast Notification */}
+          {toast.open && (
+            <SimpleToast
+              open={toast.open}
+              severity={toast.severity}
+              message={toast.message}
+              handleCloseToast={hideToast}
+            />
+          )}
         </div>
-      )}
-
-      {error && <div className="alert alert-danger">{error}</div>}
-
-      {donorList.length === 0 && !loading && !error && (
-        <div className="alert alert-info text-center">No donors available at the moment.</div>
-      )}
-
-      <div className="row">
-        {donorList.map((donor) => (
-          <div key={donor.id} className="col-md-4 mb-4">
-            <div className="card shadow-sm border-primary rounded">
-              <div className="card-header text-center text-white">
-                <h5 className="card-title mb-0">{donor.name}</h5>
-              </div>
-              <div className="card-body">
-                <p><strong>Address:</strong> {donor.address || 'Not Available'}</p>
-                <p><strong>Age:</strong> {donor.age || 'Not Available'}</p>
-                <p><strong>Gender:</strong> {donor.gender || 'Not Available'}</p>
-                <p><strong>Blood Group:</strong> {donor.bloodGroup || 'Not Available'}</p>
-                <p><strong>City:</strong> {donor.city || 'Not Available'}</p>
-                <p><strong>Mobile:</strong> {donor.mobile || 'Not Available'}</p>
-                <p><strong>Units:</strong> {donor.units || 'Not Available'}</p>
-                <p><strong>Date:</strong> {donor.date || 'Not Available'}</p>
-              </div>
-              <div className="card-footer text-center">
-                <button className="btn btn-success">Contact Donor</button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <SimpleToast
-        open={toast.open}
-        severity={toast.severity}
-        message={toast.message}
-        handleCloseToast={hideToast}
-      />
-    </div>
+      </Box>
+    </ThemeProvider>
   );
 };
 

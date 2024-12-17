@@ -1,19 +1,97 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { END_POINT } from "../../../config/api";
-import { SimpleToast } from "../../../components/util/Toast/Toast";
 import { useToast } from "../../../services/toastService";
-import Loader from "../../../components/util/Loader"; 
+import { SimpleToast } from "../../../components/util/Toast/Toast";
+import Loader from "../../../components/util/Loader";
+import {
+  Box,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  TablePagination,
+  Card,
+  CardContent,
+  CardHeader,
+  CardActions,
+  Grid,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  ToggleButtonGroup,
+  ToggleButton
+} from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-const DonorList = () => {
+// Define themes for light and dark modes
+const lightTheme = createTheme({
+  palette: {
+    mode: "light",
+    primary: {
+      main: "#1976d2",
+    },
+    background: {
+      default: "#fff",
+      paper: "#f5f5f5",
+    },
+  },
+});
+
+const darkTheme = createTheme({
+  palette: {
+    mode: "dark",
+    primary: {
+      main: "#90caf9",
+    },
+    background: {
+      default: "#121212",
+      paper: "#1e1e1e",
+    },
+  },
+});
+
+const DonorList = (props) => {
   const [donorList, setDonorList] = useState([]);
+  const [filteredDonors, setFilteredDonors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(0); // Current page
+  const [rowsPerPage, setRowsPerPage] = useState(5); // Rows per page
+  const [viewMode, setViewMode] = useState("table"); // Default view is table
+  const [searchQuery, setSearchQuery] = useState(""); // Search query
+  const [selectedBloodGroup, setSelectedBloodGroup] = useState(""); // Blood group filter
+
   const { toast, showToast, hideToast } = useToast();
+  let dark = props.theme;
 
   useEffect(() => {
     fetchDonorList();
   }, []);
+
+  useEffect(() => {
+    // Filter donor list based on search query and selected blood group
+    let filtered = donorList;
+
+    if (searchQuery) {
+      filtered = filtered.filter((donor) =>
+        donor.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    if (selectedBloodGroup) {
+      filtered = filtered.filter((donor) => donor.bloodGroup === selectedBloodGroup);
+    }
+
+    setFilteredDonors(filtered);
+  }, [searchQuery, selectedBloodGroup, donorList]);
 
   const fetchDonorList = () => {
     const token = localStorage.getItem("jwtToken");
@@ -21,7 +99,7 @@ const DonorList = () => {
     if (!token) {
       setError("User is not authenticated");
       setLoading(false);
-      showToast("User is not authenticated", "error"); 
+      showToast("User is not authenticated", "error");
       return;
     }
 
@@ -33,87 +111,231 @@ const DonorList = () => {
       })
       .then((response) => {
         setDonorList(response.data);
+        setFilteredDonors(response.data); // Set filtered donors initially to all donors
         setLoading(false);
         showToast("Donor list loaded successfully", "success");
       })
       .catch((error) => {
-        if (error.response && error.response.status === 401) {
-          setError("Authentication failed. Please login again.");
-        } else if (error.response && error.response.status === 404) {
-          setError("Endpoint not found. Please check the API URL.");
-        } else {
-          setError("Failed to fetch donor list. Please try again later.");
-        }
+        console.error("Error:", error);
+        setError("Failed to fetch donor list. Please try again later.");
         setLoading(false);
-        showToast(error.message || "Failed to fetch donor list.", "error");
+        showToast(
+          error.message || "Failed to fetch donor list. Please try again later.",
+          "error"
+        );
       });
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleBloodGroupChange = (event) => {
+    setSelectedBloodGroup(event.target.value);
+  };
+
+  // Paginate the filteredDonors based on the current page and rows per page
+  const paginatedDonors = filteredDonors.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
   return (
-    <div className="container my-5">
-      <h1 className="text-center text-primary mb-4">Available Blood Donors</h1>
+    <ThemeProvider theme={dark ? darkTheme : lightTheme}>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="flex-start"
+        sx={{
+          minHeight: "100vh",
+          padding: 2,
+          backgroundColor: dark ? "#121212" : "#fff",
+        }}
+      >
+        <div style={{ width: "90%" }}>
+          <Typography
+            variant="h4"
+            align="center"
+            sx={{
+              fontWeight: "bold",
+              color: dark ? "#90caf9" : "#1976d2",
+              margin: "20px",
+              fontFamily: "'Roboto', sans-serif",
+            }}
+          >
+            Available Blood Donors
+          </Typography>
 
-      {loading ? (
-        <div className="text-center">
-          <Loader /> {/* Display the reusable Loader */}
-        </div>
-      ) : error ? (
-        <div className="alert alert-danger">{error}</div>
-      ) : donorList.length === 0 ? (
-        <div className="alert alert-info text-center">
-          No donors available at the moment.
-        </div>
-      ) : (
-        <div className="row">
-          {donorList.map((donor) => (
-            <div key={donor.id} className="col-md-4 mb-4">
-              <div className="card shadow-sm border-primary rounded">
-                <div className="card-header text-center text-white">
-                  <h5 className="card-title mb-0">{donor.name}</h5>
-                </div>
-                <div className="card-body">
-                  <p>
-                    <strong>Address:</strong> {donor.address || "Not Available"}
-                  </p>
-                  <p>
-                    <strong>Age:</strong> {donor.age || "Not Available"}
-                  </p>
-                  <p>
-                    <strong>Gender:</strong> {donor.gender || "Not Available"}
-                  </p>
-                  <p>
-                    <strong>Blood Group:</strong>{" "}
-                    {donor.bloodGroup || "Not Available"}
-                  </p>
-                  <p>
-                    <strong>City:</strong> {donor.city || "Not Available"}
-                  </p>
-                  <p>
-                    <strong>Mobile:</strong> {donor.mobile || "Not Available"}
-                  </p>
-                  <p>
-                    <strong>Units:</strong> {donor.units || "Not Available"}
-                  </p>
-                  <p>
-                    <strong>Date:</strong> {donor.date || "Not Available"}
-                  </p>
-                </div>
-                <div className="card-footer text-center">
-                  <button className="btn btn-success">Contact Donor</button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+          {/* Search and Blood Group Filter Section */}
+          <Box display="flex" justifyContent="center" alignItems="center" sx={{ marginBottom: 2 }}>
+            <TextField
+              variant="outlined"
+              label="Search Users"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              fullWidth
+              sx={{ marginRight: 2 }}
+            />
+            <FormControl sx={{ minWidth: 200, marginRight: 2 }}>
+              <InputLabel>Blood Group</InputLabel>
+              <Select
+                value={selectedBloodGroup}
+                onChange={handleBloodGroupChange}
+                label="Blood Group"
+              >
+                <MenuItem value="">All</MenuItem>
+                <MenuItem value="A+">A+</MenuItem>
+                <MenuItem value="B+">B+</MenuItem>
+                <MenuItem value="O+">O+</MenuItem>
+                <MenuItem value="AB+">AB+</MenuItem>
+                <MenuItem value="A-">A-</MenuItem>
+                <MenuItem value="B-">B-</MenuItem>
+                <MenuItem value="O-">O-</MenuItem>
+                <MenuItem value="AB-">AB-</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
 
-      <SimpleToast
-        open={toast.open}
-        severity={toast.severity}
-        message={toast.message}
-        handleCloseToast={hideToast}
-      />
-    </div>
+          {/* Toggle Button Group for View Mode */}
+          <Box textAlign="center" sx={{ marginBottom: 2 }}>
+            <ToggleButtonGroup
+              value={viewMode}
+              exclusive
+              onChange={(_, newViewMode) => setViewMode(newViewMode)}
+            >
+              <ToggleButton value="table">Table</ToggleButton>
+              <ToggleButton value="card">Card</ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
+
+          {/* Loading Spinner */}
+          {loading && (
+            <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+              <Loader />
+            </Box>
+          )}
+
+          {/* Error Message */}
+          {error && (
+            <Box textAlign="center" color="error.main">
+              <Typography variant="h6">{error}</Typography>
+            </Box>
+          )}
+
+          {/* Display Donations */}
+          {!loading && !error && (
+            <>
+              {viewMode === "table" ? (
+                <TableContainer component={Paper}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Name</TableCell>
+                        <TableCell>Age</TableCell>
+                        <TableCell>Gender</TableCell>
+                        <TableCell>Blood Group</TableCell>
+                        <TableCell>City</TableCell>
+                        <TableCell>Mobile</TableCell>
+                        <TableCell>Units</TableCell>
+                        <TableCell>Date</TableCell>
+                        <TableCell>Action</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {paginatedDonors.length > 0 ? (
+                        paginatedDonors.map((donor) => (
+                          <TableRow key={donor.id}>
+                            <TableCell>{donor.name}</TableCell>
+                            <TableCell>{donor.age || "Not Available"}</TableCell>
+                            <TableCell>{donor.gender || "Not Available"}</TableCell>
+                            <TableCell>{donor.bloodGroup || "Not Available"}</TableCell>
+                            <TableCell>{donor.city || "Not Available"}</TableCell>
+                            <TableCell>{donor.mobile || "Not Available"}</TableCell>
+                            <TableCell>{donor.units || "Not Available"}</TableCell>
+                            <TableCell>{donor.date || "Not Available"}</TableCell>
+                            <TableCell>
+                              <Button variant="contained" color="secondary">
+                                Contact Donor
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan="9" align="center">
+                            No donors available at the moment.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                  <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={filteredDonors.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                  />
+                </TableContainer>
+              ) : (
+                // Card View
+                <Grid container spacing={3}>
+                  {paginatedDonors.length > 0 ? (
+                    paginatedDonors.map((donor) => (
+                      <Grid item xs={12} sm={6} md={4} key={donor.id}>
+                        <Card>
+                          <CardHeader title={donor.name} />
+                          <CardContent>
+                            <Typography variant="body2">
+                              Age: {donor.age || "Not Available"}
+                            </Typography>
+                            <Typography variant="body2">
+                              Gender: {donor.gender || "Not Available"}
+                            </Typography>
+                            <Typography variant="body2">
+                              Blood Group: {donor.bloodGroup || "Not Available"}
+                            </Typography>
+                            <Typography variant="body2">
+                              City: {donor.city || "Not Available"}
+                            </Typography>
+                            <Typography variant="body2">
+                              Mobile: {donor.mobile || "Not Available"}
+                            </Typography>
+                            <Typography variant="body2">
+                              Units: {donor.units || "Not Available"}
+                            </Typography>
+                            <Typography variant="body2">
+                              Date: {donor.date || "Not Available"}
+                            </Typography>
+                          </CardContent>
+                          <CardActions>
+                            <Button variant="contained" color="secondary">
+                              Contact Donor
+                            </Button>
+                          </CardActions>
+                        </Card>
+                      </Grid>
+                    ))
+                  ) : (
+                    <Typography variant="body2" align="center" sx={{ width: "100%" }}>
+                      No donors available at the moment.
+                    </Typography>
+                  )}
+                </Grid>
+              )}
+            </>
+          )}
+        </div>
+      </Box>
+    </ThemeProvider>
   );
 };
 

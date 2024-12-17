@@ -33,7 +33,7 @@ import { Delete, Visibility, Info } from "@mui/icons-material";
 import Loader from "../../../components/util/Loader";
 import useToast from "../../../hooks/useToast";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Swal from "sweetalert2"; // Import SweetAlert2
+import Swal from "sweetalert2";
 
 const lightTheme = createTheme({
   palette: {
@@ -64,13 +64,13 @@ const darkTheme = createTheme({
 const VolunteerList = (props) => {
   const [volunteers, setVolunteers] = useState([]);
   const [filteredVolunteers, setFilteredVolunteers] = useState([]);
-  const [events, setEvents] = useState([]); // To store events for selection
-  const [selectedEventId, setSelectedEventId] = useState(""); // Selected event ID for filtering
+  const [events, setEvents] = useState([]);
+  const [selectedEventId, setSelectedEventId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [viewMode, setViewMode] = useState("table"); // 'table' or 'card' view
-  const [searchQuery, setSearchQuery] = useState(""); // Search query
-  const [selectedVolunteer, setSelectedVolunteer] = useState(null); // Store selected volunteer for details view
-  const [selectedEvent, setSelectedEvent] = useState(null); // Store selected event for details view
+  const [viewMode, setViewMode] = useState("table");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedVolunteer, setSelectedVolunteer] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState(null);
   const { showToast, SnackbarToast } = useToast();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -89,7 +89,7 @@ const VolunteerList = (props) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      setEvents(response.data); // Store events for selection
+      setEvents(response.data);
     } catch (error) {
       showToast("Failed to fetch events. Please try again later.", "error");
     }
@@ -98,18 +98,21 @@ const VolunteerList = (props) => {
   const fetchVolunteers = async () => {
     const token = getJwtToken();
     try {
-      const response = await axios.get(`${END_POINT}/volunteers/all-with-event`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      // Ensure the event information is included correctly
-      const volunteersWithEvent = response.data.map(volunteer => ({
+      const response = await axios.get(
+        `${END_POINT}/volunteers/all-with-event`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const volunteersWithEvent = response.data.map((volunteer) => ({
         ...volunteer,
-        event: volunteer.event, // This includes the event information
+        event: volunteer.event,
       }));
       setVolunteers(volunteersWithEvent);
-      setFilteredVolunteers(volunteersWithEvent); // Initialize filtered volunteers with event data
+      setFilteredVolunteers(volunteersWithEvent);
       showToast("Volunteer list loaded successfully", "success");
     } catch (error) {
       showToast("Failed to fetch volunteers. Please try again later.", "error");
@@ -138,7 +141,9 @@ const VolunteerList = (props) => {
           },
         });
         setVolunteers(volunteers.filter((volunteer) => volunteer.id !== id));
-        setFilteredVolunteers(filteredVolunteers.filter((volunteer) => volunteer.id !== id));
+        setFilteredVolunteers(
+          filteredVolunteers.filter((volunteer) => volunteer.id !== id)
+        );
         showToast("Volunteer deleted successfully.", "success");
       } catch (error) {
         showToast("Failed to delete volunteer.", "error", [
@@ -148,7 +153,6 @@ const VolunteerList = (props) => {
     }
   };
 
-  // Search filter function
   const handleSearchChange = (event) => {
     const query = event.target.value.toLowerCase();
     setSearchQuery(query);
@@ -167,29 +171,28 @@ const VolunteerList = (props) => {
     }
   };
 
-  // Filter volunteers based on selected event ID
   const filterVolunteersByEvent = (eventId) => {
     if (eventId) {
       setFilteredVolunteers(
         volunteers.filter((volunteer) => volunteer.event.id === eventId)
       );
     } else {
-      setFilteredVolunteers(volunteers); // Show all volunteers if no event is selected
+      setFilteredVolunteers(volunteers);
     }
   };
 
   const handleViewDetails = (volunteer) => {
-    setSelectedVolunteer(volunteer); // Set selected volunteer for details
+    setSelectedVolunteer(volunteer);
   };
 
   const handleViewEventDetails = (eventId) => {
     const event = events.find((event) => event.id === eventId);
-    setSelectedEvent(event); // Set selected event for details
+    setSelectedEvent(event);
   };
 
   const handleCloseDialog = () => {
-    setSelectedVolunteer(null); // Close the details dialog
-    setSelectedEvent(null); // Close event details dialog
+    setSelectedVolunteer(null);
+    setSelectedEvent(null);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -202,12 +205,12 @@ const VolunteerList = (props) => {
   };
 
   useEffect(() => {
-    fetchEvents(); // Fetch event list when component mounts
-    fetchVolunteers(); // Fetch volunteers
+    fetchEvents();
+    fetchVolunteers();
   }, []);
 
   useEffect(() => {
-    filterVolunteersByEvent(selectedEventId); // Filter volunteers based on selected event
+    filterVolunteersByEvent(selectedEventId);
   }, [selectedEventId, volunteers]);
 
   if (isLoading) {
@@ -232,7 +235,7 @@ const VolunteerList = (props) => {
         sx={{
           minHeight: "100vh",
           padding: 2,
-          backgroundColor: dark ? "#121212" : "#fff", // Set background color dynamically
+          backgroundColor: dark ? "#121212" : "#fff",
         }}
       >
         <div style={{ width: "90%" }}>
@@ -269,45 +272,46 @@ const VolunteerList = (props) => {
                   fullWidth
                   value={searchQuery}
                   onChange={handleSearchChange}
-                  size="medium" 
+                  size="medium"
                   // sx={{
                   //   maxWidth: 500,
                   //   "& .MuiInputBase-root": {
-                  //     padding: "6px 12px", 
-                  //     fontSize: "0.875rem", 
+                  //     padding: "6px 12px",
+                  //     fontSize: "0.875rem",
                   //   },
                   //   "& .MuiOutlinedInput-root": {
                   //     backgroundColor: dark ? "#333" : "#f5f5f5",
                   //   },
                   //   "& .MuiInputLabel-root": {
-                  //     color: dark ? "#ccc" : "#000", 
+                  //     color: dark ? "#ccc" : "#000",
                   //   },
                   //   "& .MuiInputBase-input": {
-                  //     color: dark ? "#fff" : "#000", 
+                  //     color: dark ? "#fff" : "#000",
                   //   },
                   // }}
                 />
               </Grid>
 
               <Grid item xs={12} sm={4}>
-                <FormControl fullWidth 
-                // size="small" 
-                // sx={{
-                //     maxWidth: 500,
-                //     "& .MuiInputBase-root": {
-                //       padding: "6px 12px", 
-                //       fontSize: "0.875rem", 
-                //     },
-                //     "& .MuiOutlinedInput-root": {
-                //       backgroundColor: dark ? "#333" : "#f5f5f5",
-                //     },
-                //     "& .MuiInputLabel-root": {
-                //       color: dark ? "#ccc" : "#000", 
-                //     },
-                //     "& .MuiInputBase-input": {
-                //       color: dark ? "#fff" : "#000", 
-                //     },
-                //   }}
+                <FormControl
+                  fullWidth
+                  // size="small"
+                  // sx={{
+                  //     maxWidth: 500,
+                  //     "& .MuiInputBase-root": {
+                  //       padding: "6px 12px",
+                  //       fontSize: "0.875rem",
+                  //     },
+                  //     "& .MuiOutlinedInput-root": {
+                  //       backgroundColor: dark ? "#333" : "#f5f5f5",
+                  //     },
+                  //     "& .MuiInputLabel-root": {
+                  //       color: dark ? "#ccc" : "#000",
+                  //     },
+                  //     "& .MuiInputBase-input": {
+                  //       color: dark ? "#fff" : "#000",
+                  //     },
+                  //   }}
                 >
                   <InputLabel>Event</InputLabel>
                   <Select
@@ -354,36 +358,54 @@ const VolunteerList = (props) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                {filteredVolunteers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((volunteer) => (
-                    <TableRow key={volunteer.id}>
-                      <TableCell>
-                        {volunteer.firstName} {volunteer.lastName}
-                      </TableCell>
-                      <TableCell>{volunteer.email}</TableCell>
-                      <TableCell>{volunteer.phone}</TableCell>
-                      <TableCell>{volunteer.event ? volunteer.event.name : "No Event"}</TableCell> {/* Display Event */}
-                      <TableCell>
-                        <IconButton
-                          color="error"
-                          onClick={() => handleDelete(volunteer.id)} // Call handleDelete with volunteer ID
-                        >
-                          <Delete />
-                        </IconButton>
-                        <IconButton
-                          color="primary"
-                          onClick={() => handleViewDetails(volunteer)} // View Details button
-                        >
-                          <Visibility />
-                        </IconButton>
-                        <IconButton
-                          color="info"
-                          onClick={() => handleViewEventDetails(volunteer.event.id)} // View Event Details button
-                        >
-                          <Info />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {filteredVolunteers
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((volunteer) => (
+                      <TableRow key={volunteer.id}>
+                        <TableCell>
+                          {volunteer.firstName} {volunteer.lastName}
+                        </TableCell>
+                        <TableCell>{volunteer.email}</TableCell>
+                        <TableCell>{volunteer.phone}</TableCell>
+                        <TableCell>
+                          {volunteer.event ? volunteer.event.name : "No Event"}
+                        </TableCell>
+                        <TableCell>
+                          {/* <IconButton
+                            color="primary"
+                            onClick={() => handleViewDetails(volunteer)}
+                          >
+                            <Visibility />
+                          </IconButton> */}
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={() => handleViewDetails(volunteer)}
+                            aria-label="view-details"
+                            sx={{
+                              padding: "6px 12px",
+                              textTransform: "none",
+                            }}
+                          >
+                            View Details
+                          </Button>
+                          <IconButton
+                            color="info"
+                            onClick={() =>
+                              handleViewEventDetails(volunteer.event.id)
+                            }
+                          >
+                            <Info />
+                          </IconButton>
+                          <IconButton
+                            color="error"
+                            onClick={() => handleDelete(volunteer.id)}
+                          >
+                            <Delete />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </TableBody>
               </Table>
               <TablePagination
@@ -413,26 +435,41 @@ const VolunteerList = (props) => {
                         Phone: {volunteer.phone}
                       </Typography>
                       <Typography variant="body2">
-                        Event: {volunteer.event ? volunteer.event.name : "No Event"} {/* Display Event */}
+                        Event:{" "}
+                        {volunteer.event ? volunteer.event.name : "No Event"}
                       </Typography>
                       <Box mt={2}>
                         <IconButton
-                          color="error"
-                          onClick={() => handleDelete(volunteer.id)} // Call handleDelete with volunteer ID
-                        >
-                          <Delete />
-                        </IconButton>
-                        <IconButton
                           color="primary"
-                          onClick={() => handleViewDetails(volunteer)} // View Details button
+                          onClick={() => handleViewDetails(volunteer)}
                         >
                           <Visibility />
                         </IconButton>
+                        {/* <Button
+                          variant="outlined"
+                          color="primary"
+                          onClick={() => handleViewDetails(volunteer)}
+                          aria-label="view-details"
+                          sx={{
+                            padding: "6px 12px",
+                            textTransform: "none",
+                          }}
+                        >
+                          View Details
+                        </Button> */}
                         <IconButton
                           color="info"
-                          onClick={() => handleViewEventDetails(volunteer.event.id)} // View Event Details button
+                          onClick={() =>
+                            handleViewEventDetails(volunteer.event.id)
+                          }
                         >
                           <Info />
+                        </IconButton>
+                        <IconButton
+                          color="error"
+                          onClick={() => handleDelete(volunteer.id)}
+                        >
+                          <Delete />
                         </IconButton>
                       </Box>
                     </CardContent>
@@ -444,7 +481,12 @@ const VolunteerList = (props) => {
 
           {/* View Details Dialog */}
           {selectedVolunteer && (
-            <Dialog open={Boolean(selectedVolunteer)} onClose={handleCloseDialog}>
+            <Dialog
+              open={Boolean(selectedVolunteer)}
+              onClose={handleCloseDialog}
+              maxWidth="sm"
+              fullWidth
+            >
               <DialogTitle>Volunteer Details</DialogTitle>
               <DialogContent>
                 <Typography variant="h6">
@@ -453,16 +495,35 @@ const VolunteerList = (props) => {
                 <Typography variant="body2">
                   Date of Birth: {selectedVolunteer.dob}
                 </Typography>
-                <Typography variant="body2">Gender: {selectedVolunteer.gender}</Typography>
-                <Typography variant="body2">Phone: {selectedVolunteer.phone}</Typography>
-                <Typography variant="body2">Email: {selectedVolunteer.email}</Typography>
-                <Typography variant="body2">Address: {selectedVolunteer.address}</Typography>
-                <Typography variant="body2">City: {selectedVolunteer.city}</Typography>
-                <Typography variant="body2">State: {selectedVolunteer.state}</Typography>
-                <Typography variant="body2">Zip Code: {selectedVolunteer.zipCode}</Typography>
-                <Typography variant="body2">Message: {selectedVolunteer.message}</Typography>
                 <Typography variant="body2">
-                  Event: {selectedVolunteer.event ? selectedVolunteer.event.name : "No Event"}
+                  Gender: {selectedVolunteer.gender}
+                </Typography>
+                <Typography variant="body2">
+                  Phone: {selectedVolunteer.phone}
+                </Typography>
+                <Typography variant="body2">
+                  Email: {selectedVolunteer.email}
+                </Typography>
+                <Typography variant="body2">
+                  Address: {selectedVolunteer.address}
+                </Typography>
+                <Typography variant="body2">
+                  City: {selectedVolunteer.city}
+                </Typography>
+                <Typography variant="body2">
+                  State: {selectedVolunteer.state}
+                </Typography>
+                <Typography variant="body2">
+                  Zip Code: {selectedVolunteer.zipCode}
+                </Typography>
+                <Typography variant="body2">
+                  Message: {selectedVolunteer.message}
+                </Typography>
+                <Typography variant="body2">
+                  Event:{" "}
+                  {selectedVolunteer.event
+                    ? selectedVolunteer.event.name
+                    : "No Event"}
                 </Typography>
               </DialogContent>
               <DialogActions>
@@ -473,14 +534,27 @@ const VolunteerList = (props) => {
 
           {/* Event Details Dialog */}
           {selectedEvent && (
-            <Dialog open={Boolean(selectedEvent)} onClose={handleCloseDialog}>
+            <Dialog
+              open={Boolean(selectedEvent)}
+              onClose={handleCloseDialog}
+              maxWidth="sm"
+              fullWidth
+            >
               <DialogTitle>Event Details</DialogTitle>
               <DialogContent>
                 <Typography variant="h6">{selectedEvent.name}</Typography>
-                <Typography variant="body2">Date: {selectedEvent.dateTime}</Typography>
-                <Typography variant="body2">Location: {selectedEvent.location}</Typography>
-                <Typography variant="body2">Description: {selectedEvent.description}</Typography>
-                <Typography variant="body2">Organizer: {selectedEvent.organizer}</Typography>
+                <Typography variant="body2">
+                  Date: {selectedEvent.dateTime}
+                </Typography>
+                <Typography variant="body2">
+                  Location: {selectedEvent.location}
+                </Typography>
+                <Typography variant="body2">
+                  Description: {selectedEvent.description}
+                </Typography>
+                <Typography variant="body2">
+                  Organizer: {selectedEvent.organizer}
+                </Typography>
               </DialogContent>
               <DialogActions>
                 <Button onClick={handleCloseDialog}>Close</Button>

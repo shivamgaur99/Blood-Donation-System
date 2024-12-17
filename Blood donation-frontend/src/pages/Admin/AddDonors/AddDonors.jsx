@@ -2,8 +2,48 @@ import React, { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { END_POINT } from "../../../config/api";
+import {
+  TextField,
+  Button,
+  Grid,
+  Box,
+  Typography,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  CircularProgress,
+  ThemeProvider,
+  createTheme,
+} from "@mui/material";
 
-function AddDonors() {
+const lightTheme = createTheme({
+  palette: {
+    mode: "light",
+    primary: {
+      main: "#1976d2",
+    },
+    background: {
+      default: "#fff",
+      paper: "#f5f5f5",
+    },
+  },
+});
+
+const darkTheme = createTheme({
+  palette: {
+    mode: "dark",
+    primary: {
+      main: "#90caf9",
+    },
+    background: {
+      default: "#121212",
+      paper: "#1e1e1e",
+    },
+  },
+});
+
+function AddDonors(props) {
   const [name, setName] = useState("");
   const [bloodGroup, setBloodGroup] = useState("");
   const [units, setUnits] = useState("");
@@ -95,195 +135,179 @@ function AddDonors() {
   };
 
   return (
-    <div className="container mt-5 mb-5 d-flex align-items-center justify-content-center">
-      <div className="row w-100">
-        {/* Left Side Image */}
-        <div className="col-md-6 mt-5 d-none d-md-block">
-          <img
-            src="https://via.placeholder.com/500" // Replace with an actual image source
-            alt="Add Donor"
-            className="img-fluid rounded"
-            style={{ marginTop: "60px" }}
-          />
-        </div>
-
-        {/* Right Side Form */}
-        <div className="col-md-6">
-          <h1 className="text-center mb-4 text-primary">Add Donor</h1>
-          <form
-            onSubmit={handleSubmit}
-            className="shadow-lg p-4 bg-light rounded"
+    <ThemeProvider theme={props.theme ? darkTheme : lightTheme}>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="flex-start"
+        sx={{
+          minHeight: "100vh",
+          padding: 2,
+          backgroundColor: props.theme ? "#121212" : "#ffffff", // solid background colors
+        }}
+      >
+        <div style={{ width: "80%", maxWidth: 800 }}>
+          <Typography
+            variant="h4"
+            align="center"
+            sx={{
+              fontWeight: "bold",
+              color: props.theme ? "#90caf9" : "#1976d2",
+              margin: "20px",
+              fontFamily: "'Roboto', sans-serif",
+            }}
           >
-            <div className="form-group">
-              <label htmlFor="name">
-                Name <span className="text-danger">*</span>
-              </label>
-              <input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                placeholder="Enter donor's full name"
-              />
-            </div>
+            Add Donor
+          </Typography>
 
-            {/* Blood Group and Units in Same Row */}
-            <div className="form-row">
-              <div className="col-md-6">
-                <div className="form-group">
-                  <label htmlFor="bloodGroup">
-                    Blood Group <span className="text-danger">*</span>
-                  </label>
-                  <select
-                    id="bloodGroup"
+          <form onSubmit={handleSubmit}>
+            <Grid container spacing={2}>
+              {/* Name Field */}
+              <Grid item xs={12}>
+                <TextField
+                  label="Name"
+                  variant="outlined"
+                  fullWidth
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  placeholder="Enter donor's full name"
+                />
+              </Grid>
+
+              {/* Blood Group and Units */}
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth required>
+                  <InputLabel>Blood Group</InputLabel>
+                  <Select
+                    label="Blood Group"
                     value={bloodGroup}
                     onChange={(e) => setBloodGroup(e.target.value)}
-                    required
                   >
-                    <option value="">Select Blood Group</option>
-                    <option value="A+">A+</option>
-                    <option value="A-">A-</option>
-                    <option value="B+">B+</option>
-                    <option value="B-">B-</option>
-                    <option value="AB+">AB+</option>
-                    <option value="AB-">AB-</option>
-                    <option value="O+">O+</option>
-                    <option value="O-">O-</option>
-                  </select>
-                </div>
-              </div>
-              <div className="col-md-6">
-                <div className="form-group">
-                  <label htmlFor="units">
-                    Units <span className="text-danger">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    id="units"
-                    value={units}
-                    onChange={(e) => setUnits(e.target.value)}
-                    required
-                    placeholder="Enter units of blood"
-                  />
-                </div>
-              </div>
-            </div>
+                    <MenuItem value="A+">A+</MenuItem>
+                    <MenuItem value="A-">A-</MenuItem>
+                    <MenuItem value="B+">B+</MenuItem>
+                    <MenuItem value="B-">B-</MenuItem>
+                    <MenuItem value="AB+">AB+</MenuItem>
+                    <MenuItem value="AB-">AB-</MenuItem>
+                    <MenuItem value="O+">O+</MenuItem>
+                    <MenuItem value="O-">O-</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
 
-            {/* Mobile Number */}
-            <div className="form-group">
-              <label htmlFor="mobile">
-                Mobile <span className="text-danger">*</span>
-              </label>
-              <div className="input-group">
-                <input
-                  type="text"
-                  id="mobile"
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Units"
+                  variant="outlined"
+                  fullWidth
+                  type="number"
+                  value={units}
+                  onChange={(e) => setUnits(e.target.value)}
+                  required
+                  placeholder="Enter units of blood"
+                />
+              </Grid>
+
+              {/* Mobile and Gender */}
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Mobile"
+                  variant="outlined"
+                  fullWidth
                   value={mobile}
                   onChange={(e) => setMobile(e.target.value)}
                   required
                   placeholder="Enter mobile number"
                 />
-              </div>
-            </div>
+              </Grid>
 
-            {/* Gender and Age in Same Row */}
-            <div className="form-row">
-              <div className="col-md-6">
-                <div className="form-group">
-                  <label htmlFor="gender">
-                    Gender <span className="text-danger">*</span>
-                  </label>
-                  <select
-                    id="gender"
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth required>
+                  <InputLabel>Gender</InputLabel>
+                  <Select
+                    label="Gender"
                     value={gender}
                     onChange={(e) => setGender(e.target.value)}
-                    required
                   >
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-              </div>
-              <div className="col-md-6">
-                <div className="form-group">
-                  <label htmlFor="age">
-                    Age <span className="text-danger">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    id="age"
-                    value={age}
-                    onChange={(e) => setAge(e.target.value)}
-                    required
-                    placeholder="Enter age"
-                  />
-                </div>
-              </div>
-            </div>
+                    <MenuItem value="Male">Male</MenuItem>
+                    <MenuItem value="Female">Female</MenuItem>
+                    <MenuItem value="Other">Other</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
 
-            {/* City */}
-            <div className="form-group">
-              <label htmlFor="city">
-                City <span className="text-danger">*</span>
-              </label>
-              <input
-                type="text"
-                id="city"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                required
-                placeholder="Enter city"
-              />
-            </div>
+              {/* Age, City and Address */}
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="Age"
+                  variant="outlined"
+                  fullWidth
+                  type="number"
+                  value={age}
+                  onChange={(e) => setAge(e.target.value)}
+                  required
+                  placeholder="Enter age"
+                />
+              </Grid>
 
-            {/* Address */}
-            <div className="form-group">
-              <label htmlFor="address">
-                Address <span className="text-danger">*</span>
-              </label>
-              <input
-                type="text"
-                id="address"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                required
-                placeholder="Enter address"
-              />
-            </div>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  label="City"
+                  variant="outlined"
+                  fullWidth
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  required
+                  placeholder="Enter city"
+                />
+              </Grid>
 
-            {/* Date */}
-            <div className="form-group">
-              <label htmlFor="date">
-                Date <span className="text-danger">*</span>
-              </label>
-              <div className="input-group">
-                <input
+              <Grid item xs={12}>
+                <TextField
+                  label="Address"
+                  variant="outlined"
+                  fullWidth
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  required
+                  placeholder="Enter address"
+                />
+              </Grid>
+
+              {/* Date */}
+              <Grid item xs={12}>
+                <TextField
+                  label="Date"
                   type="date"
-                  id="date"
+                  variant="outlined"
+                  fullWidth
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
                   required
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
-              </div>
-            </div>
+              </Grid>
 
-            {/* Submit Button */}
-            <div className="text-center mt-4">
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={!isFormValid() || isLoading}
-              >
-                {isLoading ? "Loading..." : "Submit"}
-              </button>
-            </div>
+              {/* Submit Button */}
+              <Grid item xs={12} textAlign="center">
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={!isFormValid() || isLoading}
+                  fullWidth
+                >
+                  {isLoading ? <CircularProgress size={24} /> : "Submit"}
+                </Button>
+              </Grid>
+            </Grid>
           </form>
         </div>
-      </div>
-    </div>
+      </Box>
+    </ThemeProvider>
   );
 }
 

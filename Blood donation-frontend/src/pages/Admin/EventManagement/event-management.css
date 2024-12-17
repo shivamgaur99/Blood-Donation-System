@@ -1,17 +1,16 @@
 .event-container {
-  height: 100vh;
   text-align: center;
-  padding: 20px;
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-  font-family: 'Poppins', sans-serif;
+  padding: 40px;
+  font-family: "Poppins", sans-serif;
+  transition: background 0.3s, color 0.3s; /* Smooth transition for theme change */
 }
 
 .event-container h1 {
   font-size: 2.6em;
   margin-top: 30px;
   margin-bottom: 30px;
-  color: #007bff;
   font-weight: 700;
+  transition: color 0.3s;
 }
 
 .ecards-container {
@@ -19,6 +18,7 @@
   justify-content: center;
   gap: 30px;
   margin-top: 40px;
+  flex-wrap: wrap; /* Allow wrapping of cards for small screens */
 }
 
 .ecard {
@@ -33,9 +33,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-bottom: 30px; /* Space between cards */
 }
 
-.card:hover {
+.ecard:hover {
   transform: translateY(-10px);
   box-shadow: 0 15px 20px rgba(0, 0, 0, 0.3);
 }
@@ -54,10 +55,105 @@
   margin: 0;
 }
 
-.ecard:hover h2, .ecard:hover p {
+.ecard:hover h2,
+.ecard:hover p {
   text-shadow: 1px 2px 5px rgba(255, 255, 255, 0.8);
 }
 
 .icon-spacing {
   margin-top: 10px;
+}
+
+/* Light Theme */
+.light {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+}
+
+.light h1 {
+  color: #007bff;
+}
+
+.light .ecard {
+  background: linear-gradient(135deg, #007bff, #0056b3);
+}
+
+.light .ecard:hover {
+  box-shadow: 0 15px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark Theme */
+.dark {
+  background: #121212; /* Solid background color for dark theme */
+  color: white;
+}
+
+.dark h1 {
+  color: #90caf9;
+}
+
+.dark .ecard {
+  background: #333333; /* Solid background color for cards in dark theme */
+}
+
+.dark .ecard:hover {
+  box-shadow: 0 15px 20px rgba(255, 255, 255, 0.2);
+}
+
+.dark .ecard h2,
+.dark .ecard p {
+  color: #ffffff;
+}
+
+.dark .ecard:hover h2,
+.dark .ecard:hover p {
+  text-shadow: 1px 2px 5px rgba(0, 0, 0, 0.8);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .event-container h1 {
+    font-size: 2em;
+  }
+
+  .ecards-container {
+    gap: 20px;
+    justify-content: center;
+  }
+
+  .ecard {
+    width: 280px;
+    padding: 15px 20px;
+  }
+
+  .ecard h2 {
+    font-size: 1.6rem;
+  }
+
+  .ecard p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .event-container h1 {
+    font-size: 1.8em;
+  }
+
+  .ecards-container {
+    gap: 15px;
+    justify-content: center;
+  }
+
+  .ecard {
+    width: 250px;
+    padding: 10px 15px;
+  }
+
+  .ecard h2 {
+    font-size: 1.4rem;
+  }
+
+  .ecard p {
+    font-size: 0.8rem;
+  }
 }

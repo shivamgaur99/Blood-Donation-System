@@ -24,9 +24,6 @@ public class DonorService {
 	@Autowired
 	private DonorRepository donorRepository;
 
-	@Autowired
-	private RequestingBloodRepository requestingBloodRepository;
-
 	public Donor getDonorById(int id) {
 		Optional<Donor> donor = donorRepository.findById(id);
 		return donor.orElse(null);
@@ -46,40 +43,8 @@ public class DonorService {
 		return donorRepository.findByBloodGroup(bloodGroup);
 	}
 
-	public void saveBloodRequest(Requesting requesting) {
-		requestingBloodRepository.save(requesting); // Assuming a JPA repository is available
-	}
-
-	public List<Requesting> getRequestHistoryByEmail(String email) {
-		System.out.println("Fetching history for email: " + email);
-		return requestingBloodRepository.findByEmail(email);
-	}
-
-	public boolean updateRequestStatus(int id, String status) {
-		Optional<Requesting> request = requestingBloodRepository.findById(id);
-		if (request.isPresent()) {
-			Requesting req = request.get();
-			req.setStatus(status);
-			requestingBloodRepository.save(req);
-			return true;
-		}
-		return false;
-	}
-
 	public List<Donor> getDonorsByUser(User user) {
 		return donorRepository.findByUser(user);
-	}
-
-	public List<Requesting> getRequestHistoryByUser(User user) {
-		return requestingBloodRepository.findByUser(user);
-	}
-
-	public List<Requesting> getRequestsByBloodGroup(String bloodGroup) {
-		return requestingBloodRepository.findByBloodGroup(bloodGroup);
-	}
-
-	public List<Requesting> getRequestsByStatus(String status) {
-		return requestingBloodRepository.findByStatus(status);
 	}
 
 	public List<BloodDetails> getDonorUnitsByBloodGroup() {
@@ -111,21 +76,8 @@ public class DonorService {
 		return donorRepository.save(donor);
 	}
 
-	public void updateStatus(String email) {
-		requestingBloodRepository.updateStatus(email);
-		System.out.println("Updated");
-	}
-
-	public void rejectStatus(String email) {
-		requestingBloodRepository.rejectStatus(email);
-	}
-
 	public List<Donor> getAllDonors() {
 		return (List<Donor>) donorRepository.findAll();
-	}
-
-	public List<Requesting> getRequestHistory() {
-		return (List<Requesting>) requestingBloodRepository.findAll();
 	}
 
 	public List<Donor> getBloodDetails() {

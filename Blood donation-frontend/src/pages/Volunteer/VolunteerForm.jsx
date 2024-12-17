@@ -318,7 +318,6 @@ const VolunteerForm = (props) => {
                     name="eventId"
                     value={formData.eventId}
                     onChange={handleChange}
-                    required
                   >
                     <option value="">Select Event</option>
                     {events.map((event) => (

@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.application.constants.RequestStatus;
 import com.application.custom_excs.DonorNotFoundException;
 import com.application.custom_excs.InvalidTokenException;
 import com.application.custom_excs.ResourceNotFoundException;
@@ -31,7 +30,6 @@ import com.application.custom_excs.UserNotFoundException;
 import com.application.model.BloodDetails;
 import com.application.model.Donor;
 import com.application.model.Event;
-import com.application.model.Requesting;
 import com.application.model.User;
 import com.application.service.DonorService;
 import com.application.service.EventService;
@@ -46,7 +44,7 @@ public class DonorController {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private EventService eventService;
 
@@ -67,7 +65,7 @@ public class DonorController {
 		}
 
 		donor.setUser(user);
-		
+
 		if (donor.getEvent() != null) {
 			Event event = eventService.getEventById(donor.getEvent().getId());
 			donor.setEvent(event);
@@ -156,88 +154,6 @@ public class DonorController {
 		return bloodGroup.matches("^(A|B|AB|O)[+-]$");
 	}
 
-	@PostMapping("/blood-requests")
-	public ResponseEntity<String> addBloodRequest(@Valid @RequestBody Requesting requesting, HttpServletRequest request) {
-		String token = extractTokenFromRequest(request);
-		String email = jwtUtils.extractUsername(token);
-
-		User user = userService.fetchUserByEmail(email);
-		if (user == null) {
-			throw new UserNotFoundException("User not found.");
-		}
-
-		requesting.setUser(user);
-		requesting.setStatus(RequestStatus.PENDING.getStatus());
-		donorService.saveBloodRequest(requesting);
-
-		logger.info("Blood request created successfully for user: {}", email);
-		return ResponseEntity.status(HttpStatus.CREATED).body("Blood request created successfully.");
-	}
-
-	@GetMapping("/requestHistory")
-	public ResponseEntity<List<Requesting>> getRequestHistory() {
-		List<Requesting> history = donorService.getRequestHistory();
-
-		if (history.isEmpty()) {
-			return ResponseEntity.noContent().build();
-		}
-		
-
-		return ResponseEntity.ok(history);
-	}
-
-	@GetMapping("/requestHistory/{email}")
-	public ResponseEntity<List<Requesting>> getRequestHistoryByEmail(@PathVariable String email) {
-		List<Requesting> history = donorService.getRequestHistoryByEmail(email);
-
-		if (history.isEmpty()) {
-			return ResponseEntity.noContent().build();
-		}
-
-		return ResponseEntity.ok(history);
-	}
-
-	@GetMapping("/userRequestHistory")
-	public ResponseEntity<List<Requesting>> getRequestHistoryByUser(HttpServletRequest request) {
-		String token = extractTokenFromRequest(request);
-		String email = jwtUtils.extractUsername(token);
-		User user = userService.fetchUserByEmail(email);
-
-		if (user == null) {
-			throw new UserNotFoundException("User not found with email: " + email);
-		}
-
-		List<Requesting> requestHistory = donorService.getRequestHistoryByUser(user);
-
-		if (requestHistory.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(requestHistory);
-		}
-
-		return ResponseEntity.ok(requestHistory);
-	}
-
-	@PutMapping("/blood-requests/{id}/approve")
-	public ResponseEntity<String> approveRequest(@PathVariable int id) {
-		boolean result = donorService.updateRequestStatus(id, RequestStatus.APPROVED.getStatus());
-
-		if (!result) {
-			throw new ResourceNotFoundException("Request with ID " + id + " not found.");
-		}
-
-		return ResponseEntity.ok("Request approved successfully.");
-	}
-
-	@PutMapping("/blood-requests/{id}/reject")
-	public ResponseEntity<String> rejectRequest(@PathVariable int id) {
-		boolean result = donorService.updateRequestStatus(id, RequestStatus.REJECTED.getStatus());
-
-		if (!result) {
-			throw new ResourceNotFoundException("Request with ID " + id + " not found.");
-		}
-
-		return ResponseEntity.ok("Request rejected successfully.");
-	}
-
 	@GetMapping("/user-donors")
 	public ResponseEntity<List<Donor>> getDonorsByUser(HttpServletRequest request) {
 		String token = extractTokenFromRequest(request);
@@ -256,17 +172,7 @@ public class DonorController {
 		return ResponseEntity.ok(donors);
 	}
 
-	@GetMapping("/requestsByBloodGroup/{bloodGroup}")
-	public ResponseEntity<List<Requesting>> getRequestsByBloodGroup(@PathVariable String bloodGroup) {
-		List<Requesting> requests = donorService.getRequestsByBloodGroup(bloodGroup);
-
-		if (requests.isEmpty()) {
-			return ResponseEntity.noContent().build();
-		}
-
-		return ResponseEntity.ok(requests);
-	}
-
+	
 	@PutMapping("/updateDonor/{id}")
 	public ResponseEntity<String> updateDonor(@PathVariable int id, @RequestBody Donor updatedDonor) {
 		Donor existingDonor = donorService.getDonorById(id);
@@ -282,14 +188,7 @@ public class DonorController {
 		return ResponseEntity.ok("Donor updated successfully.");
 	}
 
-	@GetMapping("/requestsByStatus/{status}")
-	public ResponseEntity<List<Requesting>> getRequestsByStatus(@PathVariable String status) {
-		List<Requesting> requests = donorService.getRequestsByStatus(status);
-		if (requests.isEmpty()) {
-			return ResponseEntity.noContent().build();
-		}
-		return ResponseEntity.ok(requests);
-	}
+	
 
 	@GetMapping("/donorUnitsByBloodGroup")
 	public ResponseEntity<List<BloodDetails>> getDonorUnitsByBloodGroup() {
@@ -381,17 +280,7 @@ public class DonorController {
 		}
 	}
 
-	@GetMapping("/getTotalRequests/{email}")
-	public ResponseEntity<List<Integer>> getTotalRequests(@PathVariable String email) {
-		try {
-			List<Requesting> requestHistory = donorService.getRequestHistoryByEmail(email);
-			List<Integer> result = new ArrayList<>();
-			result.add(requestHistory.size());
-			return ResponseEntity.ok(result);
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-		}
-	}
+
 
 	@GetMapping("/getTotalDonationCount/{email}")
 	public ResponseEntity<List<Integer>> getTotalDonationCount(@PathVariable String email) {
