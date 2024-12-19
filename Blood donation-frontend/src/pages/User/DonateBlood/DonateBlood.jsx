@@ -74,9 +74,8 @@ const DonateBlood = (props) => {
       <div className="form-container">
         <div className="image-section">
           <img
-            src="https://via.placeholder.com/500"
+            src="/images/donate2.png"
             alt="Donate Blood"
-            className="img-fluid"
           />
         </div>
         <div className="form-section">

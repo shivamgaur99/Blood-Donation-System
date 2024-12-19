@@ -12,7 +12,7 @@
   }
   
   .error-logo {
-    width: 120px;
+    /* width: 120px; */
     margin-bottom: 20px;
   }
   
@@ -61,9 +61,9 @@
   }
   
   .error-logo-dark {
-    width: 120px;
+    /* width: 120px; */
     margin-bottom: 20px;
-    filter: invert(100%);
+    /* filter: invert(100%); */
   }
   
   .error-text-dark {

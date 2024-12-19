@@ -11,7 +11,7 @@ export const NotFound = (props) => {
           <div>
             <img
               className={dark ? "error-logo-dark" : "error-logo"}
-              src="./images/404-blood-drop.png"
+              src={dark ? "/images/404error-dark.png" : "/images/404error.png"}
               alt="404 - Not Found"
             />
           </div>

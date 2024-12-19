@@ -43,7 +43,7 @@ const AboutUs = (props) => {
               <img
                 alt="about"
                 className="aboutus-img"
-                src="/images/"
+                src="/images/about-us.png"
               />
           </div>
         </div>

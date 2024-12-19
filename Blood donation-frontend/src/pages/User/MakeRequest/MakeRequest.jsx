@@ -73,7 +73,7 @@ const MakeRequest = (props) => {
       <div className="form-container">
         <div className="image-section">
           <img
-            src="https://via.placeholder.com/500"
+            src="/images/request1.png"
             alt="Make Request"
             className="img-fluid"
           />

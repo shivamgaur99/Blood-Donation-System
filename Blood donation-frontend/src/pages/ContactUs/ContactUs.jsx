@@ -88,7 +88,7 @@ const ContactUs = (props) => {
         <div className={"contact-parent"}>
           <div className={`contact-child child1`}>
             <img
-              src="./images/contact-us-image.png"
+              src="/images/sem-importance.png"
               alt="contact"
               className={"contact-image"}
             />

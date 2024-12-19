@@ -123,7 +123,7 @@ const Volunteer = (props) => {
         <div className="volunteer-parent">
           <div className="volunteer-child child1">
             <img
-              src="./images/volunteer-image.png"
+              src="/images/volunteer-image.png"
               alt="volunteer"
               className="volunteer-image"
             />
