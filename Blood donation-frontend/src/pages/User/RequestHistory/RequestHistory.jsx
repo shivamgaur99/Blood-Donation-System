@@ -18,6 +18,13 @@ import {
   DialogContent,
   DialogTitle,
   TablePagination,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  CardHeader,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@mui/material";
 import { useToast } from "../../../services/toastService";
 import { SimpleToast } from "../../../components/util/Toast/Toast";
@@ -61,21 +68,16 @@ const RequestHistory = (props) => {
   const [requestToDelete, setRequestToDelete] = useState(null);
   const [page, setPage] = useState(0); // Current page
   const [rowsPerPage, setRowsPerPage] = useState(5); // Rows per page
+  const [viewMode, setViewMode] = useState("table"); // View mode ("table" or "card")
 
-  const { toast, showToast, hideToast } = useToast(); 
-  const dark = props.theme; 
+  const { toast, showToast, hideToast } = useToast();
+  const dark = props.theme;
 
   useEffect(() => {
-    const email = localStorage.getItem("email");
-    if (email) {
-      fetchRequestHistory(email);
-    } else {
-      setError("No user logged in");
-      setLoading(false);
-    }
+    fetchRequestHistory();
   }, []);
 
-  const fetchRequestHistory = (email) => {
+  const fetchRequestHistory = () => {
     const token = localStorage.getItem("jwtToken");
 
     if (!token) {
@@ -160,7 +162,10 @@ const RequestHistory = (props) => {
   };
 
   // Paginate the requests based on the current page and rows per page
-  const paginatedRequests = requests.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const paginatedRequests = requests.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   return (
     <ThemeProvider theme={dark ? darkTheme : lightTheme}>
@@ -188,13 +193,27 @@ const RequestHistory = (props) => {
             Request History
           </Typography>
 
+          {/* Toggle Button Group for view mode */}
+          <Box textAlign="center" sx={{ marginBottom: 2 }}>
+            <Grid item>
+              <ToggleButtonGroup
+                value={viewMode}
+                exclusive
+                onChange={(_, newViewMode) => setViewMode(newViewMode)}
+              >
+                <ToggleButton value="table">Table</ToggleButton>
+                <ToggleButton value="card">Card</ToggleButton>
+              </ToggleButtonGroup>
+            </Grid>
+          </Box>
+          
           {/* Loading Spinner */}
           {loading && (
             <Box
               display="flex"
               justifyContent="center"
               alignItems="center"
-              height="100vh"
+              height="80vh"
             >
               <Loader /> {/* Custom Loader component */}
             </Box>
@@ -209,93 +228,156 @@ const RequestHistory = (props) => {
 
           {/* Request History Table */}
           {!loading && !error && (
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>ID</TableCell>
-                    <TableCell>Name</TableCell>
-                    <TableCell>Mobile</TableCell>
-                    <TableCell>Gender</TableCell>
-                    <TableCell>Blood Group</TableCell>
-                    <TableCell>Age</TableCell>
-                    <TableCell>Disease</TableCell>
-                    <TableCell>Units</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Action</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {paginatedRequests.length > 0 ? (
-                    paginatedRequests.map((request) => (
-                      <TableRow key={request.id}>
-                        <TableCell>{request.id}</TableCell>
-                        <TableCell>{request.name}</TableCell>
-                        <TableCell>{request.mobile}</TableCell>
-                        <TableCell>{request.gender}</TableCell>
-                        <TableCell>{request.bloodGroup}</TableCell>
-                        <TableCell>{request.age}</TableCell>
-                        <TableCell>{request.disease}</TableCell>
-                        <TableCell>{request.units}</TableCell>
-                        <TableCell>
-                          <Badge
-                            color={
-                              request.status === "Approved"
-                                ? "success"
-                                : request.status === "Rejected"
-                                ? "error"
-                                : "warning"
-                            }
-                            variant="dot"
-                          >
-                            {request.status.charAt(0).toUpperCase() +
-                              request.status.slice(1)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          {/* "View Details" Button */}
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() => handleViewDetails(request)}
-                          >
-                            View Details
-                          </Button>
-                          <Button
-                            variant="contained"
-                            color="error"
-                            onClick={() => {
-                              setRequestToDelete(request);
-                              setOpenDeleteConfirm(true);
-                            }}
-                            sx={{ marginLeft: 1 }}
-                            disabled
-                          >
-                            Delete
-                          </Button>
-                        </TableCell>
+            <>
+              {viewMode === "table" ? (
+                <TableContainer component={Paper}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>ID</TableCell>
+                        <TableCell>Name</TableCell>
+                        <TableCell>Mobile</TableCell>
+                        <TableCell>Gender</TableCell>
+                        <TableCell>Blood Group</TableCell>
+                        <TableCell>Age</TableCell>
+                        <TableCell>Disease</TableCell>
+                        <TableCell>Units</TableCell>
+                        <TableCell>Status</TableCell>
+                        <TableCell>Action</TableCell>
                       </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {paginatedRequests.length > 0 ? (
+                        paginatedRequests.map((request) => (
+                          <TableRow key={request.id}>
+                            <TableCell>{request.id}</TableCell>
+                            <TableCell>{request.name}</TableCell>
+                            <TableCell>{request.mobile}</TableCell>
+                            <TableCell>{request.gender}</TableCell>
+                            <TableCell>{request.bloodGroup}</TableCell>
+                            <TableCell>{request.age}</TableCell>
+                            <TableCell>{request.disease}</TableCell>
+                            <TableCell>{request.units}</TableCell>
+                            <TableCell>
+                              <Badge
+                                color={
+                                  request.status === "Approved"
+                                    ? "success"
+                                    : request.status === "Rejected"
+                                    ? "error"
+                                    : "warning"
+                                }
+                                variant="dot"
+                              >
+                                {request.status.charAt(0).toUpperCase() +
+                                  request.status.slice(1)}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              {/* "View Details" Button */}
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() => handleViewDetails(request)}
+                              >
+                                View Details
+                              </Button>
+                              <Button
+                                variant="contained"
+                                color="error"
+                                onClick={() => {
+                                  setRequestToDelete(request);
+                                  setOpenDeleteConfirm(true);
+                                }}
+                                sx={{ marginLeft: 1 }}
+                                disabled
+                              >
+                                Delete
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan="10" align="center">
+                            You have not made any requests yet.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                  {/* Pagination Controls */}
+                  <TablePagination
+                    rowsPerPageOptions={[5, 10, 25]}
+                    component="div"
+                    count={requests.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                  />
+                </TableContainer>
+              ) : (
+                <Grid container spacing={3}>
+                  {requests.length > 0 ? (
+                    requests.map((request) => (
+                      <Grid item xs={12} sm={6} md={4} key={request.id}>
+                        <Card>
+                          <CardHeader title={`Request ID: ${request.id}`} />
+                          <CardContent>
+                            <Typography variant="body2">
+                              Name: {request.name}
+                            </Typography>
+                            <Typography variant="body2">
+                              Mobile: {request.mobile}
+                            </Typography>
+                            <Typography variant="body2">
+                              Gender: {request.gender}
+                            </Typography>
+                            <Typography variant="body2">
+                              Blood Group: {request.bloodGroup}
+                            </Typography>
+                            <Typography variant="body2">
+                              Disease: {request.disease}
+                            </Typography>
+                            <Typography variant="body2">
+                              Units: {request.units}
+                            </Typography>
+                            <Typography variant="body2">
+                              Status: {request.status}
+                            </Typography>
+                          </CardContent>
+                          <CardActions>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={() => handleViewDetails(request)}
+                            >
+                              View Details
+                            </Button>
+                            <Button
+                              variant="contained"
+                              color="error"
+                              onClick={() => {
+                                setRequestToDelete(request);
+                                setOpenDeleteConfirm(true);
+                              }}
+                              disabled
+                            >
+                              Delete
+                            </Button>
+                          </CardActions>
+                        </Card>
+                      </Grid>
                     ))
                   ) : (
-                    <TableRow>
-                      <TableCell colSpan="10" align="center">
-                        You have not made any requests yet.
-                      </TableCell>
-                    </TableRow>
+                    <Typography variant="h6" align="center">
+                      No requests available.
+                    </Typography>
                   )}
-                </TableBody>
-              </Table>
-              {/* Pagination Controls */}
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={requests.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </TableContainer>
+                </Grid>
+              )}
+            </>
           )}
 
           {/* Toast Notification */}
@@ -310,19 +392,42 @@ const RequestHistory = (props) => {
 
           {/* View Details Modal */}
           {selectedRequest && (
-            <Dialog open={openDetailsModal} onClose={handleCloseDetailsModal} fullWidth maxWidth="xs">
+            <Dialog
+              open={openDetailsModal}
+              onClose={handleCloseDetailsModal}
+              fullWidth
+              maxWidth="xs"
+            >
               <DialogTitle>Request Details</DialogTitle>
               <DialogContent>
-                <Typography variant="h6">Name: {selectedRequest.name}</Typography>
-                <Typography variant="body2">Email: {selectedRequest.email}</Typography>
-                <Typography variant="body2">Blood Group: {selectedRequest.bloodGroup}</Typography>
-                <Typography variant="body2">Contact: {selectedRequest.mobile}</Typography>
-                <Typography variant="body2">Age: {selectedRequest.age}</Typography>
-                <Typography variant="body2">Gender: {selectedRequest.gender}</Typography>
-                <Typography variant="body2">Disease: {selectedRequest.disease}</Typography>
-                <Typography variant="body2">Units: {selectedRequest.units}</Typography>
+                <Typography variant="h6">
+                  Name: {selectedRequest.name}
+                </Typography>
                 <Typography variant="body2">
-                  Status: {selectedRequest.status.charAt(0).toUpperCase() + selectedRequest.status.slice(1)}
+                  Email: {selectedRequest.email}
+                </Typography>
+                <Typography variant="body2">
+                  Blood Group: {selectedRequest.bloodGroup}
+                </Typography>
+                <Typography variant="body2">
+                  Contact: {selectedRequest.mobile}
+                </Typography>
+                <Typography variant="body2">
+                  Age: {selectedRequest.age}
+                </Typography>
+                <Typography variant="body2">
+                  Gender: {selectedRequest.gender}
+                </Typography>
+                <Typography variant="body2">
+                  Disease: {selectedRequest.disease}
+                </Typography>
+                <Typography variant="body2">
+                  Units: {selectedRequest.units}
+                </Typography>
+                <Typography variant="body2">
+                  Status:{" "}
+                  {selectedRequest.status.charAt(0).toUpperCase() +
+                    selectedRequest.status.slice(1)}
                 </Typography>
               </DialogContent>
               <DialogActions>
@@ -334,13 +439,21 @@ const RequestHistory = (props) => {
           )}
 
           {/* Confirmation Dialog for Deletion */}
-          <Dialog open={openDeleteConfirm} onClose={() => setOpenDeleteConfirm(false)}>
+          <Dialog
+            open={openDeleteConfirm}
+            onClose={() => setOpenDeleteConfirm(false)}
+          >
             <DialogTitle>Confirm Deletion</DialogTitle>
             <DialogContent>
-              <Typography>Are you sure you want to delete this request?</Typography>
+              <Typography>
+                Are you sure you want to delete this request?
+              </Typography>
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => setOpenDeleteConfirm(false)} color="primary">
+              <Button
+                onClick={() => setOpenDeleteConfirm(false)}
+                color="primary"
+              >
                 Cancel
               </Button>
               <Button

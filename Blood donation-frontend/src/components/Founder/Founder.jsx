@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
-import { MDBBadge } from "mdbreact";
+import Badge from '@material-ui/core/Badge'; 
 import Loader from "../util/Loader";
 import "./founder-card.css"; 
 import { useToast } from "../../services/toastService";
@@ -28,7 +28,7 @@ const Founder = (props) => {
   const classes = uses();
 
   return (
-    <div className={dark ? "dark" : ""}>
+    <div className={dark ? "dark" : "light"}>
       <div className="team">
         <Typography
           variant="h4"
@@ -65,9 +65,9 @@ const Founder = (props) => {
                 <Typography component="h6" variant="h6" id="Mui-h6">
                   Shivam Gaur
                 </Typography>
-                <MDBBadge pill className="info badge text-dark">
+                <Badge pill className="info badge text-dark">
                   {"founder".toUpperCase()}
-                </MDBBadge>
+                </Badge>
                 <div>
                   <p className="intro">I am a Software Developer who ❤ contributing to open source</p>
                 </div>
@@ -120,19 +120,21 @@ const Founder = (props) => {
                     <div className="badge-container">
                       {roleObject?.teams?.map((badge) => {
                         return (
-                          <MDBBadge
+                          <Badge
                             key={badge}
-                            className={
+                            badgeContent={badge}
+                            color={
                               badge === "open-source" ? "primary" :
                               badge === "social" ? "default" :
-                              badge === "broadcast" ? "broadcast" :
+                              badge === "broadcast" ? "secondary" :
                               badge === "design" ? "info" :
                               badge === "resource-sharing" ? "info" :
-                              ""
+                              "default"
                             }
+                            overlap="rectangular" 
                           >
-                            {badge}
-                          </MDBBadge>
+                            <span></span> 
+                          </Badge>
                         );
                       })}
                     </div>

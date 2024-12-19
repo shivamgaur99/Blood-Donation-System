@@ -55,6 +55,8 @@ function AddDonors(props) {
   const [date, setDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  let dark = props.theme;
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -135,7 +137,7 @@ function AddDonors(props) {
   };
 
   return (
-    <ThemeProvider theme={props.theme ? darkTheme : lightTheme}>
+    <ThemeProvider theme={dark ? darkTheme : lightTheme}>
       <Box
         display="flex"
         justifyContent="center"
@@ -143,7 +145,7 @@ function AddDonors(props) {
         sx={{
           minHeight: "100vh",
           padding: 2,
-          backgroundColor: props.theme ? "#121212" : "#ffffff", // solid background colors
+          backgroundColor: dark ? "#121212" : "#ffffff", // solid background colors
         }}
       >
         <div style={{ width: "80%", maxWidth: 800 }}>
@@ -152,7 +154,7 @@ function AddDonors(props) {
             align="center"
             sx={{
               fontWeight: "bold",
-              color: props.theme ? "#90caf9" : "#1976d2",
+              color: dark ? "#90caf9" : "#1976d2",
               margin: "20px",
               fontFamily: "'Roboto', sans-serif",
             }}
@@ -160,7 +162,7 @@ function AddDonors(props) {
             Add Donor
           </Typography>
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} >
             <Grid container spacing={2}>
               {/* Name Field */}
               <Grid item xs={12}>
@@ -172,12 +174,33 @@ function AddDonors(props) {
                   onChange={(e) => setName(e.target.value)}
                   required
                   placeholder="Enter donor's full name"
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      backgroundColor: dark ? "#333" : "#f5f5f5",
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: dark ? "#ccc" : "#000",
+                    },
+                    "& .MuiInputBase-input": {
+                      color: dark ? "#fff" : "#000",
+                    },
+                  }}
                 />
               </Grid>
 
               {/* Blood Group and Units */}
               <Grid item xs={12} sm={6}>
-                <FormControl fullWidth required>
+                <FormControl fullWidth required   sx={{
+    "& .MuiOutlinedInput-root": {
+      backgroundColor: dark ? "#333" : "#f5f5f5",
+    },
+    "& .MuiInputLabel-root": {
+      color: dark ? "#ccc" : "#000",
+    },
+    "& .MuiInputBase-input": {
+      color: dark ? "#fff" : "#000",
+    },
+  }}>
                   <InputLabel>Blood Group</InputLabel>
                   <Select
                     label="Blood Group"
@@ -206,6 +229,17 @@ function AddDonors(props) {
                   onChange={(e) => setUnits(e.target.value)}
                   required
                   placeholder="Enter units of blood"
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      backgroundColor: dark ? "#333" : "#f5f5f5",
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: dark ? "#ccc" : "#000",
+                    },
+                    "& .MuiInputBase-input": {
+                      color: dark ? "#fff" : "#000",
+                    },
+                  }}
                 />
               </Grid>
 
@@ -219,11 +253,32 @@ function AddDonors(props) {
                   onChange={(e) => setMobile(e.target.value)}
                   required
                   placeholder="Enter mobile number"
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      backgroundColor: dark ? "#333" : "#f5f5f5",
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: dark ? "#ccc" : "#000",
+                    },
+                    "& .MuiInputBase-input": {
+                      color: dark ? "#fff" : "#000",
+                    },
+                  }}
                 />
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <FormControl fullWidth required>
+                <FormControl fullWidth required   sx={{
+    "& .MuiOutlinedInput-root": {
+      backgroundColor: dark ? "#333" : "#f5f5f5",
+    },
+    "& .MuiInputLabel-root": {
+      color: dark ? "#ccc" : "#000",
+    },
+    "& .MuiInputBase-input": {
+      color: dark ? "#fff" : "#000",
+    },
+  }}>
                   <InputLabel>Gender</InputLabel>
                   <Select
                     label="Gender"
@@ -248,6 +303,17 @@ function AddDonors(props) {
                   onChange={(e) => setAge(e.target.value)}
                   required
                   placeholder="Enter age"
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      backgroundColor: dark ? "#333" : "#f5f5f5",
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: dark ? "#ccc" : "#000",
+                    },
+                    "& .MuiInputBase-input": {
+                      color: dark ? "#fff" : "#000",
+                    },
+                  }}
                 />
               </Grid>
 
@@ -260,6 +326,17 @@ function AddDonors(props) {
                   onChange={(e) => setCity(e.target.value)}
                   required
                   placeholder="Enter city"
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      backgroundColor: dark ? "#333" : "#f5f5f5",
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: dark ? "#ccc" : "#000",
+                    },
+                    "& .MuiInputBase-input": {
+                      color: dark ? "#fff" : "#000",
+                    },
+                  }}
                 />
               </Grid>
 
@@ -272,6 +349,17 @@ function AddDonors(props) {
                   onChange={(e) => setAddress(e.target.value)}
                   required
                   placeholder="Enter address"
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      backgroundColor: dark ? "#333" : "#f5f5f5",
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: dark ? "#ccc" : "#000",
+                    },
+                    "& .MuiInputBase-input": {
+                      color: dark ? "#fff" : "#000",
+                    },
+                  }}
                 />
               </Grid>
 
@@ -287,6 +375,17 @@ function AddDonors(props) {
                   required
                   InputLabelProps={{
                     shrink: true,
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      backgroundColor: dark ? "#333" : "#f5f5f5",
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: dark ? "#ccc" : "#000",
+                    },
+                    "& .MuiInputBase-input": {
+                      color: dark ? "#fff" : "#000",
+                    },
                   }}
                 />
               </Grid>

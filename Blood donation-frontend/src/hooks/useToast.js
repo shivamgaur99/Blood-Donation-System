@@ -2,42 +2,65 @@ import { useState } from "react";
 import { Snackbar, Alert, Button } from "@mui/material";
 
 /* Allow the toast to accept optional actions (like buttons for retry, dismiss, etc.).*/
-
 const useToast = () => {
   const [toast, setToast] = useState({
     open: false,
     message: "",
-    severity: "",
-    actions: null, // Optional actions
+    severity: "info",
+    actions: [],
+    autoHideDuration: 6000,
   });
 
-  const showToast = (message, severity, actions = null) => {
-    setToast({ open: true, message, severity, actions });
+  const showToast = (
+    message,
+    severity = "info",
+    actions = [],
+    autoHideDuration = 6000
+  ) => {
+    setToast({ open: true, message, severity, actions, autoHideDuration });
   };
 
   const SnackbarToast = () => (
     <Snackbar
       open={toast.open}
-      autoHideDuration={6000}
-      onClose={() => setToast({ ...toast, open: false })}
+      autoHideDuration={toast.autoHideDuration}
+      onClose={() =>
+        setToast({
+          open: false,
+          message: "",
+          severity: "info",
+          actions: [],
+          autoHideDuration: 6000,
+        })
+      }
       anchorOrigin={{
-        vertical: 'bottom', 
-        horizontal: 'center', 
+        vertical: "bottom",
+        horizontal: "center",
       }}
     >
       <Alert
-        onClose={() => setToast({ ...toast, open: false })}
+        onClose={() =>
+          setToast({
+            open: false,
+            message: "",
+            severity: "info",
+            actions: [],
+            autoHideDuration: 6000,
+          })
+        }
         severity={toast.severity}
         sx={{ width: "100%" }}
         action={
-          // Render optional actions if provided
           toast.actions &&
           toast.actions.map((action, index) => (
             <Button
               key={index}
               color="inherit"
               size="small"
-              onClick={action.onClick}
+              onClick={() => {
+                action.onClick();
+                setToast({ ...toast, open: false });
+              }}
             >
               {action.label}
             </Button>
@@ -54,7 +77,6 @@ const useToast = () => {
 
 export default useToast;
 
-
 // const useToast = () => {
 //   const [toast, setToast] = useState({ open: false, message: "", severity: "" });
 
@@ -68,8 +90,8 @@ export default useToast;
 //       autoHideDuration={6000}
 //       onClose={() => setToast({ ...toast, open: false })}
 //       anchorOrigin={{
-//         vertical: 'bottom', 
-//         horizontal: 'center', 
+//         vertical: 'bottom',
+//         horizontal: 'center',
 //       }}
 //     >
 //       <Alert
@@ -84,4 +106,3 @@ export default useToast;
 
 //   return { showToast, SnackbarToast };
 // };
-

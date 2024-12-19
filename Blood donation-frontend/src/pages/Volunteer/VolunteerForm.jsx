@@ -5,7 +5,7 @@ import { SimpleToast } from "../../components/util/Toast/Toast";
 import { useToast } from "../../services/toastService";
 import "./volunteer-form.css";
 
-const VolunteerForm = (props) => {
+const Volunteer = (props) => {
     const initialFormData = {
         firstName: "",
         lastName: "",
@@ -368,4 +368,4 @@ const VolunteerForm = (props) => {
   );
 };
 
-export default VolunteerForm;
+export default Volunteer;

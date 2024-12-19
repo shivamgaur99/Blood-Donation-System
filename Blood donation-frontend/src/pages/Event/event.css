@@ -34,15 +34,15 @@
   background: linear-gradient(135deg, #ff758c, #ff7eb3);
   padding: 30px;
   border-radius: 18px;
-  width: 320px;
+  width: 340px;
   min-height: 350px;
-  /* max-height: 400px; */
   text-align: left;
   position: relative;
   overflow: hidden;
   box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   color: #fff;
+  margin: 15px auto;
 }
 
 .event:hover {
@@ -132,12 +132,13 @@
   margin-bottom: 10px; 
 }
 
-.event .event-date {
-  font-weight: 500;
-}
-
-.event .event-location {
-  font-style: italic;
+.event .badge {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 5px 10px;
+  font-size: 0.9em;
+  border-radius: 8px;
+  display: inline-block;
+  margin-bottom: 10px;
 }
 
 .event .event-organizer {
@@ -148,9 +149,8 @@
 }
 
 .event .event-description {
-  font-size: 1em;
+  font-style: italic;
 }
-
 .event .event-date,
 .event .event-location,
 .event .event-organizer {
@@ -161,11 +161,11 @@
   align-items: center;
 }
 
-.event .event-date i, .event .event-location i, .event .badge i {
+.event .event-date i, .event .event-location i {
   margin-right: 8px; 
 }
 
-.event .event-date, .event .event-location, .event .badge {
+.event .event-date, .event .event-location {
   display: flex;
   align-items: center;
 }

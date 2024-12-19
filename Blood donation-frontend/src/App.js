@@ -9,7 +9,6 @@ import AboutUs from "./pages/About/AboutUs";
 import ContactUs from "./pages/ContactUs/ContactUs";
 import Register from "./pages/Register/Register";
 import Login from "./pages/Login/Login";
-import GetInvolved from "./pages/GetInvolved/GetInvolved";
 import AdminDashboard from "./pages/Admin/AdminDashboard/AdminDashboard";
 import DonorList from "./pages/Admin/DonorList/DonorList";
 import BloodRequestHistory from "./pages/Admin/BloodRequestHistory/BloodRequestHistory";
@@ -34,6 +33,7 @@ import ManageEvents from "./pages/Admin/EventManagement/ManageEvents/ManageEvent
 import AllEvents from "./pages/Event/Components/AllEvents/AllEvents";
 import Contacts from "./pages/Admin/Contacts/Contacts";
 import VolunteerList from "./pages/Admin/Volunteers/VolunteerList";
+import Volunteer from "./pages/Volunteer/VolunteerForm";
 
 function App() {
   const getTheme = () => JSON.parse(localStorage.getItem("dark")) || false;
@@ -85,7 +85,7 @@ function App() {
             path="/bloodRequests"
             element={<BloodRequestHistory theme={theme} />}
           />
-          <Route path="/get-involved" element={<GetInvolved theme={theme} />} />
+          <Route path="/get-involved" element={<Volunteer theme={theme} />} />
           <Route
             path="/event-management"
             element={<EventManagement theme={theme} />}

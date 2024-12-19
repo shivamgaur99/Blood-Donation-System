@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { END_POINT } from "../../../config/api";
 import { useToast } from "../../../services/toastService";
@@ -21,10 +21,11 @@ import {
   CardHeader,
   CardActions,
   Grid,
+  ToggleButton,
+  ToggleButtonGroup, // Import the necessary components
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-// Define themes for light and dark modes
 const lightTheme = createTheme({
   palette: {
     mode: "light",
@@ -55,18 +56,14 @@ const Donations = (props) => {
   const [donorList, setDonorList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(0); // Current page
-  const [rowsPerPage, setRowsPerPage] = useState(5); // Rows per page
-  const [viewMode, setViewMode] = useState("table"); // Default view is table
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [viewMode, setViewMode] = useState("table");
 
   const { toast, showToast, hideToast } = useToast();
-  let dark = props.theme;
+  const dark = props.theme;
 
-  useEffect(() => {
-    fetchDonationHistory();
-  }, []);
-
-  const fetchDonationHistory = () => {
+  const fetchDonationHistory = useCallback(() => {
     const token = localStorage.getItem("jwtToken");
 
     if (!token) {
@@ -92,11 +89,16 @@ const Donations = (props) => {
         setError("Failed to fetch donation history. Please try again later.");
         setLoading(false);
         showToast(
-          error.message || "Failed to fetch donation history. Please try again later.",
+          error.message ||
+            "Failed to fetch donation history. Please try again later.",
           "error"
         );
       });
-  };
+  }, [showToast]);
+
+  useEffect(() => {
+    fetchDonationHistory();
+  }, [fetchDonationHistory]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -107,8 +109,10 @@ const Donations = (props) => {
     setPage(0);
   };
 
-  // Paginate the donorList based on the current page and rows per page
-  const paginatedDonors = donorList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const paginatedDonors = donorList.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
 
   return (
     <ThemeProvider theme={dark ? darkTheme : lightTheme}>
@@ -134,17 +138,19 @@ const Donations = (props) => {
             }}
           >
             Donation History
-          </Typography>
+          </Typography>   
 
-          {/* Toggle Button */}
           <Box textAlign="center" sx={{ marginBottom: 2 }}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => setViewMode(viewMode === "table" ? "card" : "table")}
-            >
-              Switch to {viewMode === "table" ? "Card" : "Table"} View
-            </Button>
+            <Grid item>
+              <ToggleButtonGroup
+                value={viewMode}
+                exclusive
+                onChange={(_, newViewMode) => setViewMode(newViewMode)}
+              >
+                <ToggleButton value="table">Table</ToggleButton>
+                <ToggleButton value="card">Card</ToggleButton>
+              </ToggleButtonGroup>
+            </Grid>
           </Box>
 
           {/* Loading Spinner */}
@@ -153,7 +159,7 @@ const Donations = (props) => {
               display="flex"
               justifyContent="center"
               alignItems="center"
-              height="100vh"
+              height="80vh"
             >
               <Loader />
             </Box>
@@ -190,13 +196,27 @@ const Donations = (props) => {
                         paginatedDonors.map((donor) => (
                           <TableRow key={donor.id}>
                             <TableCell>{donor.name}</TableCell>
-                            <TableCell>{donor.age || "Not Available"}</TableCell>
-                            <TableCell>{donor.gender || "Not Available"}</TableCell>
-                            <TableCell>{donor.bloodGroup || "Not Available"}</TableCell>
-                            <TableCell>{donor.city || "Not Available"}</TableCell>
-                            <TableCell>{donor.mobile || "Not Available"}</TableCell>
-                            <TableCell>{donor.units || "Not Available"}</TableCell>
-                            <TableCell>{donor.date || "Not Available"}</TableCell>
+                            <TableCell>
+                              {donor.age || "Not Available"}
+                            </TableCell>
+                            <TableCell>
+                              {donor.gender || "Not Available"}
+                            </TableCell>
+                            <TableCell>
+                              {donor.bloodGroup || "Not Available"}
+                            </TableCell>
+                            <TableCell>
+                              {donor.city || "Not Available"}
+                            </TableCell>
+                            <TableCell>
+                              {donor.mobile || "Not Available"}
+                            </TableCell>
+                            <TableCell>
+                              {donor.units || "Not Available"}
+                            </TableCell>
+                            <TableCell>
+                              {donor.date || "Not Available"}
+                            </TableCell>
                             <TableCell>
                               <Button variant="contained" color="primary">
                                 View Event
@@ -224,7 +244,6 @@ const Donations = (props) => {
                   />
                 </TableContainer>
               ) : (
-                // Card View
                 <Grid container spacing={3}>
                   {donorList.length > 0 ? (
                     donorList.map((donor) => (
@@ -232,13 +251,27 @@ const Donations = (props) => {
                         <Card>
                           <CardHeader title={donor.name} />
                           <CardContent>
-                            <Typography variant="body2">Age: {donor.age || "Not Available"}</Typography>
-                            <Typography variant="body2">Gender: {donor.gender || "Not Available"}</Typography>
-                            <Typography variant="body2">Blood Group: {donor.bloodGroup || "Not Available"}</Typography>
-                            <Typography variant="body2">City: {donor.city || "Not Available"}</Typography>
-                            <Typography variant="body2">Mobile: {donor.mobile || "Not Available"}</Typography>
-                            <Typography variant="body2">Units: {donor.units || "Not Available"}</Typography>
-                            <Typography variant="body2">Date: {donor.date || "Not Available"}</Typography>
+                            <Typography variant="body2">
+                              Age: {donor.age || "Not Available"}
+                            </Typography>
+                            <Typography variant="body2">
+                              Gender: {donor.gender || "Not Available"}
+                            </Typography>
+                            <Typography variant="body2">
+                              Blood Group: {donor.bloodGroup || "Not Available"}
+                            </Typography>
+                            <Typography variant="body2">
+                              City: {donor.city || "Not Available"}
+                            </Typography>
+                            <Typography variant="body2">
+                              Mobile: {donor.mobile || "Not Available"}
+                            </Typography>
+                            <Typography variant="body2">
+                              Units: {donor.units || "Not Available"}
+                            </Typography>
+                            <Typography variant="body2">
+                              Date: {donor.date || "Not Available"}
+                            </Typography>
                           </CardContent>
                           <CardActions>
                             <Button variant="contained" color="primary">

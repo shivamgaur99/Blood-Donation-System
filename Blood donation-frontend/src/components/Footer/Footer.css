@@ -46,10 +46,12 @@ footer {
   color: #fff;
   padding: 10px 0;
 }
+
 footer h3 {
   font-size: 24px;
   font-weight: 600;
 }
+
 footer h4 {
   font-size: 20px;
   font-weight: 600;
@@ -57,10 +59,12 @@ footer h4 {
   display: inline-block;
   margin-bottom: 2px;
 }
+
 .about-footer li i {
   position: absolute;
   left: 0;
 }
+
 .about-footer li {
   padding-left: 40px;
   position: relative;
@@ -159,9 +163,11 @@ footer hr {
 .footer-bottom p {
   text-align: right;
 }
+
 .footer-bottom {
   margin-top: 30px;
 }
+
 .open-hours hr {
   margin: 30px 0;
 }

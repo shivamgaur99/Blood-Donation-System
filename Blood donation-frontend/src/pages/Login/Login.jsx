@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
-import Joi from "joi-browser";
 import { Link } from "react-router-dom";
+import * as Yup from "yup";
 import { SimpleToast } from "../../components/util/Toast/Toast";
 import { useToast } from "../../services/toastService";
 import { END_POINT } from "../../config/api";
@@ -10,7 +10,7 @@ import "./login.css";
 function Login(props) {
   const [hidePassword, setHidePassword] = useState(false);
   const passwordInput = useRef("password");
-  const schema = { email: "", password: "" };
+  const schema = { email: "", password: "", keepMeLoggedIn: false };
   const [credential, setCredential] = useState(schema);
   const dark = props.theme;
   const [errorObj, setErrorObj] = useState({});
@@ -18,43 +18,45 @@ function Login(props) {
 
   const { toast, showToast, hideToast } = useToast();
 
-  const validationSchema = {
-    email: Joi.string().email().required(),
-    password: Joi.string().required(),
-    keepMeLoggedIn: Joi.boolean(),
+  // Yup validation schema
+  const validationSchema = Yup.object().shape({
+    email: Yup.string().email("Invalid email address").required("Email is required"),
+    password: Yup.string().required("Password is required"),
+    keepMeLoggedIn: Yup.boolean(),
+  });
+
+  const isFormValid = async () => {
+    try {
+      await validationSchema.validate(credential, { abortEarly: false });
+      return true;
+    } catch (err) {
+      const errors = {};
+      err.inner.forEach((error) => {
+        errors[error.path] = error.message;
+      });
+      setErrorObj(errors);
+      return false;
+    }
   };
 
-  const isFormValid = () => {
-    const check = Joi.validate(credential, validationSchema, {
-      abortEarly: false,
-    });
-    if (!check.error) return true;
-    const errors = {};
-    check.error.details.map((item) => {
-      if (!errors[item.path[0]]) errors[item.path[0]] = item.message;
-      return 0;
-    });
-    setErrorObj(errors);
-    return false;
-  };
-
-  const validateField = (input) => {
+  const validateField = async (input) => {
     const { name, value } = input;
-    const obj = { [name]: value };
-    const obj_schema = { [name]: validationSchema[name] };
-    const result = Joi.validate(obj, obj_schema);
-
-    return result.error ? result.error.details[0].message : null;
+    try {
+      await validationSchema.validateAt(name, { [name]: value });
+      return null;
+    } catch (err) {
+      return err.message;
+    }
   };
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { currentTarget: input } = e;
     const errors = { ...errorObj };
-    const errorMessage = validateField(input);
+    const errorMessage = await validateField(input);
     if (errorMessage) errors[input.name] = errorMessage;
     else delete errors[input.name];
 
-    setCredential({ ...credential, [e.target.name]: e.target.value });
+    setCredential({ ...credential, [input.name]: input.value });
     setErrorObj(errors);
   };
 
@@ -62,7 +64,7 @@ function Login(props) {
     e.preventDefault();
     setIsLoading(true);
 
-    if (isFormValid()) {
+    if (await isFormValid()) {
       const data = {
         email: credential.email,
         password: credential.password,
@@ -127,7 +129,7 @@ function Login(props) {
           console.error("Error:", err.message);
         }
       } finally {
-        setIsLoading(false); 
+        setIsLoading(false);
       }
     }
   };
@@ -257,15 +259,8 @@ function Login(props) {
                       style={{ paddingLeft: "50px", paddingRight: "50px" }}
                       onClick={loginUser}
                     >
-                      Login 
+                      Login
                     </button>
-                    {/* <button
-                      type="submit"
-                      className="submit-btn secondary"
-                      onClick={loginAdmin}
-                    >
-                      Login as Admin
-                    </button> */}
                   </div>
                   <Link to="#">
                     <p

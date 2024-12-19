@@ -1,0 +1,266 @@
+.donate-blood-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 0;
+}
+
+.form-container {
+  display: flex;
+  width: 90%;
+  margin: 0 auto;
+  justify-content: center;
+  gap: 40px;
+  transition: all 0.3s ease;
+}
+
+.light .form-section {
+  flex: 1;
+  padding: 40px;
+  background-color: #e7e7e7;
+  box-shadow: 5px 5px 15px #242424, -5px -5px 15px #ffffff;
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+}
+
+.dark .form-section {
+  flex: 1;
+  padding: 40px;
+  color: whitesmoke;
+  background-color: #282c35;
+  border-radius: 1rem;
+  -webkit-box-shadow: 0px 8px 16px 0px rgba(72, 127, 255, 0.1),
+    0px -8px 16px 0px rgba(72, 127, 255, 0.1);
+  -moz-box-shadow: 0px 8px 16px 0px rgba(72, 127, 255, 0.1),
+    0px -8px 16px 0px rgba(72, 127, 255, 0.1);
+  box-shadow: 0px 8px 16px 0px rgba(72, 127, 255, 0.1),
+    0px -8px 16px 0px rgba(72, 127, 255, 0.1);
+}
+
+.form-section h1 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+  transition: color 0.3s ease;
+}
+
+.light .form-section h1 {
+  color: black;
+}
+
+.dark .form-section h1 {
+  color: #69a9dd;
+}
+
+.donate-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.light .form-group label {
+  color: black;
+}
+
+.dark .form-group label {
+  color: #f8f9fa;
+}
+
+.dark .form-group input,
+.dark .form-group select,
+.dark .form-group textarea {
+  border: 1px solid #414a4c;
+  color: whitesmoke;
+  background-color: #333333;
+  box-shadow: inset 2px 2px 5px rgba(72, 127, 255, 0.1),
+    inset -2px -2px 5px rgba(72, 127, 255, 0.4);
+}
+
+.dark .form-group input:focus,
+.dark .form-group select:focus {
+  color: #f8f9fa;
+  outline: none;
+  border: none;
+  border-radius: 10px;
+  background-image: linear-gradient(to right, #2b5876, #4e4376);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  background-color: black;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.form-submit {
+  display: flex;
+  justify-content: center;
+}
+
+.submit-btn {
+  padding: 14px 24px;
+  font-size: 18px;
+  background-color: black;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.light .submit-btn {
+  background-color: black;
+  color: white;
+}
+
+.dark .submit-btn {
+  background-color: #f1f1f1;
+}
+
+.error-message {
+  color: red;
+}
+
+.form-group input,
+.form-group textarea {
+  border: 1px solid #bbbaba;
+  color: #777777;
+  background-color: #f1f1f1;
+  box-shadow: inset 2px 2px 5px #888888, inset -2px -2px 5px #ffffff;
+}
+
+.dark .form-group input,
+.dark .form-group textarea {
+  border: 1px solid #414a4c;
+  color: whitesmoke;
+  background-color: #333333;
+  box-shadow: inset 2px 2px 5px rgba(72, 127, 255, 0.1),
+    inset -2px -2px 5px rgba(72, 127, 255, 0.4);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  opacity: 1;
+  color: #777777;
+}
+
+.form-group input::-moz-placeholder,
+.form-group textarea::-moz-placeholder {
+  opacity: 1;
+  color: #777777;
+}
+
+.form-group input::-webkit-input-placeholder,
+.form-group textarea::-webkit-input-placeholder {
+  opacity: 1;
+  color: #777777;
+}
+
+.dark .form-group input::placeholder,
+.dark .form-group textarea::placeholder {
+  opacity: 1;
+  color: whitesmoke;
+}
+
+.dark .form-group input::-moz-placeholder,
+.dark .form-group textarea::-moz-placeholder {
+  opacity: 1;
+  color: whitesmoke;
+}
+
+.dark .form-group input::-webkit-input-placeholder,
+.dark .form-group textarea::-webkit-input-placeholder {
+  opacity: 1;
+  color: whitesmoke;
+}
+
+.form-group select option {
+  padding: 10px;
+  font-size: 14px;
+}
+
+.form-group select option {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.dark .form-group select option {
+  background-color: #333;
+  color: whitesmoke;
+}
+
+.form-group select option:hover {
+  background-color: #e7e7e7;
+}
+
+.dark .form-group select option:hover {
+  background-color: #444;
+}
+
+.image-section,
+.form-section {
+  flex: 1;
+  padding: 20px;
+}
+
+.image-section img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .image-section img {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .form-container {
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    gap: 20px;
+  }
+
+  .image-section,
+  .form-section {
+    width: 100%;
+  }
+
+  .form-group {
+    width: 100%;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 15px;
+  }
+}

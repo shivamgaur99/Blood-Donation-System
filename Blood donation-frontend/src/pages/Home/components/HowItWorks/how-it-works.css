@@ -1,0 +1,79 @@
+.how-it-works {
+    background-color: #f7f9fc;
+    padding: 80px 20px;
+    text-align: center;
+  }
+  
+  .how-it-works h2 {
+    font-size: 2.6em;
+    color: #1d3557;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+  }
+  
+  .steps {
+    display: flex;
+    justify-content: space-around;
+    gap: 30px;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .step {
+    background: #ffffff;
+    border-radius: 18px;
+    width: 300px;
+    padding: 30px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .step:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  }
+  
+  .step-icon {
+    background: #ff758c;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.8em;
+    margin: 0 auto 20px;
+  }
+  
+  .step h3 {
+    font-size: 1.5em;
+    color: #1d3557;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  
+  .step p {
+    color: #555;
+    line-height: 1.6;
+  }
+  
+  @media (max-width: 768px) {
+    .steps {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .step {
+      width: 90%;
+      margin-bottom: 30px;
+    }
+  }
+  
+  
+  
+  

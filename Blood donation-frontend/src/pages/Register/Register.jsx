@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import Joi from "joi-browser";
+import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { SimpleToast } from "../../components/util/Toast/Toast";
 import { useToast } from "../../services/toastService";
@@ -29,29 +29,32 @@ const Register = (props) => {
 
   const passwordInput = useRef("password");
 
-  const validationSchema = {
-    username: Joi.string().min(3).required(),
-    email: Joi.string().email().required(),
-    age: Joi.number().min(18).required(),
-    bloodGroup: Joi.string().required(),
-    gender: Joi.string().required(),
-    mobile: Joi.string().min(10).required(),
-    password: Joi.string().min(6).required(),
-    confirmPassword: Joi.string().valid(Joi.ref("password")).required(),
-  };
+  const validationSchema = Yup.object().shape({
+    username: Yup.string().min(3, "Username must be at least 3 characters").required("Username is required"),
+    email: Yup.string().email("Invalid email").required("Email is required"),
+    age: Yup.number().min(18, "You must be at least 18 years old").required("Age is required"),
+    bloodGroup: Yup.string().required("Blood group is required"),
+    gender: Yup.string().required("Gender is required"),
+    mobile: Yup.string().matches(/^\d{10}$/, "Mobile number must be 10 digits").required("Mobile number is required"),
+    password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password"), null], "Passwords must match")
+      .required("Confirm password is required"),
+  });
 
-  const validateForm = () => {
-    const { error } = Joi.validate(formData, validationSchema, {
-      abortEarly: false,
-    });
-    if (!error) return true;
-
-    const errors = error.details.reduce((acc, item) => {
-      acc[item.path[0]] = item.message;
-      return acc;
-    }, {});
-    setErrorObj(errors);
-    return false;
+  const validateForm = async () => {
+    try {
+      await validationSchema.validate(formData, { abortEarly: false });
+      setErrorObj({});
+      return true;
+    } catch (err) {
+      const errors = err.inner.reduce((acc, item) => {
+        acc[item.path] = item.message;
+        return acc;
+      }, {});
+      setErrorObj(errors);
+      return false;
+    }
   };
 
   const handleChange = (e) => {
@@ -59,9 +62,9 @@ const Register = (props) => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    if (validateForm()) {
+    if (await validateForm()) {
       setIsLoading(true);
       const payload = { ...formData, bloodgroup: formData.bloodGroup };
 
@@ -164,7 +167,7 @@ const Register = (props) => {
                     "Email",
                     "fas fa-envelope-open-text"
                   )}
-                  {renderInput("age", "", "Age", "fas fa-calendar-alt")}
+                  {renderInput("age", "number", "Age", "fas fa-calendar-alt")}
                   <div
                     className={`register-input ${
                       dark ? "register-input-dark" : "register-input-light"

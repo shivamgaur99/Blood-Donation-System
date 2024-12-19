@@ -1,46 +1,55 @@
 import React, { useState } from "react";
 import axios from "axios";
-import Swal from "sweetalert2";
+import { CircularProgress } from "@mui/material";
 import { END_POINT } from "../../../config/api";
+import * as Yup from "yup";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import "./DonateBlood.css"; 
+import useToast from "../../../hooks/useToast";
 
-const DonateBlood = () => {
-  const [name, setName] = useState("");
-  const [bloodGroup, setBloodGroup] = useState("");
-  const [units, setUnits] = useState(""); // Default to empty string instead of 0
-  const [mobile, setMobile] = useState("");
-  const [gender, setGender] = useState("");
-  const [age, setAge] = useState(""); // Default to empty string instead of 0
-  const [city, setCity] = useState("");
-  const [address, setAddress] = useState("");
-  const [date, setDate] = useState("");
+const DonateBlood = (props) => {
   const [isLoading, setIsLoading] = useState(false);
+  const dark = props.theme;  
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const { showToast, SnackbarToast } = useToast();
 
+  const validationSchema = Yup.object({
+    name: Yup.string().required("* Name is required"),
+    bloodGroup: Yup.string().required("* Blood group is required"),
+    units: Yup.number().positive().integer().required("* Units are required"),
+    mobile: Yup.string()
+      .matches(/^(\+\d{1,3}[- ]?)?\d{10}$/, "* Invalid phone number")
+      .required("* Mobile number is required"),
+    gender: Yup.string().required("* Gender is required"),
+    age: Yup.number()
+      .positive("* Age must be a positive number")
+      .min(18, "* Age must be at least 18")
+      .required("* Age is required"),
+    city: Yup.string().required("* City is required"),
+    address: Yup.string().required("* Address is required"),
+    date: Yup.date().required("* Date is required"),
+  });
+
+  const handleSubmit = (values, { resetForm }) => {
     const donorData = {
-      name,
-      bloodGroup,
-      units,
-      mobile,
-      gender,
-      age,
-      city,
-      address,
-      date,
+      name: values.name,
+      bloodGroup: values.bloodGroup,
+      units: values.units,
+      mobile: values.mobile,
+      gender: values.gender,
+      age: values.age,
+      city: values.city,
+      address: values.address,
+      date: values.date,
     };
 
     const token = localStorage.getItem("jwtToken");
     if (!token) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "User is not authenticated. Please login again.",
-      });
+      showToast("User is not authenticated. Please login again.", "error");
       return;
     }
 
-    setIsLoading(true); // Start loading
+    setIsLoading(true); 
 
     axios
       .post(`${END_POINT}/add`, donorData, {
@@ -49,240 +58,176 @@ const DonateBlood = () => {
         },
       })
       .then(() => {
-        setIsLoading(false); // Stop loading
-        Swal.fire({
-          icon: "success",
-          title: "Success",
-          text: "Donation data added successfully!",
-        });
+        setIsLoading(false); 
+        showToast("Donation data added successfully!", "success");
         resetForm();
       })
       .catch((error) => {
-        setIsLoading(false); // Stop loading
+        setIsLoading(false); 
         console.error("Error:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Failed to add donation data. Please try again later.",
-        });
+        showToast("Failed to add donation data. Please try again later.", "error");
       });
   };
 
-  const resetForm = () => {
-    setName("");
-    setBloodGroup("");
-    setUnits("");
-    setMobile("");
-    setGender("");
-    setAge("");
-    setCity("");
-    setAddress("");
-    setDate("");
-  };
-
-  const isFormValid = () => {
-    return (
-      name &&
-      bloodGroup &&
-      units &&
-      mobile &&
-      gender &&
-      age &&
-      city &&
-      address &&
-      date
-    );
-  };
-
   return (
-    <div className="container mt-5 mb-5 d-flex align-items-center justify-content-center">
-      <div className="row w-100">
-        {/* Left Side Image */}
-        <div className="col-md-6 mt-5 d-none d-md-block">
+    <div className={`donate-blood-container ${dark ? 'dark' : 'light'}`}>
+      <div className="form-container">
+        <div className="image-section">
           <img
-            src="https://via.placeholder.com/500" // Add your image source here
+            src="https://via.placeholder.com/500"
             alt="Donate Blood"
-            className="img-fluid rounded"
-            style={{ marginTop: "60px" }}
+            className="img-fluid"
           />
         </div>
-
-        {/* Right Side Form */}
-        <div className="col-md-6">
-          <h1 className="text-center mb-4 text-primary">Donate Blood</h1>
-          <form
+        <div className="form-section">
+          <Formik
+            initialValues={{
+              name: "",
+              bloodGroup: "",
+              units: "",
+              mobile: "",
+              gender: "",
+              age: "",
+              city: "",
+              address: "",
+              date: "",
+            }}
+            validationSchema={validationSchema}
             onSubmit={handleSubmit}
-            className="shadow-lg p-4 bg-light rounded"
           >
-            <div className="form-group">
-              <label htmlFor="name">
-                Name <span className="text-danger">*</span>
-              </label>
-              <input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                placeholder="Enter your full name"
-              />
-            </div>
+            {({ isSubmitting, isValid, dirty }) => (
+              <Form className="donate-form">
+                <h1>Donate Blood</h1>
 
-            {/* Blood Group and Units in Same Row */}
-            <div className="form-row">
-              <div className="col-md-6">
                 <div className="form-group">
-                  <label htmlFor="bloodGroup">
-                    Blood Group <span className="text-danger">*</span>
-                  </label>
-                  <select
-                    id="bloodGroup"
-                    value={bloodGroup}
-                    onChange={(e) => setBloodGroup(e.target.value)}
-                    required
-                  >
-                    <option value="">Select Blood Group</option>
-                    <option value="A+">A+</option>
-                    <option value="A-">A-</option>
-                    <option value="B+">B+</option>
-                    <option value="B-">B-</option>
-                    <option value="AB+">AB+</option>
-                    <option value="AB-">AB-</option>
-                    <option value="O+">O+</option>
-                    <option value="O-">O-</option>
-                  </select>
-                </div>
-              </div>
-              <div className="col-md-6">
-                <div className="form-group">
-                  <label htmlFor="units">
-                    Units <span className="text-danger">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    id="units"
-                    value={units}
-                    onChange={(e) => setUnits(e.target.value)}
-                    required
-                    placeholder="Enter the number of units"
+                  <label htmlFor="name">Name:</label>
+                  <Field
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="Enter your full name"
+                    className={dark ? 'dark-input' : 'light-input'}
                   />
+                  <ErrorMessage name="name" component="div" className="error-message" />
                 </div>
-              </div>
-            </div>
 
-            {/* Mobile */}
-            <div className="form-group">
-              <label htmlFor="mobile">
-                Mobile <span className="text-danger">*</span>
-              </label>
-              <div className="input-group">
-                <input
-                  type="text"
-                  id="mobile"
-                  value={mobile}
-                  onChange={(e) => setMobile(e.target.value)}
-                  required
-                  placeholder="Enter your mobile number"
-                />
-              </div>
-            </div>
-
-            {/* Gender and Age in Same Row */}
-            <div className="form-row">
-              <div className="col-md-6">
-                <div className="form-group">
-                  <label htmlFor="gender">
-                    Gender <span className="text-danger">*</span>
-                  </label>
-                  <select
-                    id="gender"
-                    value={gender}
-                    onChange={(e) => setGender(e.target.value)}
-                    required
-                  >
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                  </select>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="bloodGroup">Blood Group:</label>
+                    <Field as="select" id="bloodGroup" name="bloodGroup" className={dark ? 'dark-input' : 'light-input'}>
+                      <option value="">Select Blood Group</option>
+                      <option value="A+">A+</option>
+                      <option value="A-">A-</option>
+                      <option value="B+">B+</option>
+                      <option value="B-">B-</option>
+                      <option value="AB+">AB+</option>
+                      <option value="AB-">AB-</option>
+                      <option value="O+">O+</option>
+                      <option value="O-">O-</option>
+                    </Field>
+                    <ErrorMessage name="bloodGroup" component="div" className="error-message" />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="units">Units:</label>
+                    <Field
+                      type="number"
+                      id="units"
+                      name="units"
+                      placeholder="Enter the number of units"
+                      className={dark ? 'dark-input' : 'light-input'}
+                    />
+                    <ErrorMessage name="units" component="div" className="error-message" />
+                  </div>
                 </div>
-              </div>
-              <div className="col-md-6">
+
                 <div className="form-group">
-                  <label htmlFor="age">
-                    Age <span className="text-danger">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    id="age"
-                    value={age}
-                    onChange={(e) => setAge(e.target.value)}
-                    required
-                    placeholder="Enter your age"
+                  <label htmlFor="mobile">Mobile:</label>
+                  <Field
+                    type="text"
+                    id="mobile"
+                    name="mobile"
+                    placeholder="Enter your mobile number"
+                    className={dark ? 'dark-input' : 'light-input'}
                   />
+                  <ErrorMessage name="mobile" component="div" className="error-message" />
                 </div>
-              </div>
-            </div>
 
-            {/* City */}
-            <div className="form-group">
-              <label htmlFor="city">
-                City <span className="text-danger">*</span>
-              </label>
-              <input
-                type="text"
-                id="city"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                required
-                placeholder="Enter your city"
-              />
-            </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="gender">Gender:</label>
+                    <Field as="select" id="gender" name="gender" className={dark ? 'dark-input' : 'light-input'}>
+                      <option value="">Select Gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </Field>
+                    <ErrorMessage name="gender" component="div" className="error-message" />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="age">Age:</label>
+                    <Field
+                      type="number"
+                      id="age"
+                      name="age"
+                      placeholder="Enter your age"
+                      className={dark ? 'dark-input' : 'light-input'}
+                    />
+                    <ErrorMessage name="age" component="div" className="error-message" />
+                  </div>
+                </div>
 
-            {/* Address */}
-            <div className="form-group">
-              <label htmlFor="address">
-                Address <span className="text-danger">*</span>
-              </label>
-              <input
-                type="text"
-                id="address"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                required
-                placeholder="Enter your address"
-              />
-            </div>
+                <div className="form-group">
+                  <label htmlFor="city">City:</label>
+                  <Field
+                    type="text"
+                    id="city"
+                    name="city"
+                    placeholder="Enter your city"
+                    className={dark ? 'dark-input' : 'light-input'}
+                  />
+                  <ErrorMessage name="city" component="div" className="error-message" />
+                </div>
 
-            {/* Date */}
-            <div className="form-group">
-              <label htmlFor="date">
-                Date <span className="text-danger">*</span>
-              </label>
-              <div className="input-group">
-                <input
-                  type="date"
-                  id="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
+                <div className="form-group">
+                  <label htmlFor="address">Address:</label>
+                  <Field
+                    type="text"
+                    id="address"
+                    name="address"
+                    placeholder="Enter your address"
+                    className={dark ? 'dark-input' : 'light-input'}
+                  />
+                  <ErrorMessage name="address" component="div" className="error-message" />
+                </div>
 
-            {/* Submit Button */}
-            <div className="text-center mt-4">
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={!isFormValid() || isLoading}
-              >
-                {isLoading ? "Loading..." : "Submit"}
-              </button>
-            </div>
-          </form>
+                <div className="form-group">
+                  <label htmlFor="date">Date:</label>
+                  <Field
+                    type="date"
+                    id="date"
+                    name="date"
+                    className={dark ? 'dark-input' : 'light-input'}
+                  />
+                  <ErrorMessage name="date" component="div" className="error-message" />
+                </div>
+
+                <div className="form-submit">
+                  <button
+                    type="submit"
+                    className={`submit-btn ${dark ? 'btn-light' : 'btn-primary'}`}
+                    disabled={isSubmitting || !isValid || !dirty || isLoading}
+                  >
+                    {isLoading ? <CircularProgress size={24} color="inherit" /> : "Submit"}
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
         </div>
       </div>
+
+      {/* Using SnackbarToast from the custom hook */}
+      <SnackbarToast />
     </div>
   );
 };
