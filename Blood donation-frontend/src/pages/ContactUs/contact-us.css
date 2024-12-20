@@ -197,7 +197,7 @@
   border: double 2px transparent;
   border-radius: 10px;
   background-image: linear-gradient(white, white),
-    linear-gradient(to right, rgba(255, 0, 90, 1), rgba(10, 24, 61, 1));
+  linear-gradient(to right, rgb(45, 70, 232), rgb(51, 57, 242));
   background-origin: border-box;
   background-clip: padding-box, border-box;
   background-color: #ffffff;

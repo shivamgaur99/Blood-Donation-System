@@ -1,5 +1,12 @@
 import { Fragment, useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { useSelector } from "react-redux";
+
 import "./App.css";
 import useInactivityLogout from "./hooks/useInactivityLogout";
 import useTokenExpiration from "./hooks/useTokenExpiration";
@@ -53,52 +60,132 @@ function App() {
   useTokenExpiration();
   // useInactivityLogout();
 
+  // Access token (user authentication check)
+  const token = useSelector((state) => state.auth.token);
+
   return (
     <Fragment>
       <Navbar handleClick={toggleTheme} theme={theme} />
       <main>
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Home theme={theme} />} />
           <Route path="/about-us" element={<AboutUs theme={theme} />} />
           <Route path="/contact-us" element={<ContactUs theme={theme} />} />
           <Route path="/register" element={<Register theme={theme} />} />
           <Route path="/login" element={<Login theme={theme} />} />
           <Route path="/donorlist" element={<DonorList theme={theme} />} />
-          <Route
-            path="/user-dashboard"
-            element={<UserDashboard theme={theme} />}
-          />
-          <Route path="/makeRequest" element={<MakeRequest theme={theme} />} />
-          <Route
-            path="/requestHistory"
-            element={<RequestHistory theme={theme} />}
-          />
-          <Route path="/donateBlood" element={<DonateBlood theme={theme} />} />
-          <Route path="/user-donors" element={<Donations theme={theme} />} />
-          <Route
-            path="/admin-dashboard"
-            element={<AdminDashboard theme={theme} />}
-          />
-          <Route path="/addDonors" element={<AddDonors theme={theme} />} />
-          <Route path="/users" element={<UserList theme={theme} />} />
-          <Route
-            path="/bloodRequests"
-            element={<BloodRequestHistory theme={theme} />}
-          />
-          <Route path="/get-involved" element={<Volunteer theme={theme} />} />
-          <Route
-            path="/event-management"
-            element={<EventManagement theme={theme} />}
-          />
           <Route path="/events" element={<Event theme={theme} />} />
           <Route path="/all-events" element={<AllEvents theme={theme} />} />
-          <Route path="/create-event" element={<CreateEvent theme={theme} />} />
+
+          {/* Protected Routes - Accessible only if the user is authenticated */}
+          <Route
+            path="/user-dashboard"
+            element={
+              token ? <UserDashboard theme={theme} /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/makeRequest"
+            element={
+              token ? <MakeRequest theme={theme} /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/requestHistory"
+            element={
+              token ? (
+                <RequestHistory theme={theme} />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/donateBlood"
+            element={
+              token ? <DonateBlood theme={theme} /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/user-donors"
+            element={
+              token ? <Donations theme={theme} /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/admin-dashboard"
+            element={
+              token ? (
+                <AdminDashboard theme={theme} />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/addDonors"
+            element={
+              token ? <AddDonors theme={theme} /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/users"
+            element={
+              token ? <UserList theme={theme} /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/bloodRequests"
+            element={
+              token ? (
+                <BloodRequestHistory theme={theme} />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/get-involved"
+            element={
+              token ? <Volunteer theme={theme} /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/event-management"
+            element={
+              token ? (
+                <EventManagement theme={theme} />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/create-event"
+            element={
+              token ? <CreateEvent theme={theme} /> : <Navigate to="/login" />
+            }
+          />
           <Route
             path="/manage-events"
-            element={<ManageEvents theme={theme} />}
+            element={
+              token ? <ManageEvents theme={theme} /> : <Navigate to="/login" />
+            }
           />
-          <Route path="/contacts" element={<Contacts theme={theme} />} />
-          <Route path="/volunteers" element={<VolunteerList theme={theme} />} />
+          <Route
+            path="/contacts"
+            element={
+              token ? <Contacts theme={theme} /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/volunteers"
+            element={
+              token ? <VolunteerList theme={theme} /> : <Navigate to="/login" />
+            }
+          />
+
           {/* NotFound Route */}
           <Route path="*" element={<NotFound theme={theme} />} />
         </Routes>

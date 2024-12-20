@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { END_POINT } from "../../../config/api";
-import { useToast } from "../../../services/toastService";
-import { SimpleToast } from "../../../components/util/Toast/Toast";
+import useToast from "../../../hooks/useToast";
 import Loader from "../../../components/util/Loader";
 import {
   Box,
@@ -60,10 +59,10 @@ const Donations = (props) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [viewMode, setViewMode] = useState("table");
 
-  const { toast, showToast, hideToast } = useToast();
+  const { showToast, SnackbarToast } = useToast();
   const dark = props.theme;
 
-  const fetchDonationHistory = useCallback(() => {
+  const fetchDonationHistory = () => {
     const token = localStorage.getItem("jwtToken");
 
     if (!token) {
@@ -94,11 +93,11 @@ const Donations = (props) => {
           "error"
         );
       });
-  }, [showToast]);
+  };
 
   useEffect(() => {
     fetchDonationHistory();
-  }, [fetchDonationHistory]);
+  }, []);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -138,7 +137,7 @@ const Donations = (props) => {
             }}
           >
             Donation History
-          </Typography>   
+          </Typography>
 
           <Box textAlign="center" sx={{ marginBottom: 2 }}>
             <Grid item>
@@ -290,18 +289,9 @@ const Donations = (props) => {
               )}
             </>
           )}
-
-          {/* Toast Notification */}
-          {toast.open && (
-            <SimpleToast
-              open={toast.open}
-              severity={toast.severity}
-              message={toast.message}
-              handleCloseToast={hideToast}
-            />
-          )}
         </div>
       </Box>
+      <SnackbarToast />
     </ThemeProvider>
   );
 };

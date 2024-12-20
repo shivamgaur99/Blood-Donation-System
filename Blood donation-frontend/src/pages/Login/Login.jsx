@@ -1,13 +1,16 @@
 import React, { useState, useRef } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux"; // Hook to dispatch Redux actions
 import * as Yup from "yup";
 import { SimpleToast } from "../../components/util/Toast/Toast";
 import { useToast } from "../../services/toastService";
+import Loader from "../../components/util/Loader";
 import { END_POINT } from "../../config/api";
 import axios from "axios";
 import "./login.css";
+import { login } from "../../store/actions/actions";
 
-function Login(props) {
+function Login(props)  {
   const [hidePassword, setHidePassword] = useState(false);
   const passwordInput = useRef("password");
   const schema = { email: "", password: "", keepMeLoggedIn: false };
@@ -20,7 +23,9 @@ function Login(props) {
 
   // Yup validation schema
   const validationSchema = Yup.object().shape({
-    email: Yup.string().email("Invalid email address").required("Email is required"),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
     password: Yup.string().required("Password is required"),
     keepMeLoggedIn: Yup.boolean(),
   });
@@ -60,6 +65,8 @@ function Login(props) {
     setErrorObj(errors);
   };
 
+  const dispatch = useDispatch();
+
   const loginUser = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -93,6 +100,8 @@ function Login(props) {
             } else {
               showToast("No valid role found.", "error");
             }
+
+            dispatch(login(accessToken));
 
             showToast("Login successful!", "success");
 
@@ -262,15 +271,16 @@ function Login(props) {
                       Login
                     </button>
                   </div>
-                  <Link to="#">
-                    <p
-                      style={{
-                        textAlign: "center",
-                        color: dark ? "gray" : "blue",
-                      }}
-                    >
-                      Forgot your password?
-                    </p>
+                  <Link
+                    to="#"
+                    style={{
+                      textAlign: "center",
+                      color: dark ? "gray" : "blue",
+                      // textDecorationColor: dark ? "gray" : "blue",
+                      textDecoration: "none",
+                    }}
+                  >
+                    <p>Forgot your password?</p>
                   </Link>
                 </div>
               </form>

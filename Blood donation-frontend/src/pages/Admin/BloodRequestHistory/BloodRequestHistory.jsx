@@ -34,7 +34,6 @@ import { Delete, Visibility } from "@mui/icons-material";
 import Loader from "../../../components/util/Loader";
 import useToast from "../../../hooks/useToast";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Swal from "sweetalert2";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 
@@ -71,6 +70,8 @@ const BloodRequestHistory = (props) => {
   const [viewMode, setViewMode] = useState("table");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false); 
+  const [requestToDelete, setRequestToDelete] = useState(null); 
   const { showToast, SnackbarToast } = useToast();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -191,35 +192,32 @@ const BloodRequestHistory = (props) => {
     setSelectedRequest(request);
   };
 
-  const handleDelete = async (id) => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    });
+  const handleOpenDeleteDialog = (requestId) => {
+    setRequestToDelete(requestId);
+    setOpenDeleteDialog(true);
+  };
 
-    if (result.isConfirmed) {
-      const token = getJwtToken();
-      try {
-        await axios.delete(`${END_POINT}/blood-requests/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setRequests(requests.filter((request) => request.id !== id));
-        setFilteredRequests(
-          filteredRequests.filter((request) => request.id !== id)
-        );
-        showToast("Request deleted successfully.", "success");
-      } catch (error) {
-        showToast("Failed to delete request.", "error", [
-          { label: "Retry", onClick: () => handleDelete(id) },
-        ]);
-      }
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+    setRequestToDelete(null);
+  };
+
+  const handleDelete = async () => {
+    const token = getJwtToken();
+    try {
+      await axios.delete(`${END_POINT}/blood-requests/${requestToDelete}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setRequests(requests.filter((request) => request.id !== requestToDelete));
+      setFilteredRequests(filteredRequests.filter((request) => request.id !== requestToDelete));
+      showToast("Request deleted successfully.", "success");
+      handleCloseDeleteDialog(); // Close the delete dialog after deletion
+    } catch (error) {
+      showToast("Failed to delete request.", "error", [
+        { label: "Retry", onClick: handleDelete },
+      ]);
     }
   };
 
@@ -407,7 +405,7 @@ const BloodRequestHistory = (props) => {
                             </IconButton>
                             <IconButton
                               color="secondary"
-                              onClick={() => handleDelete(request.id)}
+                              onClick={() => handleOpenDeleteDialog(request.id)}
                             >
                               <Delete />
                             </IconButton>
@@ -482,7 +480,7 @@ const BloodRequestHistory = (props) => {
                         </IconButton>
                         <IconButton
                           color="secondary"
-                          onClick={() => handleDelete(request.id)}
+                          onClick={() => handleOpenDeleteDialog(request.id)}
                         >
                           <Delete />
                         </IconButton>
@@ -552,6 +550,28 @@ const BloodRequestHistory = (props) => {
               </Button>
             </DialogActions>
           </Dialog>
+
+          {/* Delete Confirmation Dialog */}
+          <Dialog
+            open={openDeleteDialog}
+            onClose={handleCloseDeleteDialog}
+          >
+            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogContent>
+              <Typography>
+                Are you sure you want to delete this request?
+              </Typography>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseDeleteDialog} color="primary">
+                Cancel
+              </Button>
+              <Button onClick={handleDelete} color="secondary">
+                Delete
+              </Button>
+            </DialogActions>
+          </Dialog>
+
            {/* Snackbar Toast */}
            <SnackbarToast />
         </div>

@@ -28,6 +28,7 @@
     "sass": "^1.80.6",
     "slick-carousel": "^1.8.1",
     "sweetalert2": "^11.6.13",
+    "web-vitals": "^4.2.4",
     "yup": "^1.6.1"
   },
   "scripts": {

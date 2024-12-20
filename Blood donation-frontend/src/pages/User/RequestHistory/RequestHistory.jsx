@@ -26,8 +26,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
 } from "@mui/material";
-import { useToast } from "../../../services/toastService";
-import { SimpleToast } from "../../../components/util/Toast/Toast";
+import useToast from "../../../hooks/useToast";
 import Loader from "../../../components/util/Loader";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
@@ -70,12 +69,8 @@ const RequestHistory = (props) => {
   const [rowsPerPage, setRowsPerPage] = useState(5); // Rows per page
   const [viewMode, setViewMode] = useState("table"); // View mode ("table" or "card")
 
-  const { toast, showToast, hideToast } = useToast();
+  const { showToast, SnackbarToast } = useToast();
   const dark = props.theme;
-
-  useEffect(() => {
-    fetchRequestHistory();
-  }, []);
 
   const fetchRequestHistory = () => {
     const token = localStorage.getItem("jwtToken");
@@ -111,9 +106,13 @@ const RequestHistory = (props) => {
         showToast(
           error.message || "Failed to fetch request history. Please try again.",
           "error"
-        ); // Error toast
+        ); 
       });
   };
+
+  useEffect(() => {
+    fetchRequestHistory();
+  }, []);
 
   const handleDeleteRequest = (requestId) => {
     const token = localStorage.getItem("jwtToken");
@@ -380,16 +379,6 @@ const RequestHistory = (props) => {
             </>
           )}
 
-          {/* Toast Notification */}
-          {toast.open && (
-            <SimpleToast
-              open={toast.open}
-              severity={toast.severity}
-              message={toast.message}
-              handleCloseToast={hideToast}
-            />
-          )}
-
           {/* View Details Modal */}
           {selectedRequest && (
             <Dialog
@@ -466,6 +455,7 @@ const RequestHistory = (props) => {
           </Dialog>
         </div>
       </Box>
+      <SnackbarToast />
     </ThemeProvider>
   );
 };

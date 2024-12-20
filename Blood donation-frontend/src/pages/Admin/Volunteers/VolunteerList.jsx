@@ -33,7 +33,6 @@ import { Delete, Visibility, Info } from "@mui/icons-material";
 import Loader from "../../../components/util/Loader";
 import useToast from "../../../hooks/useToast";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import Swal from "sweetalert2";
 
 const lightTheme = createTheme({
   palette: {
@@ -71,6 +70,8 @@ const VolunteerList = (props) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedVolunteer, setSelectedVolunteer] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false); // State for delete dialog
+  const [volunteerToDelete, setVolunteerToDelete] = useState(null); // Volunteer to be deleted
   const { showToast, SnackbarToast } = useToast();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -121,36 +122,25 @@ const VolunteerList = (props) => {
     }
   };
 
-  const handleDelete = async (id) => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    });
-
-    if (result.isConfirmed) {
-      const token = getJwtToken();
-      try {
-        await axios.delete(`${END_POINT}/volunteers/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setVolunteers(volunteers.filter((volunteer) => volunteer.id !== id));
-        setFilteredVolunteers(
-          filteredVolunteers.filter((volunteer) => volunteer.id !== id)
-        );
-        showToast("Volunteer deleted successfully.", "success");
-      } catch (error) {
+  const handleDelete = async () => {
+    const token = getJwtToken();
+    try {
+      await axios.delete(`${END_POINT}/volunteers/${volunteerToDelete.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setVolunteers(volunteers.filter((volunteer) => volunteer.id !== volunteerToDelete.id));
+      setFilteredVolunteers(filteredVolunteers.filter((volunteer) => volunteer.id !== volunteerToDelete.id));
+      showToast("Volunteer deleted successfully.", "success");
+    } catch (error) {
         showToast("Failed to delete volunteer.", "error", [
-          { label: "Retry", onClick: () => handleDelete(id) },
+          { label: "Retry", onClick: () => handleDelete() },
         ]);
+      }finally {
+        setOpenDeleteDialog(false); // Close the dialog
       }
-    }
+    
   };
 
   const handleSearchChange = (event) => {
@@ -202,6 +192,16 @@ const VolunteerList = (props) => {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const openDeleteConfirmationDialog = (volunteer) => {
+    setVolunteerToDelete(volunteer); // Set the volunteer to be deleted
+    setOpenDeleteDialog(true); // Open the delete confirmation dialog
+  };
+
+  const closeDeleteConfirmationDialog = () => {
+    setVolunteerToDelete(null); // Reset the volunteer to be deleted
+    setOpenDeleteDialog(false); // Close the dialog
   };
 
   useEffect(() => {
@@ -399,7 +399,7 @@ const VolunteerList = (props) => {
                           </IconButton>
                           <IconButton
                             color="error"
-                            onClick={() => handleDelete(volunteer.id)}
+                            onClick={() => openDeleteConfirmationDialog(volunteer)}
                           >
                             <Delete />
                           </IconButton>
@@ -467,7 +467,7 @@ const VolunteerList = (props) => {
                         </IconButton>
                         <IconButton
                           color="error"
-                          onClick={() => handleDelete(volunteer.id)}
+                          onClick={() => openDeleteConfirmationDialog(volunteer)}
                         >
                           <Delete />
                         </IconButton>
@@ -537,8 +537,6 @@ const VolunteerList = (props) => {
             <Dialog
               open={Boolean(selectedEvent)}
               onClose={handleCloseDialog}
-              maxWidth="sm"
-              fullWidth
             >
               <DialogTitle>Event Details</DialogTitle>
               <DialogContent>
@@ -562,10 +560,30 @@ const VolunteerList = (props) => {
             </Dialog>
           )}
 
-          {/* Snackbar Toast */}
-          <SnackbarToast />
+           {/* Delete Confirmation Dialog */}
+           <Dialog
+            open={openDeleteDialog}
+            onClose={closeDeleteConfirmationDialog}
+          >
+            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogContent>
+              <Typography variant="body1">
+                Are you sure you want to delete this volunteer?
+              </Typography>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={closeDeleteConfirmationDialog} color="primary">
+                Cancel
+              </Button>
+              <Button onClick={handleDelete} color="error">
+                Delete
+              </Button>
+            </DialogActions>
+          </Dialog>
         </div>
       </Box>
+       {/* Snackbar Toast */}
+       <SnackbarToast />
     </ThemeProvider>
   );
 };

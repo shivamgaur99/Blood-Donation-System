@@ -92,11 +92,11 @@
 }
 
 .dark .ecard {
-  background: #333333; /* Solid background color for cards in dark theme */
+  background: linear-gradient(135deg, #ff00a6, #0056b3);
 }
 
 .dark .ecard:hover {
-  box-shadow: 0 15px 20px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 20px rgba(47, 95, 255, 0.398);
 }
 
 .dark .ecard h2,

@@ -178,7 +178,7 @@ const Register = (props) => {
                       value={formData.bloodGroup}
                       onChange={handleChange}
                       className={
-                        dark ? "input-register-dark" : "input-register-light"
+                        dark ? "register-input-dark" : "register-input-light"
                       }
                     >
                       <option value="">Select Blood Group</option>
@@ -207,7 +207,7 @@ const Register = (props) => {
                       value={formData.gender}
                       onChange={handleChange}
                       className={
-                        dark ? "input-register-dark" : "input-register-light"
+                        dark ? "register-input-dark" : "register-input-light"
                       }
                     >
                       <option value="">Select Gender</option>
@@ -239,8 +239,8 @@ const Register = (props) => {
                       value={formData.password}
                       onChange={handleChange}
                       placeholder="Password"
-                      className={`input-register ${
-                        dark ? "input-register-dark" : "input-register-light"
+                      className={`register-input ${
+                        dark ? "register-input-dark" : "register-input-light"
                       }`}
                     />
                     <i

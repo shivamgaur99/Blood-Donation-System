@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { END_POINT } from "../../../config/api";
-import { SimpleToast } from "../../../components/util/Toast/Toast";
-import { useToast } from "../../../services/toastService";
+import useToast from "../../../hooks/useToast";
 import Loader from "../../../components/util/Loader";
-import Swal from "sweetalert2";
 import {
   IconButton,
   TextField,
@@ -77,9 +75,10 @@ function UserList(props) {
   const [searchQuery, setSearchQuery] = useState(""); // Search query
   const [selectedBloodGroup, setSelectedBloodGroup] = useState(""); // Blood group filter
   const [openDialog, setOpenDialog] = useState(false); // For dialog open/close
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null); // User whose role is being updated
   const [newRole, setNewRole] = useState(""); // New selected role
-  const { toast, showToast, hideToast } = useToast();
+  const { showToast, SnackbarToast } = useToast();
 
   let dark = props.theme;
 
@@ -143,40 +142,46 @@ function UserList(props) {
     setFilteredUsers(filtered);
   };
 
-  const handleDeleteUser = (email) => {
+  const handleDeleteDialogOpen = (user) => {
+    if (user) {
+      setSelectedUser(user);
+      setOpenDeleteDialog(true);
+    }
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+    setSelectedUser(null);  // Reset selected user
+  };
+
+  const handleDeleteUser = () => {
+    if (!selectedUser) {
+      showToast("No user selected for deletion.", "error");
+      return;
+    }
+
     const token = localStorage.getItem("jwtToken");
     if (!token) {
       showToast("No authentication token found.", "error");
       return;
     }
 
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        axios
-          .delete(`${END_POINT}/user/${email}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-          .then(() => {
-            setUsers(users.filter((user) => user.email !== email));
-            setFilteredUsers(
-              filteredUsers.filter((user) => user.email !== email)
-            ); // Update filtered users as well
-            showToast("User deleted successfully!", "success");
-          })
-          .catch((error) => {
-            console.error("Error deleting user:", error);
-            showToast("Failed to delete user.", "error");
-          });
-      }
-    });
+    axios
+      .delete(`${END_POINT}/user/${selectedUser.email}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(() => {
+        setUsers(users.filter((user) => user.email !== selectedUser.email));
+        setFilteredUsers(
+          filteredUsers.filter((user) => user.email !== selectedUser.email)
+        ); // Update filtered users as well
+        showToast("User deleted successfully!", "success");
+        setOpenDeleteDialog(false);
+      })
+      .catch((error) => {
+        console.error("Error deleting user:", error);
+        showToast("Failed to delete user.", "error");
+      });
   };
 
   const handleOpenRoleDialog = (user) => {
@@ -372,7 +377,7 @@ function UserList(props) {
                             </IconButton>
                             <IconButton
                               color="error"
-                              onClick={() => handleDeleteUser(user.email)}
+                              onClick={() => handleDeleteDialogOpen(user)}
                               aria-label="delete"
                             >
                               <DeleteIcon />
@@ -429,7 +434,7 @@ function UserList(props) {
                             </IconButton>
                             <IconButton
                               color="error"
-                              onClick={() => handleDeleteUser(user.email)}
+                              onClick={() => handleDeleteDialogOpen(user)}
                             >
                               <DeleteIcon />
                             </IconButton>
@@ -445,16 +450,6 @@ function UserList(props) {
                 </Grid>
               )}
             </>
-          )}
-
-          {/* Toast Notification */}
-          {toast.open && (
-            <SimpleToast
-              open={toast.open}
-              severity={toast.severity}
-              message={toast.message}
-              handleCloseToast={hideToast}
-            />
           )}
 
           {/* Dialog for Role Update */}
@@ -480,11 +475,30 @@ function UserList(props) {
               <Button onClick={handleCloseRoleDialog} color="primary">
                 Cancel
               </Button>
-              <Button onClick={handleUpdateRole} color="primary">
+              <Button onClick={handleUpdateRole} color="secondary">
                 Update
               </Button>
             </DialogActions>
           </Dialog>
+
+           {/* Delete Confirmation Dialog */}
+           <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
+            <DialogTitle>Delete User</DialogTitle>
+            <DialogContent>
+              <Typography>Are you sure you want to delete this user?</Typography>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseDeleteDialog} color="primary">
+                Cancel
+              </Button>
+              <Button onClick={handleDeleteUser} color="error">
+                Delete
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+           {/* Snackbar Toast */}
+           <SnackbarToast />
         </div>
       </Box>
     </ThemeProvider>
