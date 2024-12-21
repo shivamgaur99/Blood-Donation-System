@@ -41,6 +41,9 @@ import AllEvents from "./pages/Event/Components/AllEvents/AllEvents";
 import Contacts from "./pages/Admin/Contacts/Contacts";
 import VolunteerList from "./pages/Admin/Volunteers/VolunteerList";
 import Volunteer from "./pages/Volunteer/VolunteerForm";
+import Faq from "./pages/FAQs/Faq";
+import Terms from "./pages/Terms/Terms";
+import PrivacyPolicy from "./pages/PrivacyPolicy/PrivacyPolicy";
 
 function App() {
   const getTheme = () => JSON.parse(localStorage.getItem("dark")) || false;
@@ -74,9 +77,11 @@ function App() {
           <Route path="/contact-us" element={<ContactUs theme={theme} />} />
           <Route path="/register" element={<Register theme={theme} />} />
           <Route path="/login" element={<Login theme={theme} />} />
-          <Route path="/donorlist" element={<DonorList theme={theme} />} />
           <Route path="/events" element={<Event theme={theme} />} />
           <Route path="/all-events" element={<AllEvents theme={theme} />} />
+          <Route path="/faqs" element={<Faq theme={theme} />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy theme={theme} />} />
+          <Route path="/terms" element={<Terms theme={theme} />} />
 
           {/* Protected Routes - Accessible only if the user is authenticated */}
           <Route
@@ -143,6 +148,12 @@ function App() {
               ) : (
                 <Navigate to="/login" />
               )
+            }
+          />
+          <Route
+            path="/donorlist"
+            element={
+              token ? <DonorList theme={theme} /> : <Navigate to="/login" />
             }
           />
           <Route

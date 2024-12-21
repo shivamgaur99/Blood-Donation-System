@@ -142,6 +142,21 @@ export const Navbar = (props) => {
             </NavLink>
           </li>
 
+          <li className={dark ? "nav-item-dark" : "nav-item"}>
+            <NavLink
+              activeClassName={"active-link"}
+              to="/faqs"
+              className={({ isActive }) =>
+                `${
+                  isActive ? (dark ? "active-link-dark" : "active-link") : ""
+                } ${dark ? "nav-links-dark" : "nav-links"}`
+              }
+              onClick={closeMobileMenu}
+            >
+              FAQs
+            </NavLink>
+          </li>
+
           {/* Admin Dashboard Link */}
           {hasRole("admin") && (
             <li className={dark ? "nav-item-dark" : "nav-item"}>

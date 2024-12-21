@@ -71,9 +71,9 @@ const CreateEvent = (props) => {
       <div className="create-event-parent">
       <div className={`create-event-child child1`}>
             <img
-              src="/images/events.png"
+              src="/images/event.png"
               alt="event"
-              className={"contact-image"}
+              className="contact-image"
             />
           </div>
           <div className={`contact-child child2`}>

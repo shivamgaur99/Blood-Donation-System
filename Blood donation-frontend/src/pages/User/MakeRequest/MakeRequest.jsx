@@ -73,7 +73,7 @@ const MakeRequest = (props) => {
       <div className="form-container">
         <div className="image-section">
           <img
-            src="/images/request1.png"
+            src="/images/request.png"
             alt="Make Request"
             className="img-fluid"
           />

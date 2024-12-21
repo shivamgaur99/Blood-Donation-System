@@ -6,7 +6,7 @@ import Newsletter from "./components/Newsletter/Newsletter";
 import Mission from "./components/Mission/Mission";
 import ImpactStats from "./components/ImpactStats/ImpactStats";
 import HowItWorks from "./components/HowItWorks/HowItWorks";
-import GetInvolved from "../GetInvolved/GetInvolved";
+import GetInvolved from "./components/GetInvolved/GetInvolved";
 
 const Home = ({ theme }) => {
   return (

@@ -140,7 +140,7 @@ const Register = (props) => {
         <div className="register-parent">
           <div className="register-child child1">
             <img
-              src="./images/signup.png"
+              src="./images/signup2.png"
               alt="signup"
               className="register-image"
             />

@@ -159,7 +159,7 @@ function Login(props)  {
         <div className="login-parent">
           <div className="login-child child1">
             <img
-              src="./images/login.png"
+              src="/images/login1.png"
               alt="login-illustration"
               className="login-image"
             />
